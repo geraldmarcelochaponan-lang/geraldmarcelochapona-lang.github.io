@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Seguridad IoT · Amenaza vs Defensa + Casos Reales</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--cb:#fffaf0;--ct:#0f172a;--rojo:#ef4444;--azul:#3b82f6;box-sizing:border-box}
+html,body{margin:0;overflow:hidden;background:radial-gradient(ellipse at top,#1e293b 0%,#0a0e1a 60%)}
+body{font-family:'Fredoka','Trebuchet MS',system-ui,sans-serif;color:#e2e8f0;height:100vh;width:100vw;overflow:hidden}
+
+#stage{
+  position:relative;
+  width:100vw;
+  height:100vh;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  grid-template-rows:1fr 1fr;
+  gap:0.5vh 0.5vw;
+  padding:1.5vh 1.5vw;
+  box-sizing:border-box;
+}
+
+.zona-ataque{
+  grid-column:1;grid-row:1;
+  position:relative;display:flex;align-items:center;justify-content:center;overflow:visible;
+}
+
+.zona-defensa{
+  grid-column:2;grid-row:1;
+  position:relative;display:flex;align-items:center;justify-content:center;overflow:visible;
+}
+
+.zona-casos{
+  grid-column:1 / span 2;grid-row:2;
+  position:relative;display:flex;align-items:center;justify-content:center;overflow:visible;
+}
+
+/* ============ CÁMARA SIN CAJA ============ */
+.camWrap{
+  position:relative;
+  width:auto;
+  height:100%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:visible;
+}
+
+.casoPunto{
+  position:absolute;
+  width:clamp(30px,2.8vw,42px);
+  height:clamp(30px,2.8vw,42px);
+  margin-left:calc(-1 * clamp(15px,1.4vw,21px));
+  margin-top:calc(-1 * clamp(15px,1.4vw,21px));
+  border-radius:50%;
+  background:radial-gradient(circle at 35% 30%, #f87171, #b91c1c);
+  border:3px solid #fecaca;
+  box-shadow:0 0 0 5px rgba(239,68,68,.25), 0 6px 14px rgba(0,0,0,.7);
+  cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  color:#fff;font-weight:700;
+  font-size:clamp(12px,1.2vw,15px);
+  transition:transform .25s, box-shadow .25s;
+  z-index:20;
+  animation:pulseCaso 2.4s ease-in-out infinite;
+}
+.casoPunto:hover,
+.casoPunto:focus-visible{
+  transform:scale(1.25);
+  box-shadow:0 0 0 10px rgba(239,68,68,.35), 0 12px 24px rgba(0,0,0,.8);
+  outline:none;
+}
+.casoPunto .num{pointer-events:none;text-shadow:0 1px 3px #000}
+@keyframes pulseCaso{
+  0%,100%{box-shadow:0 0 0 5px rgba(239,68,68,.25), 0 6px 14px rgba(0,0,0,.7)}
+  50%{box-shadow:0 0 0 12px rgba(239,68,68,.08), 0 6px 14px rgba(0,0,0,.7)}
+}
+
+.camIcon{
+  height:100%;
+  width:auto;
+  max-height:38vh;
+  max-width:80vw;
+  display:block;
+  position:relative;
+  z-index:1;
+}
+.camIcon .body{fill:#1e293b;stroke:#475569;stroke-width:3}
+.camIcon .lens{fill:#0a0e1a;stroke:#64748b;stroke-width:3}
+.camIcon .glass{fill:#3b82f6;opacity:.4;animation:flicker 1.6s infinite}
+.camIcon .glitch{stroke:#ef4444;stroke-width:3;fill:none;stroke-linecap:round;animation:glitch .6s infinite}
+.camIcon .crack{stroke:#ef4444;stroke-width:2;fill:none;stroke-linecap:round;stroke-dasharray:3 3;animation:dash 2s linear infinite}
+@keyframes flicker{0%,100%{opacity:.15}50%{opacity:.55}}
+@keyframes glitch{0%,100%{transform:translate(0,0)}25%{transform:translate(-3px,1px)}50%{transform:translate(2px,-2px)}75%{transform:translate(-1px,2px)}}
+@keyframes dash{to{stroke-dashoffset:-20}}
+
+/* ============ TARJETA FLOTANTE ============ */
+#card{
+  position:fixed;z-index:50;left:0;top:0;
+  width:min(440px,calc(100vw - 24px));
+  background:var(--cb);color:var(--ct);
+  border-radius:22px;box-shadow:0 14px 40px rgba(0,0,0,.6);
+  padding-bottom:16px;overflow:hidden;
+  font-size:19px;line-height:1.35;
+  opacity:0;transform:translateY(8px) scale(.97);
+  pointer-events:none;transition:opacity .18s,transform .18s;
+}
+#card.on{opacity:1;transform:none;pointer-events:auto}
+#card img{display:block;width:100%;height:150px;object-fit:cover;background:#0f172a}
+#card .tag{display:inline-block;margin:12px 18px 0;padding:4px 12px;border-radius:999px;font-size:14px;font-weight:700;letter-spacing:1px}
+#card .tag.v{background:#fee2e2;color:#991b1b}
+#card .tag.d{background:#dbeafe;color:#1e40af}
+#card h3{margin:8px 18px 4px;font-size:24px;line-height:1.1;font-weight:700}
+#card p{margin:0 18px;font-weight:500;font-size:17px}
+#card ul{margin:10px 18px 0;padding-left:22px;font-size:16px;font-weight:500}
+#card li{margin-bottom:6px;line-height:1.35}
+
+/* ============ SVG ============ */
+#m,#m2{
+  display:block;width:100%;height:100%;overflow:visible;
+  position:absolute;
+  inset:0;
+}
+#m text,#m2 text{font-family:inherit;font-weight:600;pointer-events:none}
+.pop{transform-box:fill-box;transform-origin:50% 50%;animation:pop .8s cubic-bezier(.2,1.5,.4,1) backwards var(--d),sway 6s ease-in-out calc(var(--d) + .8s) infinite alternate}
+.h{transform-box:fill-box;transform-origin:50% 50%;transition:transform .25s}
+[data-k]{cursor:pointer;pointer-events:all}
+[data-k]:hover>.h,[data-k]:focus-visible>.h{transform:scale(1.07)}
+[data-k]:focus{outline:none}
+.spike{transform-box:fill-box;transform-origin:50% 100%;animation:spike 2.6s ease-in-out infinite alternate}
+.ring{transform-box:fill-box;transform-origin:50% 50%;animation:ring 3s ease-out infinite}
+.sweep{transform-box:fill-box;transform-origin:50% 50%;animation:sweep 4s ease-in-out infinite}
+.rays{transform-box:fill-box;transform-origin:50% 50%;animation:spin 60s linear infinite}
+.grid{opacity:.14}
+@keyframes pop{from{transform:scale(0) rotate(-25deg)}}
+@keyframes sway{from{transform:rotate(-1.8deg)}to{transform:rotate(1.8deg)}}
+@keyframes spike{from{transform:scaleY(.85)}to{transform:scaleY(1.08)}}
+@keyframes ring{0%{transform:scale(.6);opacity:.85}100%{transform:scale(1.6);opacity:0}}
+@keyframes sweep{0%,100%{transform:translateY(-12px);opacity:.25}50%{transform:translateY(12px);opacity:.7}}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+
+<div id="stage">
+
+  <!-- ============ ARRIBA IZQUIERDA: ATAQUE ============ -->
+  <div class="zona-ataque">
+    <svg id="m" viewBox="0 0 600 500" preserveAspectRatio="xMidYMid meet" aria-label="Amenazas">
+      <defs>
+        <radialGradient id="gv" cx="50%" cy="50%">
+          <stop offset="0%" stop-color="#991b1b"/><stop offset="70%" stop-color="#450a0a"/><stop offset="100%" stop-color="#1c0707"/>
+        </radialGradient>
+      </defs>
+
+      <g class="grid" id="gridA"></g>
+
+      <text x="300" y="35" text-anchor="middle" font-size="20" fill="#f87171" letter-spacing="5">LA AMENAZA</text>
+      <text x="300" y="68" text-anchor="middle" font-size="26" fill="#fff" font-weight="700">6 formas de entrar</text>
+
+      <g transform="translate(300 310) scale(0.78)">
+        <g class="rays" id="virusRays"></g>
+        <g id="virusSpikes"></g>
+        <circle r="135" fill="url(#gv)" stroke="#7f1d1d" stroke-width="3"/>
+        <circle r="135" fill="none" stroke="#ef4444" stroke-width="2" opacity=".4" class="ring"/>
+        <text y="-14" text-anchor="middle" font-size="26" fill="#fca5a5" letter-spacing="3">ATAQUE</text>
+        <text y="20" text-anchor="middle" font-size="40" fill="#fff" font-weight="700">VULNERABLE</text>
+        <text y="56" text-anchor="middle" font-size="22" fill="#fecaca">así entra el atacante</text>
+      </g>
+    </svg>
+  </div>
+
+  <!-- ============ ARRIBA DERECHA: DEFENSA ============ -->
+  <div class="zona-defensa">
+    <svg id="m2" viewBox="0 0 600 500" preserveAspectRatio="xMidYMid meet" aria-label="Defensas">
+      <defs>
+        <radialGradient id="gd" cx="50%" cy="50%">
+          <stop offset="0%" stop-color="#1e3a8a"/><stop offset="70%" stop-color="#0f172a"/><stop offset="100%" stop-color="#020617"/>
+        </radialGradient>
+        <linearGradient id="gs" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#60a5fa"/><stop offset="100%" stop-color="#1d4ed8"/>
+        </linearGradient>
+      </defs>
+
+      <g class="grid" id="gridD"></g>
+
+      <text x="300" y="35" text-anchor="middle" font-size="20" fill="#60a5fa" letter-spacing="5">LA DEFENSA</text>
+      <text x="300" y="68" text-anchor="middle" font-size="26" fill="#fff" font-weight="700">6 formas de frenarlo</text>
+
+      <g transform="translate(300 310) scale(0.78)">
+        <g class="rays" id="shieldRays"></g>
+        <g id="shieldDefs"></g>
+      </g>
+    </svg>
+  </div>
+
+  <!-- ============ ABAJO CENTRADO: CASOS (CÁMARA) ============ -->
+  <div class="zona-casos">
+    <div class="camWrap">
+
+      <div data-k="caso1" tabindex="0" class="casoPunto" style="left:20%; top:8%;">
+        <span class="num">1</span>
+      </div>
+      <div data-k="caso2" tabindex="0" class="casoPunto" style="left:50%; top:8%;">
+        <span class="num">2</span>
+      </div>
+      <div data-k="caso3" tabindex="0" class="casoPunto" style="left:80%; top:8%;">
+        <span class="num">3</span>
+      </div>
+
+      <svg class="camIcon" viewBox="0 0 440 340" aria-hidden="true">
+        <rect x="205" y="20" width="30" height="60" fill="#475569"/>
+        <rect x="140" y="72" width="160" height="28" rx="8" class="body"/>
+        <rect x="70" y="100" width="300" height="150" rx="36" class="body"/>
+        <circle cx="220" cy="175" r="55" class="lens"/>
+        <circle cx="220" cy="175" r="34" class="glass"/>
+        <circle cx="220" cy="175" r="16" fill="#0a0e1a"/>
+        <circle cx="115" cy="135" r="10" fill="#ef4444">
+          <animate attributeName="opacity" values="1;0.2;1" dur="1.2s" repeatCount="indefinite"/>
+        </circle>
+        <path class="crack" d="M220 175 L155 125 M220 175 L290 140 M220 175 L170 240 M220 175 L280 220"/>
+        <path class="glitch" d="M40 200 L400 200 M40 235 L300 235 M120 260 L400 260"/>
+        <text x="220" y="315" text-anchor="middle" font-size="22" fill="#ef4444" font-weight="700" letter-spacing="6">NO SIGNAL</text>
+      </svg>
+
+    </div>
+  </div>
+
+</div>
+
+<div id="card" role="dialog" aria-live="polite"></div>
+
+<script>
+const $=id=>document.getElementById(id);
+
+const INFO={
+v1:{tag:'v',t:'Clave de fábrica',d:'Todos los aparatos vienen con la misma clave.',items:['Ejemplos reales: admin/admin, 1234, 0000.','Los atacantes tienen listas con miles de claves.','Muchos usuarios nunca la cambian.']},
+v2:{tag:'v',t:'Sin actualizar',d:'El fabricante deja de arreglar fallos.',items:['El aparato queda con errores ya conocidos.','Los ataques aprovechan esos huecos.','Pueden pasar años sin recibir mejoras.']},
+v3:{tag:'v',t:'Sin cifrar',d:'Los datos viajan como postal abierta.',items:['Cualquiera en la misma red puede leerlos.','Se expone: claves, video, ubicación.','Debería viajar cifrado (HTTPS/TLS).']},
+v4:{tag:'v',t:'Panel abierto',d:'La app o web del aparato no pide contraseña.',items:['Cualquiera con la dirección entra.','A veces se puede controlar el aparato entero.','Es como dejar la puerta de casa sin cerradura.']},
+v5:{tag:'v',t:'Misma red',d:'El aparato y la compu en la misma red.',items:['Si cae uno, el atacante salta al otro.','Un foco infectado puede llegar a tu PC.','Los expertos recomiendan separar redes.']},
+v6:{tag:'v',t:'Puertos libres',d:'El aparato trae conexiones físicas sin proteger.',items:['Con un cable alguien puede reprogramarlo.','Se necesita acceso físico: alguien que lo toque.','Se cubren o desactivan si no se usan.']},
+d1:{tag:'d',t:'Cambia la clave',d:'Ponle una clave tuya, larga y distinta.',items:['Mínimo 12 caracteres con números y símbolos.','No reutilices la misma en varios aparatos.','Cámbiala el primer día al instalarlo.']},
+d2:{tag:'d',t:'Actualiza',d:'Acepta cada mejora que envíe el fabricante.',items:['Arregla fallos que ya se conocen.','Activa la actualización automática si existe.','Si el aparato ya no se actualiza, considera cambiarlo.']},
+d3:{tag:'d',t:'Activa cifrado',d:'Usa HTTPS o TLS en todo lo posible.',items:['La información viaja como en caja fuerte.','Se activa desde los ajustes del aparato.','Si no ofrece cifrado, es mala señal.']},
+d4:{tag:'d',t:'Protege la app',d:'Pon contraseña al panel o la aplicación.',items:['Revisa quién tiene acceso y quita lo que sobra.','Desactiva el acceso remoto si no lo usas.','No uses contraseñas por defecto en la app.']},
+d5:{tag:'d',t:'Separa la red',d:'Aparatos en una red, compu y celular en otra.',items:['Se hace con la opción "red de invitados" del router.','Un problema no se contagia entre redes.','Es la defensa más efectiva y la más ignorada.']},
+d6:{tag:'d',t:'Cubre puertos',d:'Tapa o desactiva conexiones físicas que no uses.',items:['Evita que alguien reprograme el aparato.','Aplica en oficinas y lugares con público.','Combínalo con candados o cajas cerradas.']},
+caso1:{tag:'',t:'Mirai · La caída de internet',d:'2016 · Un virus tomó 600.000 cámaras y routers con claves de fábrica y tumbó Twitter, Netflix y Spotify en medio mundo.',items:['Los aparatos infectados formaron una botnet gigante.','El ataque dejó sin servicio a millones de usuarios.','La causa principal: claves por defecto nunca cambiadas.']},
+caso2:{tag:'',t:'Cámaras domésticas espiadas',d:'2021 · Cientos de miles de cámaras mostraban salas, bebés y hogares a cualquiera que supiera buscarlas.',items:['Nadie cambió la clave de fábrica.','Las imágenes se compartían en foros y sitios web.','Familias enteras quedaron expuestas sin saberlo.']},
+caso3:{tag:'',t:'El termostato del casino',d:'2017 · Un termostato de pecera conectado sirvió como puerta para que entraran a la base de datos del casino.',items:['Los atacantes entraron por un aparato "inofensivo".','Desde ahí accedieron a la red principal del casino.','Robaron datos de alto valor.']}
+};
+
+const U='?auto=format&fit=crop&w=800&q=60';
+const PHOTO={
+v1:'https://images.unsplash.com/photo-1614064641938-3bbee52942c7'+U,
+v2:'https://images.unsplash.com/photo-1633265486064-086b219458ec'+U,
+v3:'https://images.unsplash.com/photo-1563986768609-322da13575f3'+U,
+v4:'https://images.unsplash.com/photo-1550751827-4bd374c3f58b'+U,
+v5:'https://images.unsplash.com/photo-1544197150-b99a580bb7a8'+U,
+v6:'https://images.unsplash.com/photo-1518770660439-4636190af475'+U,
+d1:'https://images.unsplash.com/photo-1614064641938-3bbee52942c7'+U,
+d2:'https://images.unsplash.com/photo-1633265486064-086b219458ec'+U,
+d3:'https://images.unsplash.com/photo-1563986768609-322da13575f3'+U,
+d4:'https://images.unsplash.com/photo-1550751827-4bd374c3f58b'+U,
+d5:'https://images.unsplash.com/photo-1544197150-b99a580bb7a8'+U,
+d6:'https://images.unsplash.com/photo-1518770660439-4636190af475'+U,
+caso1:'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5'+U,
+caso2:'https://images.unsplash.com/photo-1557862921-37829c790f19'+U,
+caso3:'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158'+U
+};
+const ALT={v1:'Clave débil',v2:'Actualización pendiente',v3:'Datos sin cifrar',v4:'Panel sin clave',v5:'Red compartida',v6:'Puertos expuestos',d1:'Cambiar clave',d2:'Actualizar',d3:'Cifrado',d4:'App protegida',d5:'Red separada',d6:'Puertos cubiertos',caso1:'Botnet Mirai',caso2:'Cámara espiada',caso3:'Termostato hackeado'};
+
+let grA='';for(let x=0;x<=600;x+=50)grA+=`<line x1="${x}" y1="0" x2="${x}" y2="500" stroke="#1e293b" stroke-width="1"/>`;
+for(let y=0;y<=500;y+=50)grA+=`<line x1="0" y1="${y}" x2="600" y2="${y}" stroke="#1e293b" stroke-width="1"/>`;
+$('gridA').innerHTML=grA;
+$('gridD').innerHTML=grA;
+
+let vr='';for(let i=0;i<12;i++)vr+=`<rect x="-3" y="-250" width="6" height="70" rx="3" fill="#ef4444" opacity=".18" transform="rotate(${i*30})"/>`;
+$('virusRays').innerHTML=vr;
+let sr='';for(let i=0;i<12;i++)sr+=`<rect x="-3" y="-250" width="6" height="70" rx="3" fill="#3b82f6" opacity=".18" transform="rotate(${i*30})"/>`;
+$('shieldRays').innerHTML=sr;
+
+const VULNS=[
+ {k:'v1',ang:-90,label:'Clave débil'},
+ {k:'v2',ang:-30,label:'Sin actualizar'},
+ {k:'v3',ang: 30,label:'Sin cifrar'},
+ {k:'v4',ang: 90,label:'Panel abierto'},
+ {k:'v5',ang:150,label:'Misma red'},
+ {k:'v6',ang:210,label:'Puertos libres'}
+];
+let virus='';
+VULNS.forEach((v,i)=>{
+ const a=v.ang*Math.PI/180;
+ const x1=Math.cos(a)*135, y1=Math.sin(a)*135;
+ const x2=Math.cos(a)*190, y2=Math.sin(a)*190;
+ const lx=Math.cos(a)*285, ly=Math.sin(a)*285;
+ const d=(1.8+i*.12).toFixed(2);
+ virus+=`<g class="spike" style="--d:${d}s"><line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#b91c1c" stroke-width="8" stroke-linecap="round"/></g>`;
+ virus+=`<g transform="translate(${lx} ${ly})">
+   <g class="pop" style="--d:${(2.2+i*.1).toFixed(2)}s" data-k="${v.k}" tabindex="0">
+     <g class="h">
+       <circle r="48" fill="#dc2626" stroke="#7f1d1d" stroke-width="4"/>
+       <text dy="-4" text-anchor="middle" font-size="32" fill="#fff" font-weight="700">✕</text>
+       <text y="24" text-anchor="middle" font-size="14" fill="#fecaca" letter-spacing="2">AMENAZA</text>
+       <rect x="-118" y="58" width="236" height="40" rx="20" fill="#450a0a" stroke="#b91c1c" stroke-width="2"/>
+       <text y="84" text-anchor="middle" font-size="22" fill="#fecaca" font-weight="700">${v.label}</text>
+     </g>
+   </g>
+ </g>`;
+});
+$('virusSpikes').innerHTML=virus;
+
+const DEFENSAS=[
+ {k:'d1',ang:-90,label:'Cambia clave'},
+ {k:'d2',ang:-30,label:'Actualiza'},
+ {k:'d3',ang: 30,label:'Cifra'},
+ {k:'d4',ang: 90,label:'Protege app'},
+ {k:'d5',ang:150,label:'Separa red'},
+ {k:'d6',ang:210,label:'Cubre puertos'}
+];
+const shieldPath='M0 -220 C120 -220 200 -190 220 -170 L220 20 C220 130 130 200 0 240 C-130 200 -220 130 -220 20 L-220 -170 C-200 -190 -120 -220 0 -220 Z';
+let shield='';
+shield+=`<path d="${shieldPath}" fill="url(#gd)" stroke="#1d4ed8" stroke-width="4"/>`;
+shield+=`<path class="sweep" d="${shieldPath}" fill="none" stroke="#60a5fa" stroke-width="6" opacity=".35"/>`;
+DEFENSAS.forEach(v=>{
+ const a=v.ang*Math.PI/180;
+ shield+=`<line x1="0" y1="0" x2="${Math.cos(a)*200}" y2="${Math.sin(a)*200}" stroke="#1d4ed8" stroke-width="2" opacity=".45"/>`;
+});
+shield+=`<ellipse rx="80" ry="38" fill="#0f172a" stroke="#3b82f6" stroke-width="4"/>`;
+shield+=`<text y="-8" text-anchor="middle" font-size="20" fill="#93c5fd" letter-spacing="3">DEFIENDE</text>`;
+shield+=`<text y="20" text-anchor="middle" font-size="26" fill="#fff" font-weight="700">SEGURO</text>`;
+DEFENSAS.forEach((v,i)=>{
+ const a=v.ang*Math.PI/180;
+ const lx=Math.cos(a)*160, ly=Math.sin(a)*160;
+ const d=(2.0+i*.1).toFixed(2);
+ shield+=`<g transform="translate(${lx} ${ly})">
+   <g class="pop" style="--d:${d}s" data-k="${v.k}" tabindex="0">
+     <g class="h">
+       <circle r="42" fill="url(#gs)" stroke="#1e40af" stroke-width="4"/>
+       <text dy=".35em" text-anchor="middle" font-size="30" fill="#fff" font-weight="700">✓</text>
+       <rect x="-110" y="50" width="220" height="40" rx="20" fill="#0f172a" stroke="#3b82f6" stroke-width="2"/>
+       <text y="76" text-anchor="middle" font-size="22" fill="#bfdbfe" font-weight="700">${v.label}</text>
+     </g>
+   </g>
+ </g>`;
+});
+$('shieldDefs').innerHTML=shield;
+
+const card=$('card');let timer;
+function show(el){
+ const k=el.dataset.k;const o=INFO[k];if(!o)return;
+ const src=PHOTO[k];const alt=ALT[k]||o.t;
+ const tag=o.tag==='v'?'<span class="tag v">AMENAZA</span>':(o.tag==='d'?'<span class="tag d">DEFENSA</span>':'');
+ const items=o.items&&o.items.length?`<ul>${o.items.map(x=>`<li>${x}</li>`).join('')}</ul>`:'';
+ card.innerHTML=`<img src="${src}" alt="${alt}" loading="lazy" referrerpolicy="no-referrer" onerror="this.style.display='none'"/>${tag}<h3>${o.t}</h3><p>${o.d}</p>${items}`;
+ const rc=el.getBoundingClientRect(),cw=card.offsetWidth,ch=card.offsetHeight;
+ const x=Math.max(8,Math.min(innerWidth-cw-8,rc.left+rc.width/2-cw/2));
+ const up=rc.top-ch-6;
+ const y=up>=8?up:(rc.bottom+6+ch<=innerHeight-8?rc.bottom+6:Math.max(8,innerHeight-ch-8));
+ card.style.left=x+'px';card.style.top=y+'px';card.classList.add('on');
+}
+function hideAll(){card.classList.remove('on')}
+
+document.addEventListener('mouseover',e=>{
+ clearTimeout(timer);
+ if(card.contains(e.target))return;
+ const el=e.target.closest('[data-k]');
+ if(el)show(el);
+ else timer=setTimeout(hideAll,380);
+});
+
+document.addEventListener('click',e=>{
+ const el=e.target.closest('[data-k]');
+ if(el){
+   clearTimeout(timer);
+   show(el);
+   timer=setTimeout(hideAll,4000);
+ } else if(!card.contains(e.target)){
+   hideAll();
+ }
+});
+
+document.addEventListener('focusin',e=>{
+ const el=e.target.closest('[data-k]');
+ if(el)show(el);
+});
+
+document.addEventListener('keydown',e=>{
+ if(e.key==='Escape')hideAll();
+});
+</script>
+
+</body>
+</html>
