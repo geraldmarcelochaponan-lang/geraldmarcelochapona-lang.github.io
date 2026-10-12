@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Ética en IA · Lo que un programador debe hacer</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--cb:#fffaf0;--ct:#0f172a;box-sizing:border-box}
+html,body{margin:0;overflow:hidden;background:radial-gradient(ellipse at top,#1e293b 0%,#0a0e1a 60%)}
+body{font-family:'Fredoka','Trebuchet MS',system-ui,sans-serif;color:#e2e8f0;height:100vh;width:100vw;overflow:hidden}
+
+#stage{
+  position:relative;
+  width:100vw;
+  height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:2vh 2vw;
+  box-sizing:border-box;
+}
+
+#titulo{
+  position:absolute;
+  top:1.5vh;
+  left:50%;
+  transform:translateX(-50%);
+  text-align:center;
+  cursor:pointer;
+  z-index:30;
+  padding:1vh 2vw;
+  border-radius:16px;
+  transition:background .25s, box-shadow .25s;
+  max-width:94vw;
+}
+#titulo:hover,
+#titulo:focus-visible{
+  background:rgba(255,255,255,.06);
+  box-shadow:0 0 0 2px rgba(255,255,255,.15);
+  outline:none;
+}
+#titulo h1{
+  margin:0;
+  font-size:clamp(16px,1.9vw,24px);
+  font-weight:700;
+  color:#fff;
+  letter-spacing:.4px;
+  line-height:1.15;
+}
+#titulo p{
+  margin:5px 0 0;
+  font-size:clamp(11px,1.05vw,13px);
+  color:#94a3b8;
+  letter-spacing:1px;
+}
+#titulo .pistaClic{
+  display:inline-block;
+  margin-top:4px;
+  font-size:clamp(10px,.95vw,12px);
+  color:#c084fc;
+  letter-spacing:1px;
+  animation:latido 2s ease-in-out infinite;
+}
+@keyframes latido{0%,100%{opacity:.6}50%{opacity:1}}
+
+.escenaWrap{
+  position:relative;
+  width:min(96vw,1100px);
+  height:100%;
+  max-height:88vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  margin-top:4vh;
+}
+
+.escena{
+  height:100%;width:100%;
+  display:block;
+  position:relative;
+  z-index:1;
+  overflow:visible;
+}
+.escena .pantalla{fill:#0a0e1a;stroke:#475569;stroke-width:3}
+.escena .pantallaGlow{fill:url(#gp);opacity:.25;animation:flicker 2.5s infinite}
+.escena .codigo{stroke:#22c55e;stroke-width:2.5;stroke-linecap:round;opacity:.85}
+.escena .cabeza{fill:#e0b48c}
+.escena .pelo{fill:#3b2a1a}
+.escena .cuerpo{fill:#334155;stroke:#475569;stroke-width:2}
+.escena .mano{fill:#e0b48c}
+.escena .silla{fill:#1e293b;stroke:#475569;stroke-width:2}
+.escena .base{fill:#1e293b;stroke:#475569;stroke-width:3}
+.escena .balanza{stroke:#fbbf24;stroke-width:2.5;fill:none;stroke-linecap:round}
+@keyframes flicker{0%,100%{opacity:.15}50%{opacity:.45}}
+
+.zonaTxt{
+  font-family:'Fredoka','Trebuchet MS',sans-serif;
+  font-weight:700;
+  font-size:14px;
+  letter-spacing:1.5px;
+}
+
+.grupoPunto{cursor:pointer;transition:transform .25s}
+.grupoPunto:hover,
+.grupoPunto:focus-visible{outline:none}
+.grupoPunto:hover .halo,
+.grupoPunto:focus-visible .halo{opacity:.55;transform:scale(1.15)}
+.grupoPunto:hover .circulo,
+.grupoPunto:focus-visible .circulo{transform:scale(1.15)}
+.grupoPunto .circulo{transition:transform .25s;transform-origin:center;transform-box:fill-box}
+.grupoPunto .halo{opacity:.3;transition:opacity .25s, transform .25s;transform-origin:center;transform-box:fill-box;animation:haloPulso 2.4s ease-in-out infinite}
+@keyframes haloPulso{0%,100%{opacity:.25}50%{opacity:.5}}
+
+.grupoPunto .iconoSVG{
+  font-family:'Segoe UI Emoji','Apple Color Emoji','Noto Color Emoji',sans-serif;
+  font-size:16px;
+  pointer-events:none;
+  text-anchor:middle;
+  dominant-baseline:central;
+  fill:#fff;
+}
+
+#card{
+  position:fixed;z-index:50;left:0;top:0;
+  width:min(540px,calc(100vw - 24px));
+  background:var(--cb);color:var(--ct);
+  border-radius:22px;box-shadow:0 14px 40px rgba(0,0,0,.6);
+  padding-bottom:18px;
+  font-size:19px;line-height:1.45;
+  opacity:0;transform:translateY(8px) scale(.97);
+  pointer-events:none;transition:opacity .18s,transform .18s;
+  max-height:82vh;
+  overflow-y:auto;
+}
+#card.on{opacity:1;transform:none;pointer-events:auto}
+#card img{display:block;width:100%;height:140px;object-fit:cover;background:#0f172a}
+#card .tag{display:inline-block;margin:12px 22px 0;padding:4px 12px;border-radius:999px;font-size:13px;font-weight:700;letter-spacing:1px}
+#card .tag.r{background:#f3e8ff;color:#6b21a8}
+#card .tag.p{background:#dcfce7;color:#166534}
+#card .tag.t{background:#e0f2fe;color:#075985}
+#card h3{margin:8px 22px 4px;font-size:23px;line-height:1.15;font-weight:700}
+#card .intro{margin:0 22px 8px;font-weight:600;font-size:17px;color:#475569}
+#card .texto{margin:8px 22px 0;font-weight:500;font-size:17px;color:#1e293b}
+#card .ejemplo{
+  margin:16px 22px 0;
+  padding:12px 14px;
+  border-radius:8px;
+  font-size:15px;
+  font-weight:500;
+  background:#f1f5f9;
+  border-left:4px solid #64748b;
+}
+#card .ejemplo strong{color:#334155}
+
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+
+<div id="stage">
+
+  <div id="titulo" data-k="titulo" tabindex="0" role="button" aria-label="Ver definición de ética en IA">
+    <h1>Ética en IA: lo que un programador debe hacer</h1>
+    <p>5 SITUACIONES DIFÍCILES · 5 FORMAS DE ACTUAR</p>
+    <span class="pistaClic">👆 Clic para ver la definición</span>
+  </div>
+
+  <div class="escenaWrap">
+    <svg class="escena" viewBox="0 0 900 520" aria-hidden="true" preserveAspectRatio="xMidYMid meet">
+      <defs>
+        <linearGradient id="gp" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#22c55e"/>
+          <stop offset="100%" stop-color="#0ea5e9"/>
+        </linearGradient>
+        <radialGradient id="gradMorado" cx="35%" cy="30%">
+          <stop offset="0%" stop-color="#c084fc"/>
+          <stop offset="100%" stop-color="#7e22ce"/>
+        </radialGradient>
+        <radialGradient id="gradVerde" cx="35%" cy="30%">
+          <stop offset="0%" stop-color="#4ade80"/>
+          <stop offset="100%" stop-color="#16a34a"/>
+        </radialGradient>
+      </defs>
+
+      <g class="zonaTxt">
+        <rect x="30" y="8" width="250" height="28" rx="14" fill="rgba(126,34,206,.85)"/>
+        <text x="155" y="28" text-anchor="middle" fill="#f3e8ff" font-size="13">⚠ LO QUE PUEDE SALIR MAL</text>
+        <rect x="580" y="8" width="350" height="28" rx="14" fill="rgba(22,163,74,.85)"/>
+        <text x="745" y="28" text-anchor="middle" fill="#dcfce7" font-size="13">✓ LO QUE UN BUEN PROGRAMADOR HACE</text>
+      </g>
+
+      <g stroke="#64748b" stroke-width="1.5" stroke-dasharray="4 6" opacity=".3">
+        <line x1="120" y1="100" x2="780" y2="100"/>
+        <line x1="120" y1="180" x2="780" y2="180"/>
+        <line x1="120" y1="260" x2="780" y2="260"/>
+        <line x1="120" y1="340" x2="780" y2="340"/>
+        <line x1="120" y1="420" x2="780" y2="420"/>
+      </g>
+
+      <rect x="60" y="470" width="780" height="12" rx="6" fill="#1e293b" stroke="#334155" stroke-width="2"/>
+
+      <rect x="600" y="370" width="110" height="20" rx="8" class="silla"/>
+      <rect x="650" y="390" width="18" height="80" class="silla"/>
+      <rect x="620" y="466" width="80" height="10" rx="5" fill="#1e293b" stroke="#475569" stroke-width="2"/>
+
+      <rect x="600" y="410" width="100" height="24" rx="12" class="cuerpo"/>
+      <path d="M560 290 Q560 245 600 238 L660 238 Q700 245 700 290 L700 410 Q700 426 684 426 L576 426 Q560 426 560 410 Z" class="cuerpo"/>
+      <circle cx="630" cy="195" r="48" class="cabeza"/>
+      <path d="M582 188 Q585 138 630 138 Q675 138 678 188 Q666 165 630 165 Q594 165 582 188 Z" class="pelo"/>
+      <path d="M690 288 Q760 318 785 380" stroke="#e0b48c" stroke-width="26" fill="none" stroke-linecap="round"/>
+      <circle cx="790" cy="388" r="16" class="mano"/>
+      <path d="M572 288 Q520 328 500 380" stroke="#e0b48c" stroke-width="26" fill="none" stroke-linecap="round"/>
+      <circle cx="496" cy="388" r="16" class="mano"/>
+
+      <rect x="140" y="410" width="380" height="20" rx="8" class="base"/>
+      <rect x="170" y="430" width="18" height="42" class="base"/>
+      <rect x="472" y="430" width="18" height="42" class="base"/>
+
+      <rect x="180" y="180" width="290" height="200" rx="18" class="pantalla"/>
+      <rect x="192" y="192" width="266" height="176" rx="12" class="pantallaGlow"/>
+      <line x1="215" y1="225" x2="330" y2="225" class="codigo"/>
+      <line x1="215" y1="250" x2="400" y2="250" class="codigo"/>
+      <line x1="215" y1="275" x2="300" y2="275" class="codigo"/>
+      <line x1="215" y1="300" x2="380" y2="300" class="codigo"/>
+      <line x1="215" y1="325" x2="270" y2="325" class="codigo"/>
+      <line x1="215" y1="350" x2="350" y2="350" class="codigo"/>
+      <g transform="translate(420 230) scale(0.85)">
+        <line x1="0" y1="-22" x2="0" y2="22" class="balanza"/>
+        <line x1="-26" y1="-22" x2="26" y2="-22" class="balanza"/>
+        <line x1="-14" y1="-22" x2="-20" y2="0" class="balanza"/>
+        <line x1="14" y1="-22" x2="20" y2="0" class="balanza"/>
+        <line x1="-32" y1="0" x2="-8" y2="0" class="balanza"/>
+        <line x1="8" y1="0" x2="32" y2="0" class="balanza"/>
+      </g>
+      <rect x="295" y="380" width="60" height="16" rx="6" class="base"/>
+
+      <rect x="360" y="400" width="130" height="14" rx="4" fill="#1e293b" stroke="#475569" stroke-width="2"/>
+
+      <rect x="500" y="392" width="30" height="22" rx="4" fill="#1e293b" stroke="#475569" stroke-width="2"/>
+      <path d="M530 398 Q542 402 530 412" stroke="#475569" stroke-width="2.5" fill="none"/>
+
+      <!-- PROBLEMAS (izquierda) -->
+      <g class="grupoPunto" data-k="r1" tabindex="0" role="button" aria-label="Problema 1">
+        <circle class="halo" cx="120" cy="100" r="28" fill="#a855f7"/>
+        <circle class="circulo" cx="120" cy="100" r="18" fill="url(#gradMorado)" stroke="#e9d5ff" stroke-width="3"/>
+        <text class="iconoSVG" x="120" y="100">⚖</text>
+      </g>
+      <g class="grupoPunto" data-k="r2" tabindex="0" role="button" aria-label="Problema 2">
+        <circle class="halo" cx="120" cy="180" r="28" fill="#a855f7"/>
+        <circle class="circulo" cx="120" cy="180" r="18" fill="url(#gradMorado)" stroke="#e9d5ff" stroke-width="3"/>
+        <text class="iconoSVG" x="120" y="180">🕳</text>
+      </g>
+      <g class="grupoPunto" data-k="r3" tabindex="0" role="button" aria-label="Problema 3">
+        <circle class="halo" cx="120" cy="260" r="28" fill="#a855f7"/>
+        <circle class="circulo" cx="120" cy="260" r="18" fill="url(#gradMorado)" stroke="#e9d5ff" stroke-width="3"/>
+        <text class="iconoSVG" x="120" y="260">🔒</text>
+      </g>
+      <g class="grupoPunto" data-k="r4" tabindex="0" role="button" aria-label="Problema 4">
+        <circle class="halo" cx="120" cy="340" r="28" fill="#a855f7"/>
+        <circle class="circulo" cx="120" cy="340" r="18" fill="url(#gradMorado)" stroke="#e9d5ff" stroke-width="3"/>
+        <text class="iconoSVG" x="120" y="340">🌱</text>
+      </g>
+      <g class="grupoPunto" data-k="r5" tabindex="0" role="button" aria-label="Problema 5">
+        <circle class="halo" cx="120" cy="420" r="28" fill="#a855f7"/>
+        <circle class="circulo" cx="120" cy="420" r="18" fill="url(#gradMorado)" stroke="#e9d5ff" stroke-width="3"/>
+        <text class="iconoSVG" x="120" y="420">👤</text>
+      </g>
+
+      <!-- BUENAS PRÁCTICAS (derecha) -->
+      <g class="grupoPunto" data-k="p1" tabindex="0" role="button" aria-label="Práctica 1">
+        <circle class="halo" cx="780" cy="100" r="28" fill="#22c55e"/>
+        <circle class="circulo" cx="780" cy="100" r="18" fill="url(#gradVerde)" stroke="#bbf7d0" stroke-width="3"/>
+        <text class="iconoSVG" x="780" y="100">🔍</text>
+      </g>
+      <g class="grupoPunto" data-k="p2" tabindex="0" role="button" aria-label="Práctica 2">
+        <circle class="halo" cx="780" cy="180" r="28" fill="#22c55e"/>
+        <circle class="circulo" cx="780" cy="180" r="18" fill="url(#gradVerde)" stroke="#bbf7d0" stroke-width="3"/>
+        <text class="iconoSVG" x="780" y="180">💡</text>
+      </g>
+      <g class="grupoPunto" data-k="p3" tabindex="0" role="button" aria-label="Práctica 3">
+        <circle class="halo" cx="780" cy="260" r="28" fill="#22c55e"/>
+        <circle class="circulo" cx="780" cy="260" r="18" fill="url(#gradVerde)" stroke="#bbf7d0" stroke-width="3"/>
+        <text class="iconoSVG" x="780" y="260">🛡</text>
+      </g>
+      <g class="grupoPunto" data-k="p4" tabindex="0" role="button" aria-label="Práctica 4">
+        <circle class="halo" cx="780" cy="340" r="28" fill="#22c55e"/>
+        <circle class="circulo" cx="780" cy="340" r="18" fill="url(#gradVerde)" stroke="#bbf7d0" stroke-width="3"/>
+        <text class="iconoSVG" x="780" y="340">⚡</text>
+      </g>
+      <g class="grupoPunto" data-k="p5" tabindex="0" role="button" aria-label="Práctica 5">
+        <circle class="halo" cx="780" cy="420" r="28" fill="#22c55e"/>
+        <circle class="circulo" cx="780" cy="420" r="18" fill="url(#gradVerde)" stroke="#bbf7d0" stroke-width="3"/>
+        <text class="iconoSVG" x="780" y="420">✅</text>
+      </g>
+
+    </svg>
+  </div>
+
+</div>
+
+<div id="card" role="dialog" aria-live="polite"></div>
+
+<script>
+const $=id=>document.getElementById(id);
+
+/* ============================================================
+   CONTENIDO: 5 problemas ↔ 5 buenas prácticas
+   Texto directo, sin etiquetas internas
+   ============================================================ */
+const INFO={
+
+titulo:{
+  tag:'t',
+  t:'¿Qué es la ética en IA?',
+  d:'Es el conjunto de principios morales, normas y directrices que guían el diseño, desarrollo, entrenamiento, implementación y uso de los sistemas de IA para garantizar que beneficien a la sociedad y respeten los derechos humanos.'
+},
+
+/* --- 5 PROBLEMAS --- */
+r1:{
+  tag:'r',
+  t:'La IA aprende de un mundo injusto',
+  intro:'Si los ejemplos con los que se entrena ya eran injustos, la IA repite esa injusticia.',
+  texto:'La IA aprende mirando muchos ejemplos del pasado: quién consiguió un trabajo, quién recibió un préstamo, quién fue detenido. Si en el pasado ya había trato desigual hacia mujeres, personas de ciertos barrios o ciertos apellidos, la IA lo aprende como si fuera "lo normal" y lo aplica a todos por igual.',
+  ejemplo:'Una empresa usó IA para elegir currículums y el sistema descartaba a las mujeres, porque había aprendido de años en los que casi solo se contrataba a hombres.'
+},
+r2:{
+  tag:'r',
+  t:'No se sabe por qué la IA decidió eso',
+  intro:'La IA acierta o falla, pero no explica el motivo.',
+  texto:'Muchas IA modernas toman decisiones usando millones de cálculos internos que ni quien las programó puede seguir paso a paso. Eso significa que cuando la IA niega un préstamo, rechaza a un paciente o descarta a un candidato, nadie puede decir con claridad qué dato fue el que pesó más.',
+  ejemplo:'Un banco rechazó un préstamo con IA y no pudo explicarle al cliente por qué, ni pudo justificarlo ante un juez.'
+},
+r3:{
+  tag:'r',
+  t:'Los datos de las personas quedan expuestos',
+  intro:'Para aprender, la IA necesita mucha información personal.',
+  texto:'Para funcionar bien, la IA suele necesitar millones de datos: caras, voces, historiales médicos, ubicaciones, conversaciones. Si esos datos no se cuidan, pueden filtrarse, venderse a terceros o usarse para vigilar a la gente sin que lo sepa.',
+  ejemplo:'Fotos subidas a redes sociales fueron usadas para entrenar sistemas de reconocimiento facial sin pedir permiso a sus dueños.'
+},
+r4:{
+  tag:'r',
+  t:'La IA también contamina',
+  intro:'Entrenar una IA grande consume mucha electricidad.',
+  texto:'Entrenar una IA muy grande puede necesitar miles de ordenadores encendidos durante semanas. Eso consume mucha electricidad y genera emisiones contaminantes. No se ve en las demostraciones, pero el coste ambiental es real.',
+  ejemplo:'Entrenar un solo modelo grande de lenguaje puede contaminar lo mismo que varios coches funcionando durante toda su vida útil.'
+},
+r5:{
+  tag:'r',
+  t:'Nadie responde cuando la IA se equivoca',
+  intro:'Si algo sale mal, no está claro a quién reclamar.',
+  texto:'Cuando una IA toma una mala decisión, es difícil saber de quién es la culpa: de quien programó, de la empresa que la puso en marcha, de quien la usó o del propio sistema. Esa falta de responsables deja a las personas afectadas sin poder reclamar.',
+  ejemplo:'Un coche con piloto automático provocó un accidente y el fabricante, el proveedor de los sensores y el autor del programa se echaron la culpa unos a otros.'
+},
+
+/* --- 5 BUENAS PRÁCTICAS --- */
+p1:{
+  tag:'p',
+  t:'Revisar los ejemplos antes de entrenar',
+  intro:'Un buen programador comprueba si los datos son justos.',
+  texto:'Antes de entrenar la IA, hay que revisar de dónde vienen los ejemplos y comprobar si representan a todos por igual: hombres y mujeres, distintos barrios, distintas edades. Si un grupo sale mal parado, se corrigen los ejemplos o se descarta el entrenamiento.',
+  ejemplo:'Separar los ejemplos por grupos (por ejemplo, hombres y mujeres) y comprobar que la IA acierta igual con todos antes de publicarla.'
+},
+p2:{
+  tag:'p',
+  t:'Poder explicar lo que la IA decide',
+  intro:'Si la IA decide sobre personas, hay que poder justificarlo.',
+  texto:'Un buen programador deja por escrito qué datos usa la IA, cómo los usa y con qué criterios decide. Y si la IA es tan compleja que no se puede explicar, usa herramientas que al menos señalen qué dato pesó más en cada caso concreto.',
+  ejemplo:'Cuando la IA rechaza a alguien, poder mostrarle una explicación clara y comprensible de por qué se tomó esa decisión.'
+},
+p3:{
+  tag:'p',
+  t:'Cuidar los datos de las personas',
+  intro:'Lo que no se guarda, no se puede filtrar.',
+  texto:'Un buen programador solo recoge los datos que de verdad hacen falta, los guarda cifrados, borra lo que ya no se necesita y nunca los comparte sin permiso. La privacidad se piensa desde el principio, no se arregla después.',
+  ejemplo:'No guardar nombres ni teléfonos si no son imprescindibles, y borrar automáticamente los datos antiguos.'
+},
+p4:{
+  tag:'p',
+  t:'Pensar también en el planeta',
+  intro:'Ahorrar energía también es ser ético.',
+  texto:'Un buen programador mide cuánta electricidad consume su IA, elige opciones más eficientes cuando el resultado es el mismo y prefiere servidores que usen energía limpia. Si una IA pequeña hace lo mismo que una gigante, se usa la pequeña.',
+  ejemplo:'Usar modelos más pequeños cuando rinden igual, y anotar cuánta energía y cuánta contaminación genera cada entrenamiento.'
+},
+p5:{
+  tag:'p',
+  t:'Firmar y responder por lo que se publica',
+  intro:'Cada versión de la IA debe tener un responsable claro.',
+  texto:'Un buen programador no publica una IA de forma anónima. Deja claro quién la hizo, qué versión es, qué se sabe de sus fallos y a quién puede reclamar una persona afectada si algo sale mal.',
+  ejemplo:'Cada IA en funcionamiento tiene un nombre, un responsable y un canal de contacto para que cualquiera pueda preguntar o reclamar.'
+}
+};
+
+const PHOTO={
+  titulo:'https://images.unsplash.com/photo-1620712943543-bcc4688e7485?auto=format&fit=crop&w=800&q=60',
+  r1:'https://images.unsplash.com/photo-1555949963-aa79dcee981c?auto=format&fit=crop&w=800&q=60',
+  r2:'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=800&q=60',
+  r3:'https://images.unsplash.com/photo-1614064641938-3bbee52942c7?auto=format&fit=crop&w=800&q=60',
+  r4:'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=800&q=60',
+  r5:'https://images.unsplash.com/photo-1563986768609-322da13575f3?auto=format&fit=crop&w=800&q=60',
+  p1:'https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=800&q=60',
+  p2:'https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&w=800&q=60',
+  p3:'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=800&q=60',
+  p4:'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=800&q=60',
+  p5:'https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=800&q=60'
+};
+const ALT={
+  titulo:'Ética en IA',
+  r1:'Aprende de un mundo injusto', r2:'No se sabe por qué decide', r3:'Datos expuestos',
+  r4:'Contamina', r5:'Nadie responde',
+  p1:'Revisar ejemplos', p2:'Explicar decisiones', p3:'Cuidar datos',
+  p4:'Ahorrar energía', p5:'Firmar y responder'
+};
+
+const card=$('card');let timer;
+function show(el){
+ const k=el.dataset.k;const o=INFO[k];if(!o)return;
+ const src=PHOTO[k];const alt=ALT[k]||o.t;
+
+ let tag='';
+ if(o.tag==='r')tag='<span class="tag r">⚠ LO QUE PUEDE SALIR MAL</span>';
+ else if(o.tag==='p')tag='<span class="tag p">✓ LO QUE HACE UN BUEN PROGRAMADOR</span>';
+ else if(o.tag==='t')tag='<span class="tag t">DEFINICIÓN</span>';
+
+ let body='';
+ if(o.tag==='t'){
+   body=`<p class="texto">${o.d}</p>`;
+ } else {
+   body=`
+     ${o.intro?`<div class="intro">${o.intro}</div>`:''}
+     <p class="texto">${o.texto}</p>
+     <div class="ejemplo"><strong>${o.tag==='r'?'Ejemplo:':'Cómo se aplica:'}</strong> ${o.ejemplo}</div>
+   `;
+ }
+
+ card.innerHTML=`
+   <img src="${src}" alt="${alt}" loading="lazy" referrerpolicy="no-referrer" onerror="this.style.display='none'"/>
+   ${tag}
+   <h3>${o.t}</h3>
+   ${body}
+ `;
+
+ const rc=el.getBoundingClientRect(),cw=card.offsetWidth,ch=card.offsetHeight;
+ const x=Math.max(8,Math.min(innerWidth-cw-8,rc.left+rc.width/2-cw/2));
+ const up=rc.top-ch-6;
+ const y=up>=8?up:(rc.bottom+6+ch<=innerHeight-8?rc.bottom+6:Math.max(8,innerHeight-ch-8));
+ card.style.left=x+'px';card.style.top=y+'px';card.classList.add('on');
+}
+function hideAll(){card.classList.remove('on')}
+
+document.addEventListener('mouseover',e=>{
+ clearTimeout(timer);
+ if(card.contains(e.target))return;
+ const el=e.target.closest('[data-k]');
+ if(el)show(el);
+ else timer=setTimeout(hideAll,380);
+});
+
+document.addEventListener('click',e=>{
+ const el=e.target.closest('[data-k]');
+ if(el){
+   clearTimeout(timer);
+   show(el);
+   timer=setTimeout(hideAll,6000);
+ } else if(!card.contains(e.target)){
+   hideAll();
+ }
+});
+
+document.addEventListener('focusin',e=>{
+ const el=e.target.closest('[data-k]');
+ if(el)show(el);
+});
+
+document.addEventListener('keydown',e=>{
+ if(e.key==='Escape')hideAll();
+});
+</script>
+
+</body>
+</html>
