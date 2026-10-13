@@ -1,0 +1,912 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Proveedores de Nube para IoT · Guía Visual</title>
+<style>
+  :root{
+    --bg:#f5f7fb;
+    --card:#ffffff;
+    --text:#0f172a;
+    --muted:#5b6678;
+    --border:#e2e8f0;
+    --aws:#ff9900;
+    --aws-soft:#fff4e0;
+    --gcp:#4285f4;
+    --gcp-soft:#e8f0fe;
+    --azure:#0078d4;
+    --azure-soft:#e1f0fa;
+    --green:#16a34a;
+    --green-soft:#dcfce7;
+    --purple:#7c3aed;
+    --purple-soft:#ede9fe;
+    --red:#dc2626;
+    --red-soft:#fee2e2;
+    --code-bg:#0f172a;
+    --code-text:#e2e8f0;
+    --shadow:0 4px 14px rgba(15,23,42,.06), 0 12px 32px rgba(15,23,42,.06);
+  }
+  html[data-theme="dark"]{
+    --bg:#0d1117;
+    --card:#161b22;
+    --text:#e6edf3;
+    --muted:#8b949e;
+    --border:#30363d;
+    --aws:#ffb84d;
+    --aws-soft:#3d2a10;
+    --gcp:#79a9ff;
+    --gcp-soft:#0f2340;
+    --azure:#58b6ff;
+    --azure-soft:#0a2540;
+    --green:#4ade80;
+    --green-soft:#0f2d1a;
+    --purple:#bc8cff;
+    --purple-soft:#1f1533;
+    --red:#ff7b72;
+    --red-soft:#3d1a17;
+    --code-bg:#010409;
+    --shadow:0 4px 14px rgba(0,0,0,.4), 0 12px 32px rgba(0,0,0,.3);
+  }
+
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth; scroll-padding-top:80px;}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    background:var(--bg);
+    color:var(--text);
+    line-height:1.65;
+    font-size:16px;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  /* ---------- HEADER ---------- */
+  header.hero{
+    background:linear-gradient(135deg,#ff9900 0%,#4285f4 50%,#0078d4 100%);
+    color:#fff;
+    padding:56px 24px 48px;
+    text-align:center;
+    position:relative;
+    overflow:hidden;
+  }
+  header.hero::after{
+    content:"";
+    position:absolute; inset:0;
+    background:radial-gradient(circle at 20% 20%, rgba(255,255,255,.2), transparent 45%),
+               radial-gradient(circle at 85% 80%, rgba(255,255,255,.15), transparent 40%);
+    pointer-events:none;
+  }
+  header.hero h1{
+    margin:0 0 12px;
+    font-size:clamp(1.7rem,4.2vw,2.6rem);
+    letter-spacing:-.5px;
+    position:relative;
+    font-weight:800;
+  }
+  header.hero p{
+    margin:0 auto;
+    max-width:680px;
+    opacity:.95;
+    font-size:1.05rem;
+    position:relative;
+  }
+  .hero-badges{
+    margin-top:22px;
+    display:flex; gap:8px; justify-content:center; flex-wrap:wrap;
+    position:relative;
+  }
+  .hero-badges span{
+    background:rgba(255,255,255,.2);
+    border:1px solid rgba(255,255,255,.35);
+    padding:6px 15px;
+    border-radius:999px;
+    font-size:.83rem;
+    backdrop-filter:blur(4px);
+    font-weight:600;
+  }
+
+  /* ---------- NAV ---------- */
+  nav.sticky{
+    position:sticky; top:0; z-index:50;
+    background:var(--card);
+    border-bottom:1px solid var(--border);
+    padding:10px 16px;
+    display:flex; gap:6px; align-items:center;
+    overflow-x:auto;
+    box-shadow:0 1px 3px rgba(0,0,0,.04);
+  }
+  nav.sticky a{
+    color:var(--muted);
+    text-decoration:none;
+    font-size:.85rem;
+    font-weight:600;
+    padding:7px 13px;
+    border-radius:999px;
+    white-space:nowrap;
+    transition:.18s;
+  }
+  nav.sticky a:hover{background:var(--gcp-soft); color:var(--gcp);}
+  .theme-btn{
+    margin-left:auto;
+    background:transparent;
+    border:1px solid var(--border);
+    color:var(--text);
+    border-radius:999px;
+    padding:7px 14px;
+    cursor:pointer;
+    font-size:.85rem;
+    white-space:nowrap;
+    font-family:inherit;
+    font-weight:600;
+  }
+  .theme-btn:hover{border-color:var(--gcp); color:var(--gcp);}
+
+  /* ---------- LAYOUT ---------- */
+  main{max-width:1000px; margin:0 auto; padding:36px 20px 80px;}
+
+  section{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:16px;
+    padding:30px 26px;
+    margin-bottom:26px;
+    box-shadow:var(--shadow);
+  }
+  section > h2{
+    display:flex; align-items:center; gap:12px;
+    font-size:1.4rem;
+    margin:0 0 22px;
+    padding-bottom:14px;
+    border-bottom:2px solid var(--border);
+    letter-spacing:-.3px;
+    font-weight:800;
+  }
+  .num{
+    flex:none;
+    width:36px; height:36px;
+    border-radius:10px;
+    background:linear-gradient(135deg,#ff9900,#4285f4);
+    color:#fff;
+    display:grid; place-items:center;
+    font-size:.95rem;
+    font-weight:800;
+  }
+  h3{
+    font-size:1.1rem;
+    margin:26px 0 12px;
+    color:var(--gcp);
+    display:flex; align-items:center; gap:10px;
+    font-weight:800;
+  }
+  h3::before{
+    content:"";
+    width:4px; height:20px; border-radius:2px;
+    background:linear-gradient(180deg,#ff9900,#4285f4);
+  }
+  h4{font-size:1rem; margin:16px 0 8px; font-weight:700;}
+  p{margin:10px 0;}
+  ul,ol{margin:10px 0; padding-left:24px;}
+  li{margin:6px 0;}
+
+  code.inline{
+    background:var(--gcp-soft);
+    color:var(--gcp);
+    padding:2px 7px;
+    border-radius:6px;
+    font-size:.87em;
+    font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+    font-weight:700;
+    border:1px solid rgba(66,133,244,.2);
+  }
+
+  /* ---------- CALLOUTS ---------- */
+  .callout{
+    border-radius:12px;
+    padding:16px 20px;
+    margin:16px 0;
+    border-left:4px solid;
+    font-size:.95rem;
+  }
+  .callout .t{font-weight:800; display:block; margin-bottom:6px; font-size:1rem;}
+  .callout.info{background:var(--gcp-soft); border-color:var(--gcp);}
+  .callout.info .t{color:var(--gcp);}
+  .callout.tip{background:var(--green-soft); border-color:var(--green);}
+  .callout.tip .t{color:var(--green);}
+  .callout.warn{background:var(--aws-soft); border-color:var(--aws);}
+  .callout.warn .t{color:var(--aws);}
+  .callout.danger{background:var(--red-soft); border-color:var(--red);}
+  .callout.danger .t{color:var(--red);}
+
+  /* ---------- GRID CARDS ---------- */
+  .grid{display:grid; gap:16px; margin:16px 0;}
+  .grid.two{grid-template-columns:repeat(auto-fit,minmax(260px,1fr));}
+  .grid.three{grid-template-columns:repeat(auto-fit,minmax(220px,1fr));}
+
+  .mini-card{
+    border:1px solid var(--border);
+    border-radius:12px;
+    padding:20px;
+    background:var(--bg);
+    transition:.22s;
+  }
+  .mini-card:hover{transform:translateY(-3px); box-shadow:var(--shadow);}
+  .mini-card h4{margin:0 0 10px; font-size:1rem; display:flex; align-items:center; gap:10px;}
+  .mini-card p{margin:0; font-size:.9rem; color:var(--muted);}
+  .mini-card ul{margin:8px 0 0; padding-left:20px; font-size:.9rem; color:var(--muted);}
+
+  .dot{width:12px; height:12px; border-radius:50%; flex:none;}
+  .dot.aws{background:var(--aws); box-shadow:0 0 10px rgba(255,153,0,.5);}
+  .dot.gcp{background:var(--gcp); box-shadow:0 0 10px rgba(66,133,244,.5);}
+  .dot.azure{background:var(--azure); box-shadow:0 0 10px rgba(0,120,212,.5);}
+
+  /* ---------- PROCESO IOT (flujo) ---------- */
+  .flow{
+    display:flex; flex-wrap:wrap; gap:12px; align-items:stretch;
+    margin:22px 0;
+  }
+  .flow-step{
+    flex:1 1 170px;
+    background:var(--bg);
+    border:2px solid var(--border);
+    border-radius:14px;
+    padding:18px 14px;
+    text-align:center;
+    position:relative;
+    transition:.22s;
+  }
+  .flow-step:hover{transform:translateY(-3px); box-shadow:var(--shadow);}
+  .flow-step.sensor{border-color:var(--gcp);}
+  .flow-step.proc{border-color:var(--purple);}
+  .flow-step.cloud{border-color:var(--aws);}
+  .flow-step.act{border-color:var(--green);}
+  .flow-step .icon{font-size:2rem; display:block; margin-bottom:8px; line-height:1;}
+  .flow-step h4{margin:0 0 6px; font-size:.98rem; font-weight:800;}
+  .flow-step p{margin:0; font-size:.82rem; color:var(--muted); line-height:1.5;}
+  .flow-arrow{
+    display:grid; place-items:center;
+    color:var(--muted); font-size:1.5rem; font-weight:800;
+  }
+
+  /* ---------- PROVIDER CARDS (los 3) ---------- */
+  .provider{
+    border-radius:16px;
+    padding:24px;
+    margin:18px 0;
+    border:2px solid;
+    position:relative;
+    overflow:hidden;
+    transition:.25s;
+  }
+  .provider:hover{transform:translateY(-3px); box-shadow:var(--shadow);}
+  .provider.aws{border-color:var(--aws); background:linear-gradient(135deg,var(--aws-soft),transparent 60%);}
+  .provider.gcp{border-color:var(--gcp); background:linear-gradient(135deg,var(--gcp-soft),transparent 60%);}
+  .provider.azure{border-color:var(--azure); background:linear-gradient(135deg,var(--azure-soft),transparent 60%);}
+
+  .provider-head{
+    display:flex; align-items:center; gap:14px;
+    margin-bottom:14px; flex-wrap:wrap;
+  }
+  .provider-logo{
+    width:52px; height:52px;
+    border-radius:12px;
+    display:grid; place-items:center;
+    font-size:1.5rem;
+    color:#fff;
+    font-weight:800;
+    flex:none;
+  }
+  .provider.aws .provider-logo{background:linear-gradient(135deg,#ff9900,#ff6600);}
+  .provider.gcp .provider-logo{background:linear-gradient(135deg,#4285f4,#ea4335);}
+  .provider.azure .provider-logo{background:linear-gradient(135deg,#0078d4,#00bcf2);}
+
+  .provider-title h3{
+    margin:0; padding:0; color:var(--text);
+    font-size:1.2rem; font-weight:800;
+  }
+  .provider-title h3::before{display:none;}
+  .provider-title .sub{
+    font-size:.82rem; color:var(--muted); font-weight:600;
+  }
+
+  .tag-estado{
+    display:inline-block;
+    font-size:.72rem; font-weight:800;
+    padding:4px 12px;
+    border-radius:999px;
+    margin-left:auto;
+    letter-spacing:.05em;
+    text-transform:uppercase;
+  }
+  .tag-estado.activo{background:var(--green-soft); color:var(--green);}
+  .tag-estado.inactivo{background:var(--red-soft); color:var(--red);}
+
+  .provider-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+    gap:12px;
+    margin-top:12px;
+  }
+  .info-box{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:10px;
+    padding:12px 14px;
+  }
+  .info-box .label{
+    font-size:.7rem;
+    text-transform:uppercase;
+    letter-spacing:.1em;
+    color:var(--muted);
+    font-weight:800;
+    margin-bottom:4px;
+  }
+  .info-box .value{font-size:.9rem; font-weight:600;}
+
+  /* ---------- TABLA COMPARATIVA ---------- */
+  .table-wrap{overflow-x:auto; margin:16px 0; border-radius:12px; border:1px solid var(--border);}
+  table{
+    width:100%;
+    border-collapse:collapse;
+    font-size:.9rem;
+    min-width:600px;
+  }
+  th,td{
+    padding:12px 16px;
+    border-bottom:1px solid var(--border);
+    text-align:left;
+    vertical-align:top;
+  }
+  thead th{
+    background:var(--bg);
+    font-weight:800;
+    font-size:.82rem;
+    text-transform:uppercase;
+    letter-spacing:.06em;
+  }
+  thead th:nth-child(1){color:var(--muted);}
+  thead th:nth-child(2){color:var(--aws);}
+  thead th:nth-child(3){color:var(--gcp);}
+  thead th:nth-child(4){color:var(--azure);}
+  tbody tr:last-child td{border-bottom:none;}
+  tbody tr:hover{background:rgba(127,127,127,.05);}
+  td:first-child{font-weight:700;}
+  td code{
+    font-family:ui-monospace,Menlo,Consolas,monospace;
+    font-size:.85em;
+    background:rgba(127,127,127,.12);
+    padding:2px 6px;
+    border-radius:4px;
+  }
+  .check{color:var(--green); font-weight:800;}
+  .cross{color:var(--red); font-weight:800;}
+
+  /* ---------- EJEMPLO PRÁCTICO ---------- */
+  .example{
+    background:var(--code-bg);
+    color:var(--code-text);
+    border-radius:14px;
+    padding:20px 22px;
+    font-size:.9rem;
+    line-height:1.7;
+    margin:16px 0;
+    border:1px solid rgba(255,255,255,.1);
+  }
+  .example .step-line{
+    display:flex; gap:12px; align-items:flex-start;
+    padding:8px 0;
+    border-bottom:1px dashed rgba(255,255,255,.1);
+  }
+  .example .step-line:last-child{border-bottom:none;}
+  .example .step-num{
+    flex:none;
+    width:24px; height:24px;
+    border-radius:50%;
+    background:linear-gradient(135deg,#ff9900,#4285f4);
+    color:#fff;
+    display:grid; place-items:center;
+    font-size:.75rem;
+    font-weight:800;
+  }
+  .example .step-text{font-size:.88rem;}
+
+  /* ---------- RESUMEN FINAL ---------- */
+  .resumen{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+    gap:14px;
+    margin:16px 0;
+  }
+  .resumen-card{
+    border-radius:14px;
+    padding:20px;
+    color:#fff;
+    position:relative;
+    overflow:hidden;
+  }
+  .resumen-card h4{color:#fff; margin:0 0 8px; font-size:1rem; font-weight:800;}
+  .resumen-card p{margin:0; font-size:.88rem; opacity:.95; line-height:1.55;}
+  .resumen-card.aws{background:linear-gradient(135deg,#ff9900,#e67e00);}
+  .resumen-card.gcp{background:linear-gradient(135deg,#4285f4,#7c3aed);}
+  .resumen-card.azure{background:linear-gradient(135deg,#0078d4,#00bcf2);}
+
+  /* ---------- IMAGEN MENTAL ---------- */
+  .mental-map{
+    display:grid;
+    grid-template-columns:1fr;
+    gap:16px;
+    margin:18px 0;
+  }
+  .map-center{
+    text-align:center;
+    padding:18px;
+    background:linear-gradient(135deg,var(--purple-soft),var(--gcp-soft));
+    border:2px dashed var(--purple);
+    border-radius:14px;
+    font-weight:800;
+    font-size:1.05rem;
+  }
+  .map-branches{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+    gap:12px;
+  }
+  .map-branch{
+    background:var(--bg);
+    border:1px solid var(--border);
+    border-radius:12px;
+    padding:14px;
+    text-align:center;
+    font-size:.88rem;
+  }
+  .map-branch strong{display:block; margin-bottom:4px; font-size:.95rem;}
+
+  footer{
+    text-align:center;
+    color:var(--muted);
+    font-size:.85rem;
+    padding:0 20px 50px;
+  }
+
+  @media(max-width:640px){
+    section{padding:22px 18px;}
+    .flow-arrow{transform:rotate(90deg);}
+    .provider-head{flex-direction:column; align-items:flex-start;}
+    .tag-estado{margin-left:0;}
+  }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <h1>☁️ Proveedores de Nube para IoT</h1>
+  <p>Guía visual y fácil de entender: qué son, cómo funciona el proceso IoT y cuáles son los tres grandes proveedores.</p>
+  <div class="hero-badges">
+    <span>📡 Proceso IoT</span>
+    <span>🟠 AWS IoT Core</span>
+    <span>🔵 Google Cloud IoT</span>
+    <span>🔷 Azure IoT Hub</span>
+    <span>📊 Comparación</span>
+  </div>
+</header>
+
+<nav class="sticky">
+  <a href="#que-es">1. ¿Qué es?</a>
+  <a href="#proceso">2. Proceso IoT</a>
+  <a href="#proveedores">3. Los 3 Proveedores</a>
+  <a href="#tabla">4. Comparación</a>
+  <a href="#ejemplo">5. Ejemplo Real</a>
+  <a href="#resumen">6. Resumen</a>
+  <button class="theme-btn" id="themeBtn">🌙 Oscuro</button>
+</nav>
+
+<main>
+
+  <!-- ================= SECCIÓN 1 ================= -->
+  <section id="que-es">
+    <h2><span class="num">1</span> ¿Qué es un Proveedor IoT en la Nube?</h2>
+
+    <div class="callout info">
+      <span class="t">💡 Definición sencilla</span>
+      Es un <strong>"servicio en internet"</strong> que permite que tus dispositivos (sensores, cámaras, luces inteligentes) se conecten a la nube para enviar datos, recibir órdenes y ser controlados desde cualquier lugar del mundo.
+    </div>
+
+    <p>Imagina que tienes un sensor de temperatura en tu casa. Ese sensor <strong>no puede guardar datos por sí solo</strong> ni avisarte a tu celular cuando hace mucho calor. Para eso necesita un <strong>proveedor IoT</strong>: alguien que reciba la información, la procese y te avise.</p>
+
+    <h3>¿Qué hace un proveedor IoT?</h3>
+    <div class="grid three">
+      <div class="mini-card">
+        <h4>🔌 Conectar</h4>
+        <p>Recibe los datos de miles o millones de dispositivos al mismo tiempo.</p>
+      </div>
+      <div class="mini-card">
+        <h4>🔐 Proteger</h4>
+        <p>Se asegura de que solo dispositivos autorizados puedan enviar información.</p>
+      </div>
+      <div class="mini-card">
+        <h4>🧠 Procesar</h4>
+        <p>Analiza los datos, aplica reglas y toma decisiones automáticas.</p>
+      </div>
+      <div class="mini-card">
+        <h4>📊 Almacenar</h4>
+        <p>Guarda el historial para consultarlo después.</p>
+      </div>
+      <div class="mini-card">
+        <h4>📱 Notificar</h4>
+        <p>Envía alertas a tu celular o a otros sistemas.</p>
+      </div>
+      <div class="mini-card">
+        <h4>⚙️ Controlar</h4>
+        <p>Manda órdenes a los dispositivos (encender, apagar, ajustar).</p>
+      </div>
+    </div>
+
+    <div class="callout tip">
+      <span class="t">🎯 En palabras simples</span>
+      Un proveedor IoT es como el <strong>"cartero + cerebro"</strong> de tus dispositivos: recibe sus mensajes, los entiende, los guarda y les responde.
+    </div>
+  </section>
+
+  <!-- ================= SECCIÓN 2 ================= -->
+  <section id="proceso">
+    <h2><span class="num">2</span> El Proceso IoT paso a paso</h2>
+
+    <p>Todo sistema IoT funciona con <strong>4 elementos</strong> que trabajan en cadena. Es como una conversación entre el mundo físico y el mundo digital:</p>
+
+    <div class="flow">
+      <div class="flow-step sensor">
+        <span class="icon">🌡️</span>
+        <h4>1. SENSOR</h4>
+        <p>Capta algo del mundo real: temperatura, movimiento, luz, humedad.</p>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step proc">
+        <span class="icon">🧠</span>
+        <h4>2. MICROPROCESADOR</h4>
+        <p>Recibe los datos, los procesa y los envía a la nube.</p>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step cloud">
+        <span class="icon">☁️</span>
+        <h4>3. NUBE</h4>
+        <p>Analiza, guarda y decide qué hacer con la información.</p>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step act">
+        <span class="icon">⚙️</span>
+        <h4>4. ACTUADOR</h4>
+        <p>Ejecuta una acción física: encender, abrir, mover.</p>
+      </div>
+    </div>
+
+    <h3>Explicación de cada paso</h3>
+
+    <div class="grid two">
+      <div class="mini-card">
+        <h4><span class="dot gcp"></span> 1. Sensor</h4>
+        <p>Es el <strong>"ojo"</strong> del sistema. Convierte algo físico (calor, movimiento) en una señal eléctrica.</p>
+        <ul>
+          <li>Sensor de temperatura (LM35)</li>
+          <li>Sensor de movimiento (PIR)</li>
+          <li>Sensor de humedad (DHT11)</li>
+        </ul>
+      </div>
+      <div class="mini-card">
+        <h4><span class="dot" style="background:var(--purple)"></span> 2. Microprocesador</h4>
+        <p>Es el <strong>"cerebro local"</strong>. Recibe los datos del sensor y los prepara para enviarlos a la nube.</p>
+        <ul>
+          <li>Arduino</li>
+          <li>ESP32 / ESP8266</li>
+          <li>Raspberry Pi</li>
+        </ul>
+      </div>
+      <div class="mini-card">
+        <h4><span class="dot aws"></span> 3. Nube</h4>
+        <p>Es el <strong>"supercerebro"</strong>. Aquí vive el proveedor IoT. Analiza millones de datos, aplica reglas y decide.</p>
+        <ul>
+          <li>AWS IoT Core</li>
+          <li>Azure IoT Hub</li>
+          <li>Google Cloud IoT</li>
+        </ul>
+      </div>
+      <div class="mini-card">
+        <h4><span class="dot" style="background:var(--green)"></span> 4. Actuador</h4>
+        <p>Es el <strong>"músculo"</strong>. Recibe la orden de la nube y hace algo físico.</p>
+        <ul>
+          <li>Relevador (enciende/apaga)</li>
+          <li>Motor (mueve)</li>
+          <li>Válvula (abre/cierra)</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="callout info">
+      <span class="t">🔄 Ejemplo cotidiano</span>
+      <strong>Sensor</strong> detecta que hace 35°C → <strong>ESP32</strong> lo envía a la nube → <strong>AWS IoT</strong> decide "es mucho calor" → manda orden al <strong>ventilador (actuador)</strong> para que se encienda. ¡Todo automático!
+    </div>
+  </section>
+
+  <!-- ================= SECCIÓN 3 ================= -->
+  <section id="proveedores">
+    <h2><span class="num">3</span> Los 3 Proveedores de la Imagen</h2>
+
+    <!-- ============ AWS ============ -->
+    <div class="provider aws">
+      <div class="provider-head">
+        <div class="provider-logo">aws</div>
+        <div class="provider-title">
+          <h3>AWS IoT Core</h3>
+          <div class="sub">Amazon Web Services</div>
+        </div>
+        <span class="tag-estado activo">Activo</span>
+      </div>
+
+      <p><strong>¿Qué es?</strong> Es el servicio de IoT de Amazon. Conecta y administra dispositivos de forma segura, y los integra con todos los servicios de AWS.</p>
+
+      <div class="provider-grid">
+        <div class="info-box">
+          <div class="label">📅 Historia</div>
+          <div class="value">Lanzado en 2015. Fue el <strong>pionero</strong> entre los grandes proveedores de nube.</div>
+        </div>
+        <div class="info-box">
+          <div class="label">⚡ Características</div>
+          <div class="value">Muy escalable, seguridad alta, integración con IA y análisis.</div>
+        </div>
+        <div class="info-box">
+          <div class="label">🔗 Relación con IoT</div>
+          <div class="value">Es el <strong>"backend"</strong>: recibe todos los datos de los dispositivos y los enruta a otros servicios.</div>
+        </div>
+        <div class="info-box">
+          <div class="label">🎯 Ideal para</div>
+          <div class="value">Proyectos <strong>grandes y empresas</strong> que necesitan escalabilidad masiva.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ GOOGLE CLOUD ============ -->
+    <div class="provider gcp">
+      <div class="provider-head">
+        <div class="provider-logo">G</div>
+        <div class="provider-title">
+          <h3>Google Cloud IoT</h3>
+          <div class="sub">Google Cloud Platform</div>
+        </div>
+        <span class="tag-estado inactivo">Descontinuado (2023)</span>
+      </div>
+
+      <p><strong>¿Qué era?</strong> Era la plataforma de Google para conectar y gestionar dispositivos desde la nube. Se integraba fácilmente con las herramientas de Google.</p>
+
+      <div class="provider-grid">
+        <div class="info-box">
+          <div class="label">📅 Historia</div>
+          <div class="value">Lanzado en 2017. Fue <strong>descontinuado el 16 de agosto de 2023</strong>.</div>
+        </div>
+        <div class="info-box">
+          <div class="label">⚡ Características</div>
+          <div class="value">Fácil de usar, integración con otros servicios de Google, análisis de datos e IA.</div>
+        </div>
+        <div class="info-box">
+          <div class="label">🔗 Relación con IoT</div>
+          <div class="value">Servía como <strong>puente</strong> entre los dispositivos y las herramientas de análisis de Google (BigQuery, ML).</div>
+        </div>
+        <div class="info-box">
+          <div class="label">🎯 Ideal para</div>
+          <div class="value">Proyectos que usan <strong>datos e IA</strong> (era su fuerte). Hoy ya no está disponible.</div>
+        </div>
+      </div>
+
+      <div class="callout danger" style="margin-top:14px;">
+        <span class="t">⚠️ Importante</span>
+        Google Cloud IoT <strong>ya no existe</strong>. Si alguien te pide usarlo, debes migrar a AWS, Azure o una solución de terceros.
+      </div>
+    </div>
+
+    <!-- ============ AZURE ============ -->
+    <div class="provider azure">
+      <div class="provider-head">
+        <div class="provider-logo">Az</div>
+        <div class="provider-title">
+          <h3>Microsoft Azure IoT Hub</h3>
+          <div class="sub">Microsoft Azure</div>
+        </div>
+        <span class="tag-estado activo">Activo</span>
+      </div>
+
+      <p><strong>¿Qué es?</strong> Es el servicio de IoT de Microsoft. Conecta y monitorea dispositivos, con integración directa a herramientas de Microsoft.</p>
+
+      <div class="provider-grid">
+        <div class="info-box">
+          <div class="label">📅 Historia</div>
+          <div class="value">Lanzado en 2015. Microsoft lo presentó junto con Azure IoT Suite.</div>
+        </div>
+        <div class="info-box">
+          <div class="label">⚡ Características</div>
+          <div class="value">Buena integración con herramientas de Microsoft (Office, Windows, etc.).</div>
+        </div>
+        <div class="info-box">
+          <div class="label">🔗 Relación con IoT</div>
+          <div class="value">Es el <strong>centro de conexión</strong>: recibe datos, los monitorea y controla los dispositivos.</div>
+        </div>
+        <div class="info-box">
+          <div class="label">🎯 Ideal para</div>
+          <div class="value">Empresas que ya usan <strong>Microsoft</strong> en su día a día.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= SECCIÓN 4 ================= -->
+  <section id="tabla">
+    <h2><span class="num">4</span> Cuadro de Comparación</h2>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Característica</th>
+            <th>🟠 AWS IoT Core</th>
+            <th>🔵 Google Cloud IoT</th>
+            <th>🔷 Azure IoT Hub</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Año de lanzamiento</td>
+            <td>2015</td>
+            <td>2017</td>
+            <td>2015</td>
+          </tr>
+          <tr>
+            <td>Estado actual</td>
+            <td><span class="check">✓ Activo</span></td>
+            <td><span class="cross">✗ Descontinuado</span></td>
+            <td><span class="check">✓ Activo</span></td>
+          </tr>
+          <tr>
+            <td>Empresa</td>
+            <td>Amazon</td>
+            <td>Google</td>
+            <td>Microsoft</td>
+          </tr>
+          <tr>
+            <td>Escalabilidad</td>
+            <td>⭐⭐⭐⭐⭐ Muy alta</td>
+            <td>⭐⭐⭐⭐ Alta</td>
+            <td>⭐⭐⭐⭐ Alta</td>
+          </tr>
+          <tr>
+            <td>Seguridad</td>
+            <td>Muy alta</td>
+            <td>Alta</td>
+            <td>Alta</td>
+          </tr>
+          <tr>
+            <td>Integración con IA</td>
+            <td>Buena (SageMaker)</td>
+            <td>Muy buena (BigQuery ML)</td>
+            <td>Buena (Azure ML)</td>
+          </tr>
+          <tr>
+            <td>Facilidad de uso</td>
+            <td>Media</td>
+            <td>Fácil</td>
+            <td>Media</td>
+          </tr>
+          <tr>
+            <td>Ideal para</td>
+            <td>Proyectos grandes y empresas</td>
+            <td>Análisis de datos e IA</td>
+            <td>Empresas que usan Microsoft</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout tip">
+      <span class="t">🏆 La mejor opción depende de ti</span>
+      <strong>No hay un "mejor" universal.</strong> Como dice la imagen: <em>"La mejor opción depende de lo que necesites y de tus proyectos"</em>.
+    </div>
+  </section>
+
+  <!-- ================= SECCIÓN 5 ================= -->
+  <section id="ejemplo">
+    <h2><span class="num">5</span> Ejemplo Práctico: Riego Automático</h2>
+
+    <p>Veamos cómo funcionan los 4 pasos del IoT en un caso real:</p>
+
+    <div class="example">
+      <div class="step-line">
+        <span class="step-num">1</span>
+        <span class="step-text"><strong>🌡️ Sensor de humedad del suelo</strong> mide que la tierra está seca (20% de humedad).</span>
+      </div>
+      <div class="step-line">
+        <span class="step-num">2</span>
+        <span class="step-text"><strong>🧠 ESP32</strong> recibe ese dato y lo envía por WiFi a la nube (AWS IoT Core).</span>
+      </div>
+      <div class="step-line">
+        <span class="step-num">3</span>
+        <span class="step-text"><strong>☁️ AWS IoT Core</strong> aplica una regla: "si humedad &lt; 30%, activar riego" y manda la orden.</span>
+      </div>
+      <div class="step-line">
+        <span class="step-num">4</span>
+        <span class="step-text"><strong>⚙️ Válvula (actuador)</strong> se abre automáticamente y riega las plantas. ¡Ciclo completo!</span>
+      </div>
+    </div>
+
+    <h3>¿Por qué usar un proveedor IoT aquí?</h3>
+    <ul>
+      <li>Puedes <strong>ver el estado del riego desde tu celular</strong>.</li>
+      <li>Recibes <strong>alertas</strong> cuando la tierra está seca.</li>
+      <li>Guardas <strong>historial</strong> de humedad para analizar patrones.</li>
+      <li>Todo funciona <strong>automáticamente sin que estés presente</strong>.</li>
+    </ul>
+  </section>
+
+  <!-- ================= SECCIÓN 6 ================= -->
+  <section id="resumen">
+    <h2><span class="num">6</span> Resumen Final</h2>
+
+    <div class="resumen">
+      <div class="resumen-card aws">
+        <h4>🟠 AWS IoT Core</h4>
+        <p>Más escalable y con mayor variedad de servicios. <strong>Ideal para proyectos grandes y empresas.</strong></p>
+      </div>
+      <div class="resumen-card gcp">
+        <h4>🔵 Google Cloud IoT</h4>
+        <p>Más simple y con análisis de datos e IA. <strong>Ya no está disponible (descontinuado 2023).</strong></p>
+      </div>
+      <div class="resumen-card azure">
+        <h4>🔷 Azure IoT Hub</h4>
+        <p>Mejor integración con herramientas de Microsoft. <strong>Ideal para empresas que ya usan Microsoft.</strong></p>
+      </div>
+    </div>
+
+    <div class="mental-map">
+      <div class="map-center">
+        🎯 La mejor opción depende de lo que necesites y de tus proyectos
+      </div>
+      <div class="map-branches">
+        <div class="map-branch">
+          <strong>¿Necesitas escala?</strong>
+          AWS IoT Core
+        </div>
+        <div class="map-branch">
+          <strong>¿Usas Microsoft?</strong>
+          Azure IoT Hub
+        </div>
+        <div class="map-branch">
+          <strong>¿Buscas IA?</strong>
+          Google Cloud (ya no disponible)
+        </div>
+      </div>
+    </div>
+
+    <div class="callout info">
+      <span class="t">📚 Para recordar</span>
+      <ul style="margin:8px 0 0;">
+        <li><strong>Proveedor IoT</strong> = servicio en la nube que conecta tus dispositivos a internet.</li>
+        <li><strong>Proceso IoT</strong> = Sensor → Microprocesador → Nube → Actuador.</li>
+        <li><strong>3 grandes</strong> = AWS, Google Cloud y Azure. Google ya se retiró.</li>
+        <li><strong>La elección</strong> depende de tu proyecto, presupuesto y ecosistema tecnológico.</li>
+      </ul>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  Guía de estudio · Proveedores de Nube para IoT ☁️
+</footer>
+
+<script>
+  /* ---------- TEMA CLARO / OSCURO ---------- */
+  var themeBtn = document.getElementById('themeBtn');
+  var html = document.documentElement;
+  themeBtn.addEventListener('click', function(){
+    var next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+    html.setAttribute('data-theme', next);
+    themeBtn.textContent = next === 'dark' ? '☀️ Claro' : '🌙 Oscuro';
+  });
+</script>
+
+</body>
+</html>
