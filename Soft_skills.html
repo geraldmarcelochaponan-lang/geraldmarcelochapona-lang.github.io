@@ -3,20 +3,21 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Soft Skills en la era de la IA · Por qué el mercado laboral las exige</title>
+<title>Soft Skills · En tiempos de IA, aprende de humanidades</title>
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Lora:ital,wght@0,400;0,500;0,600;1,400&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
 
 <style>
   :root {
-    --accent: #c8795a;
-    --accent-2: #e8b86d;
-    --accent-3: #7c9a8e;
-    --accent-4: #a67c9d;
-    --text: #f0e9e0;
-    --muted: #b8a99a;
-    --bg-deep: #1a1410;
+    --paper: #f7f0e4;
+    --paper-2: #ede0cd;
+    --ink: #2a1f18;
+    --ink-soft: #4a3a2e;
+    --accent: #b8654a;
+    --accent-2: #d4a350;
+    --sage: #7c9a8e;
+    --plum: #a67c9d;
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -24,28 +25,10 @@
   html, body {
     height: 100%;
     width: 100%;
-    font-family: 'Inter', system-ui, sans-serif;
-    background: radial-gradient(circle at 20% 10%, #2d2119 0%, #1a1410 55%, #100c09 100%);
-    color: var(--text);
+    font-family: 'Lora', Georgia, serif;
+    background: #2a1f18;
+    color: var(--ink);
     overflow: hidden;
-  }
-
-  body::before {
-    content: "";
-    position: fixed;
-    inset: 0;
-    background:
-      radial-gradient(circle at 80% 20%, rgba(200,121,90,0.14), transparent 50%),
-      radial-gradient(circle at 10% 90%, rgba(232,184,109,0.10), transparent 50%),
-      radial-gradient(circle at 55% 65%, rgba(124,154,142,0.08), transparent 45%);
-    pointer-events: none;
-    animation: floatBg 20s ease-in-out infinite alternate;
-    z-index: 0;
-  }
-
-  @keyframes floatBg {
-    0%   { transform: scale(1) translate(0,0); }
-    100% { transform: scale(1.08) translate(-1%, -1%); }
   }
 
   .deck {
@@ -56,6 +39,24 @@
     align-items: center;
     justify-content: center;
     z-index: 1;
+    background: radial-gradient(circle at 20% 10%, #4a3a2e 0%, #2a1f18 60%, #1a120d 100%);
+  }
+
+  .deck::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(circle at 80% 25%, rgba(184,101,74,0.18), transparent 55%),
+      radial-gradient(circle at 15% 85%, rgba(212,163,80,0.12), transparent 55%),
+      radial-gradient(circle at 55% 55%, rgba(124,154,142,0.10), transparent 50%);
+    pointer-events: none;
+    animation: breathe 18s ease-in-out infinite alternate;
+  }
+
+  @keyframes breathe {
+    0%   { transform: scale(1) translate(0,0); opacity: 0.8; }
+    100% { transform: scale(1.05) translate(-1%, -1%); opacity: 1; }
   }
 
   .slide {
@@ -63,16 +64,28 @@
     inset: 0;
     width: 100vw;
     height: 100vh;
-    background: linear-gradient(160deg, rgba(45,33,25,0.97), rgba(26,20,16,0.97));
+    background: linear-gradient(135deg, #f7f0e4 0%, #ede0cd 100%);
     padding: clamp(2rem, 4.5vw, 5rem) clamp(2rem, 6vw, 7rem);
     opacity: 0;
     transform: translateY(40px) scale(0.98);
     pointer-events: none;
-    transition: opacity 0.55s ease, transform 0.55s cubic-bezier(.2,.8,.2,1);
+    transition: opacity 0.6s ease, transform 0.6s cubic-bezier(.2,.8,.2,1);
     overflow-y: auto;
     display: flex;
     flex-direction: column;
     justify-content: center;
+  }
+
+  .slide::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image:
+      radial-gradient(circle at 30% 20%, rgba(184,101,74,0.03) 0%, transparent 50%),
+      radial-gradient(circle at 70% 80%, rgba(124,154,142,0.04) 0%, transparent 50%),
+      repeating-linear-gradient(45deg, transparent, transparent 40px, rgba(42,31,24,0.012) 40px, rgba(42,31,24,0.012) 41px);
+    pointer-events: none;
+    z-index: 0;
   }
 
   .slide.active {
@@ -83,11 +96,12 @@
   }
 
   .slide::-webkit-scrollbar { width: 10px; }
-  .slide::-webkit-scrollbar-thumb { background: rgba(200,121,90,0.4); border-radius: 10px; }
+  .slide::-webkit-scrollbar-thumb { background: rgba(184,101,74,0.3); border-radius: 10px; }
   .slide::-webkit-scrollbar-track { background: transparent; }
 
-  /* Contenedor de contenido con ancho máximo para no estirar en pantallas ultra anchas */
   .content {
+    position: relative;
+    z-index: 1;
     width: 100%;
     max-width: 1500px;
     margin: 0 auto;
@@ -95,35 +109,25 @@
 
   /* ===== TÍTULOS ===== */
   .slide-title {
+    font-family: 'Inter', sans-serif;
+    font-size: clamp(2rem, 3.8vw, 3.6rem);
+    font-weight: 800;
+    letter-spacing: -0.025em;
+    line-height: 1.1;
+    color: var(--ink);
+    margin-bottom: clamp(1.5rem, 3vh, 2.5rem);
+    padding-bottom: clamp(0.8rem, 1.5vh, 1.3rem);
+    border-bottom: 3px solid var(--accent);
+    animation: fadeDown 0.6s ease both;
     display: flex;
     align-items: center;
-    gap: 1.2rem;
-    font-size: clamp(2rem, 3.6vw, 3.4rem);
-    font-weight: 800;
-    letter-spacing: -0.02em;
-    line-height: 1.1;
-    margin-bottom: clamp(1.5rem, 2.5vh, 2.5rem);
-    padding-bottom: clamp(0.8rem, 1.5vh, 1.4rem);
-    border-bottom: 3px solid rgba(200,121,90,0.35);
-    animation: fadeDown 0.6s ease both;
+    gap: 1rem;
   }
 
   .slide-title i {
-    font-size: clamp(1.8rem, 3vw, 2.8rem);
-    color: var(--accent-2);
-    background: rgba(232,184,109,0.12);
-    padding: clamp(0.6rem, 1vw, 0.9rem);
-    border-radius: 1.2rem;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
+    color: var(--accent);
+    font-size: 0.85em;
     flex-shrink: 0;
-    animation: pop 0.6s cubic-bezier(.2,.8,.2,1.4) both;
-  }
-
-  @keyframes pop {
-    0%   { transform: scale(0) rotate(-25deg); opacity: 0; }
-    100% { transform: scale(1) rotate(0); opacity: 1; }
   }
 
   @keyframes fadeDown {
@@ -138,34 +142,161 @@
 
   /* ===== PÁRRAFOS ===== */
   .slide p {
-    font-size: clamp(1.15rem, 1.55vw, 1.55rem);
-    line-height: 1.65;
-    color: #e5d9ca;
-    margin-bottom: clamp(0.8rem, 1.2vh, 1.2rem);
+    font-size: clamp(1.15rem, 1.6vw, 1.6rem);
+    line-height: 1.7;
+    color: var(--ink-soft);
+    margin-bottom: clamp(0.9rem, 1.5vh, 1.3rem);
     font-family: 'Lora', Georgia, serif;
   }
 
-  .slide strong { color: var(--accent-2); font-weight: 700; }
+  .slide p strong { color: var(--accent); font-weight: 600; }
+  .slide p em { color: var(--accent-2); font-style: italic; font-weight: 500; }
 
   /* ===== CITA ===== */
   .quote {
-    background: rgba(200,121,90,0.12);
+    background: rgba(184,101,74,0.08);
     border-left: 6px solid var(--accent);
-    padding: clamp(1rem, 2vh, 1.6rem) clamp(1.3rem, 2vw, 2rem);
-    border-radius: 1rem;
-    margin: clamp(1rem, 2vh, 1.5rem) 0;
+    padding: clamp(1.2rem, 2.5vh, 1.8rem) clamp(1.5rem, 2.5vw, 2.2rem);
+    border-radius: 0 1rem 1rem 0;
+    margin: clamp(1.2rem, 2.5vh, 1.8rem) 0;
     font-family: 'Lora', Georgia, serif;
-    font-size: clamp(1.15rem, 1.6vw, 1.6rem);
+    font-size: clamp(1.2rem, 1.7vw, 1.7rem);
     font-style: italic;
-    color: #f0e3d4;
+    color: var(--ink);
     animation: fadeUp 0.6s ease both;
     line-height: 1.55;
+    font-weight: 500;
   }
 
-  .quote::before { content: "“"; font-size: 2.4rem; color: var(--accent-2); line-height: 0; vertical-align: -0.4rem; margin-right: 0.2rem; }
-  .quote::after  { content: "”"; font-size: 2.4rem; color: var(--accent-2); line-height: 0; vertical-align: -0.4rem; margin-left: 0.2rem; }
+  .quote::before {
+    content: "“";
+    font-size: 2.6rem;
+    color: var(--accent);
+    line-height: 0;
+    vertical-align: -0.45rem;
+    margin-right: 0.25rem;
+    font-family: 'Lora', Georgia, serif;
+  }
 
-  /* ===== ESTADÍSTICAS ===== */
+  /* ===== PENSAMIENTO ===== */
+  .thought {
+    font-size: clamp(1.3rem, 2vw, 2rem);
+    line-height: 1.55;
+    color: var(--ink);
+    font-family: 'Lora', Georgia, serif;
+    font-style: italic;
+    margin: clamp(1rem, 2vh, 1.5rem) 0;
+    padding-left: clamp(1rem, 2vw, 1.8rem);
+    border-left: 4px solid var(--accent-2);
+    animation: fadeUp 0.7s ease both;
+  }
+
+  /* ===== TARJETAS ===== */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: clamp(1.2rem, 2vw, 1.8rem);
+    margin-top: clamp(1.2rem, 2.5vh, 1.8rem);
+  }
+
+  .card {
+    background: rgba(255,255,255,0.55);
+    border: 2px solid rgba(184,101,74,0.2);
+    border-radius: 1.4rem;
+    padding: clamp(1.4rem, 2.5vh, 2rem);
+    transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+    animation: fadeUp 0.7s ease both;
+    box-shadow: 0 6px 20px -10px rgba(42,31,24,0.15);
+  }
+
+  .card:nth-child(2) { animation-delay: 0.1s; }
+  .card:nth-child(3) { animation-delay: 0.2s; }
+  .card:nth-child(4) { animation-delay: 0.3s; }
+
+  .card:hover {
+    transform: translateY(-6px);
+    border-color: var(--accent);
+    box-shadow: 0 15px 30px -12px rgba(184,101,74,0.25);
+  }
+
+  .card .ico {
+    font-size: clamp(2.2rem, 3vw, 2.8rem);
+    color: var(--accent);
+    margin-bottom: clamp(0.6rem, 1vh, 0.9rem);
+    display: block;
+  }
+
+  .card strong {
+    display: block;
+    font-size: clamp(1.15rem, 1.5vw, 1.5rem);
+    color: var(--ink);
+    margin-bottom: clamp(0.5rem, 1vh, 0.7rem);
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+  }
+
+  .card span {
+    font-size: clamp(1rem, 1.15vw, 1.15rem);
+    color: var(--ink-soft);
+    line-height: 1.6;
+    font-family: 'Lora', Georgia, serif;
+  }
+
+  .card span strong { color: var(--accent); display: inline; font-size: inherit; font-family: inherit; }
+
+  /* ===== LISTA ===== */
+  .list { list-style: none; margin: 0.5rem 0; }
+
+  .list li {
+    display: flex;
+    gap: clamp(0.9rem, 1.4vw, 1.4rem);
+    align-items: flex-start;
+    padding: clamp(0.9rem, 1.6vh, 1.3rem) 0;
+    border-bottom: 1px dashed rgba(184,101,74,0.2);
+    animation: fadeUp 0.6s ease both;
+    font-size: clamp(1.05rem, 1.4vw, 1.4rem);
+    font-family: 'Lora', Georgia, serif;
+    color: var(--ink-soft);
+    line-height: 1.6;
+  }
+
+  .list li:last-child { border-bottom: none; }
+
+  .list li i {
+    color: var(--accent);
+    font-size: clamp(1.3rem, 1.6vw, 1.6rem);
+    flex-shrink: 0;
+    margin-top: 0.15rem;
+  }
+
+  .list li strong { color: var(--ink); font-family: 'Inter', sans-serif; font-weight: 700; }
+
+  /* ===== NOTAS ===== */
+  .note {
+    display: flex;
+    gap: clamp(0.9rem, 1.4vw, 1.4rem);
+    align-items: flex-start;
+    padding: clamp(1.1rem, 2vh, 1.6rem) clamp(1.3rem, 2vw, 2rem);
+    border-radius: 1.2rem;
+    margin-top: clamp(1.2rem, 2.5vh, 1.8rem);
+    font-size: clamp(1rem, 1.2vw, 1.2rem);
+    animation: fadeUp 0.7s ease both;
+    font-family: 'Lora', Georgia, serif;
+    line-height: 1.65;
+    color: var(--ink);
+  }
+
+  .note.tip { background: rgba(124,154,142,0.15); border-left: 5px solid var(--sage); }
+  .note.warm { background: rgba(212,163,80,0.15); border-left: 5px solid var(--accent-2); }
+  .note.love { background: rgba(166,124,157,0.15); border-left: 5px solid var(--plum); }
+
+  .note i { font-size: clamp(1.4rem, 1.8vw, 1.8rem); flex-shrink: 0; }
+  .note.tip i { color: var(--sage); }
+  .note.warm i { color: var(--accent-2); }
+  .note.love i { color: var(--plum); }
+  .note strong { color: var(--accent); }
+
+  /* ===== STATS ===== */
   .stat-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
@@ -174,237 +305,186 @@
   }
 
   .stat {
-    background: rgba(200,121,90,0.10);
-    border: 2px solid rgba(200,121,90,0.3);
+    background: rgba(255,255,255,0.6);
+    border: 2px solid rgba(184,101,74,0.25);
     border-radius: 1.4rem;
-    padding: clamp(1.4rem, 2.5vh, 2.2rem) clamp(1rem, 1.5vw, 1.5rem);
+    padding: clamp(1.5rem, 2.8vh, 2.2rem) clamp(1rem, 1.5vw, 1.5rem);
     text-align: center;
     animation: fadeUp 0.7s ease both;
     transition: transform 0.25s ease, border-color 0.25s ease;
+    box-shadow: 0 6px 20px -10px rgba(42,31,24,0.15);
   }
 
-  .stat:hover {
-    transform: translateY(-6px);
-    border-color: var(--accent-2);
-  }
-
+  .stat:hover { transform: translateY(-6px); border-color: var(--accent); }
   .stat:nth-child(2) { animation-delay: 0.12s; }
   .stat:nth-child(3) { animation-delay: 0.24s; }
-  .stat:nth-child(4) { animation-delay: 0.36s; }
 
   .stat .num {
     font-size: clamp(3rem, 5.5vw, 5rem);
     font-weight: 900;
-    color: var(--accent-2);
+    color: var(--accent);
     line-height: 1;
     letter-spacing: -0.03em;
+    font-family: 'Inter', sans-serif;
   }
 
   .stat .label {
     font-size: clamp(0.95rem, 1.15vw, 1.15rem);
-    color: #e0d4c5;
+    color: var(--ink-soft);
     margin-top: clamp(0.6rem, 1vh, 1rem);
-    line-height: 1.45;
-    font-family: 'Inter', sans-serif;
+    line-height: 1.5;
+    font-family: 'Lora', Georgia, serif;
   }
 
-  .stat .label strong { color: var(--accent-2); }
+  .stat .label strong { color: var(--accent); }
 
   .stat .source {
-    font-size: clamp(0.75rem, 0.9vw, 0.9rem);
-    color: var(--accent-3);
+    font-size: clamp(0.78rem, 0.92vw, 0.92rem);
+    color: var(--sage);
     margin-top: clamp(0.5rem, 1vh, 0.8rem);
     font-style: italic;
     font-family: 'Inter', sans-serif;
   }
 
-  /* ===== TARJETAS ===== */
-  .grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: clamp(1rem, 1.8vw, 1.6rem);
-    margin-top: clamp(1rem, 2vh, 1.5rem);
-  }
-
-  .card {
-    background: rgba(255,255,255,0.04);
-    border: 2px solid rgba(200,121,90,0.25);
-    border-radius: 1.3rem;
-    padding: clamp(1.2rem, 2vh, 1.8rem);
-    transition: transform 0.25s ease, border-color 0.25s ease, background 0.25s ease;
-    animation: fadeUp 0.7s ease both;
-  }
-
-  .card:nth-child(2) { animation-delay: 0.1s; }
-  .card:nth-child(3) { animation-delay: 0.2s; }
-  .card:nth-child(4) { animation-delay: 0.3s; }
-
-  .card:hover {
-    transform: translateY(-5px);
-    border-color: var(--accent-2);
-    background: rgba(200,121,90,0.10);
-  }
-
-  .card .ico {
-    font-size: clamp(2rem, 2.8vw, 2.6rem);
-    color: var(--accent-2);
-    margin-bottom: clamp(0.5rem, 1vh, 0.8rem);
-    display: block;
-  }
-
-  .card strong {
-    display: block;
-    font-size: clamp(1.1rem, 1.35vw, 1.35rem);
-    color: var(--accent-2);
-    margin-bottom: clamp(0.4rem, 0.8vh, 0.6rem);
-    font-family: 'Inter', sans-serif;
-  }
-
-  .card span {
-    font-size: clamp(0.95rem, 1.1vw, 1.1rem);
-    color: #d5c9bb;
-    line-height: 1.55;
-    font-family: 'Lora', Georgia, serif;
-  }
-
-  .card span strong { color: var(--accent-2); display: inline; font-size: inherit; font-family: inherit; }
-
-  /* ===== LISTA ===== */
-  .list { list-style: none; margin: 0.5rem 0; }
-
-  .list li {
-    display: flex;
-    gap: clamp(0.8rem, 1.2vw, 1.2rem);
-    align-items: flex-start;
-    padding: clamp(0.7rem, 1.4vh, 1.1rem) 0;
-    border-bottom: 1px dashed rgba(200,121,90,0.18);
-    animation: fadeUp 0.6s ease both;
-    font-size: clamp(1.05rem, 1.35vw, 1.35rem);
-    font-family: 'Lora', Georgia, serif;
-    color: #e5d9ca;
-    line-height: 1.6;
-  }
-
-  .list li:last-child { border-bottom: none; }
-
-  .list li i {
-    color: var(--accent);
-    font-size: clamp(1.2rem, 1.5vw, 1.5rem);
-    flex-shrink: 0;
-    margin-top: 0.15rem;
-  }
-
-  .list li strong { color: var(--accent-2); font-family: 'Inter', sans-serif; font-weight: 700; }
-
-  /* ===== NOTAS ===== */
-  .note {
-    display: flex;
-    gap: clamp(0.8rem, 1.2vw, 1.2rem);
-    align-items: flex-start;
-    padding: clamp(1rem, 1.8vh, 1.5rem) clamp(1.2rem, 1.8vw, 1.8rem);
-    border-radius: 1.1rem;
-    margin-top: clamp(1rem, 2vh, 1.5rem);
-    font-size: clamp(0.98rem, 1.15vw, 1.15rem);
-    animation: fadeUp 0.7s ease both;
-    font-family: 'Lora', Georgia, serif;
-    line-height: 1.6;
-    color: #e5d9ca;
-  }
-
-  .note.tip { background: rgba(124,154,142,0.16); border-left: 5px solid var(--accent-3); }
-  .note.warn { background: rgba(232,184,109,0.14); border-left: 5px solid var(--accent-2); }
-  .note.love { background: rgba(166,124,157,0.16); border-left: 5px solid var(--accent-4); }
-
-  .note i { font-size: clamp(1.3rem, 1.7vw, 1.7rem); flex-shrink: 0; }
-  .note.tip i { color: var(--accent-3); }
-  .note.warn i { color: var(--accent-2); }
-  .note.love i { color: var(--accent-4); }
-
-  .note strong { color: var(--accent-2); }
-
-  /* ===== COMPARATIVA ===== */
-  .compare {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: clamp(1rem, 2vw, 2rem);
-    margin-top: clamp(1rem, 2vh, 1.5rem);
-  }
-
-  .compare-col {
-    background: rgba(255,255,255,0.04);
-    border-radius: 1.3rem;
-    padding: clamp(1.2rem, 2vh, 1.8rem);
-    border: 2px solid rgba(200,121,90,0.25);
-  }
-
-  .compare-col h4 {
-    font-size: clamp(1.15rem, 1.5vw, 1.5rem);
-    margin-bottom: clamp(0.7rem, 1.2vh, 1rem);
-    display: flex;
-    align-items: center;
-    gap: 0.6rem;
-    font-family: 'Inter', sans-serif;
-  }
-
-  .compare-col.ia h4 { color: var(--accent-3); }
-  .compare-col.humano h4 { color: var(--accent); }
-
-  .compare-col ul { list-style: none; }
-
-  .compare-col li {
-    padding: clamp(0.5rem, 0.9vh, 0.7rem) 0;
-    font-size: clamp(1rem, 1.2vw, 1.2rem);
-    color: #e5d9ca;
-    display: flex;
-    gap: 0.6rem;
-    align-items: flex-start;
-    font-family: 'Lora', Georgia, serif;
-    line-height: 1.55;
-  }
-
-  .compare-col li i { flex-shrink: 0; margin-top: 0.2rem; font-size: 1.1em; }
-
   /* ===== RANKING ===== */
+  .rank-box {
+    background: rgba(255,255,255,0.55);
+    border: 2px solid rgba(184,101,74,0.2);
+    border-radius: 1.4rem;
+    padding: clamp(1.2rem, 2.5vh, 1.8rem) clamp(1.5rem, 2.5vw, 2.2rem);
+    margin: clamp(1rem, 2vh, 1.5rem) 0;
+    animation: fadeUp 0.7s ease both;
+    box-shadow: 0 6px 20px -10px rgba(42,31,24,0.12);
+  }
+
   .rank {
     display: flex;
     align-items: center;
-    gap: clamp(0.8rem, 1.5vw, 1.5rem);
-    padding: clamp(0.7rem, 1.3vh, 1rem) 0;
-    border-bottom: 1px dashed rgba(200,121,90,0.15);
+    gap: clamp(0.9rem, 1.5vw, 1.5rem);
+    padding: clamp(0.75rem, 1.4vh, 1.1rem) 0;
+    border-bottom: 1px dashed rgba(184,101,74,0.15);
   }
 
   .rank:last-child { border-bottom: none; }
 
   .rank .pos {
-    font-family: 'Fira Code', monospace;
+    font-family: 'Inter', sans-serif;
     font-size: clamp(1.2rem, 1.6vw, 1.6rem);
     font-weight: 700;
-    color: var(--accent-2);
-    width: 2.5rem;
+    color: var(--accent);
+    width: 2.4rem;
     flex-shrink: 0;
   }
 
   .rank .name {
     font-family: 'Inter', sans-serif;
     font-size: clamp(1.05rem, 1.35vw, 1.35rem);
-    color: #e5d9ca;
+    color: var(--ink-soft);
     flex: 1;
     font-weight: 500;
   }
 
   .rank .pct {
-    font-family: 'Fira Code', monospace;
+    font-family: 'Inter', sans-serif;
     font-size: clamp(1.1rem, 1.4vw, 1.4rem);
     color: var(--accent);
     font-weight: 700;
+    flex-shrink: 0;
   }
 
-  .rank-box {
-    background: rgba(255,255,255,0.04);
-    border: 2px solid rgba(200,121,90,0.22);
-    border-radius: 1.3rem;
-    padding: clamp(1rem, 2vh, 1.6rem) clamp(1.2rem, 2vw, 2rem);
-    margin-top: clamp(0.8rem, 1.5vh, 1.2rem);
+  .rank.highlight {
+    background: rgba(184,101,74,0.08);
+    border-radius: 0.8rem;
+    padding-left: 0.8rem;
+    padding-right: 0.8rem;
+    margin: 0.2rem 0;
+  }
+
+  .rank.highlight .name { color: var(--ink); font-weight: 600; }
+
+  /* ===== COMPARATIVA ===== */
+  .compare {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: clamp(1.2rem, 2vw, 2rem);
+    margin-top: clamp(1.2rem, 2.5vh, 1.8rem);
+  }
+
+  .compare-col {
+    background: rgba(255,255,255,0.55);
+    border-radius: 1.4rem;
+    padding: clamp(1.4rem, 2.5vh, 2rem);
+    border: 2px solid rgba(184,101,74,0.2);
+    box-shadow: 0 6px 20px -10px rgba(42,31,24,0.12);
+  }
+
+  .compare-col h4 {
+    font-size: clamp(1.2rem, 1.6vw, 1.6rem);
+    margin-bottom: clamp(0.8rem, 1.4vh, 1.1rem);
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+  }
+
+  .compare-col.ia h4 { color: var(--sage); }
+  .compare-col.humano h4 { color: var(--accent); }
+
+  .compare-col ul { list-style: none; }
+
+  .compare-col li {
+    padding: clamp(0.55rem, 1vh, 0.8rem) 0;
+    font-size: clamp(1rem, 1.25vw, 1.25rem);
+    color: var(--ink-soft);
+    display: flex;
+    gap: 0.7rem;
+    align-items: flex-start;
+    font-family: 'Lora', Georgia, serif;
+    line-height: 1.6;
+  }
+
+  .compare-col li i { flex-shrink: 0; margin-top: 0.2rem; font-size: 1.15em; }
+
+  /* ===== DIÁLOGO ===== */
+  .dialog {
+    background: rgba(255,255,255,0.55);
+    border-radius: 1.4rem;
+    padding: clamp(1.4rem, 2.5vh, 2rem);
+    margin: clamp(1rem, 2vh, 1.5rem) 0;
+    border: 2px solid rgba(184,101,74,0.2);
+    animation: fadeUp 0.7s ease both;
+    box-shadow: 0 6px 20px -10px rgba(42,31,24,0.12);
+  }
+
+  .dialog-line {
+    display: flex;
+    gap: 0.9rem;
+    align-items: flex-start;
+    padding: 0.8rem 0;
+    border-bottom: 1px dashed rgba(184,101,74,0.15);
+  }
+
+  .dialog-line:last-child { border-bottom: none; }
+
+  .dialog-line .who {
+    font-family: 'Inter', sans-serif;
+    font-size: clamp(0.85rem, 1vw, 1rem);
+    font-weight: 700;
+    color: var(--accent);
+    min-width: 90px;
+    flex-shrink: 0;
+    padding-top: 0.15rem;
+  }
+
+  .dialog-line .who.ia { color: var(--sage); }
+
+  .dialog-line .what {
+    font-family: 'Lora', Georgia, serif;
+    font-size: clamp(1rem, 1.25vw, 1.25rem);
+    color: var(--ink-soft);
+    line-height: 1.6;
+    font-style: italic;
   }
 
   /* ===== AUTORES ===== */
@@ -412,42 +492,43 @@
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    gap: clamp(0.6rem, 1vw, 1rem);
-    margin-top: clamp(0.6rem, 1vh, 1rem);
+    gap: clamp(0.7rem, 1.2vw, 1.2rem);
+    margin-top: clamp(0.8rem, 1.5vh, 1.2rem);
   }
 
   .author-badge {
     display: inline-flex;
     align-items: center;
     gap: 0.6rem;
-    background: rgba(232,184,109,0.12);
-    border: 2px solid rgba(232,184,109,0.35);
-    color: #edc9a8;
-    padding: clamp(0.5rem, 0.9vh, 0.7rem) clamp(1rem, 1.5vw, 1.4rem);
+    background: rgba(184,101,74,0.1);
+    border: 2px solid rgba(184,101,74,0.3);
+    color: var(--ink);
+    padding: clamp(0.55rem, 1vh, 0.8rem) clamp(1.1rem, 1.8vw, 1.6rem);
     border-radius: 2rem;
-    font-size: clamp(0.85rem, 1.05vw, 1.05rem);
+    font-size: clamp(0.9rem, 1.1vw, 1.1rem);
     font-weight: 500;
     font-family: 'Inter', sans-serif;
-    transition: all 0.2s ease;
+    transition: all 0.25s ease;
   }
 
   .author-badge:hover {
-    background: rgba(232,184,109,0.22);
-    border-color: var(--accent-2);
+    background: rgba(184,101,74,0.18);
+    border-color: var(--accent);
     transform: translateY(-2px);
   }
 
-  .author-badge i { color: var(--accent-2); font-size: 1em; }
+  .author-badge i { color: var(--accent); font-size: 1em; }
 
   .authors-title {
     font-family: 'Inter', sans-serif;
-    font-size: clamp(0.75rem, 0.9vw, 0.9rem);
-    color: var(--muted);
+    font-size: clamp(0.78rem, 0.95vw, 0.95rem);
+    color: var(--ink-soft);
+    opacity: 0.7;
     text-transform: uppercase;
-    letter-spacing: 0.18em;
+    letter-spacing: 0.2em;
     font-weight: 600;
-    margin-bottom: 0.5rem;
-    margin-top: clamp(1rem, 1.8vh, 1.5rem);
+    margin-bottom: 0.6rem;
+    margin-top: clamp(1.2rem, 2vh, 1.8rem);
     text-align: center;
   }
 
@@ -455,51 +536,28 @@
   .source-list {
     list-style: none;
     margin: 0.5rem 0;
-    counter-reset: src;
   }
 
   .source-list li {
-    counter-increment: src;
-    padding: clamp(0.7rem, 1.2vh, 1rem) 0 clamp(0.7rem, 1.2vh, 1rem) 3rem;
-    position: relative;
-    border-bottom: 1px dashed rgba(200,121,90,0.15);
+    padding: clamp(0.7rem, 1.3vh, 1rem) 0;
+    border-bottom: 1px dashed rgba(184,101,74,0.18);
     font-family: 'Inter', sans-serif;
-    font-size: clamp(0.92rem, 1.05vw, 1.05rem);
-    color: #d5c9bb;
+    font-size: clamp(0.94rem, 1.08vw, 1.08rem);
+    color: var(--ink-soft);
     line-height: 1.55;
   }
 
   .source-list li:last-child { border-bottom: none; }
 
-  .source-list li::before {
-    content: counter(src);
-    position: absolute;
-    left: 0;
-    top: clamp(0.7rem, 1.2vh, 1rem);
-    width: 2.1rem;
-    height: 2.1rem;
-    background: rgba(200,121,90,0.2);
-    border: 2px solid rgba(200,121,90,0.4);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: 'Fira Code', monospace;
-    font-size: 0.8rem;
-    font-weight: 700;
-    color: var(--accent-2);
-  }
-
-  .source-list li strong { color: var(--accent-2); font-family: 'Inter', sans-serif; font-weight: 600; }
+  .source-list li strong { color: var(--ink); font-weight: 600; }
 
   .source-list li a {
-    color: var(--accent-3);
+    color: var(--sage);
     text-decoration: none;
-    word-break: break-all;
     font-size: 0.92em;
   }
 
-  .source-list li a:hover { text-decoration: underline; color: var(--accent-2); }
+  .source-list li a:hover { text-decoration: underline; color: var(--accent); }
 
   /* ===== PORTADA ===== */
   .cover {
@@ -508,58 +566,65 @@
     align-items: center;
     justify-content: center;
     text-align: center;
-    gap: clamp(1rem, 2vh, 1.5rem);
+    gap: clamp(1.2rem, 2.5vh, 2rem);
     height: 100%;
     padding: 1rem;
   }
 
   .cover .big-ico {
     font-size: clamp(4rem, 8vw, 7rem);
-    color: var(--accent-2);
-    background: rgba(232,184,109,0.10);
+    color: var(--accent);
+    background: rgba(184,101,74,0.1);
     border-radius: 2.4rem;
     padding: clamp(1rem, 2vw, 1.8rem) clamp(1.2rem, 2.4vw, 2.2rem);
-    animation: float 3.5s ease-in-out infinite;
-    box-shadow: 0 25px 50px -20px rgba(232,184,109,0.4);
+    animation: float 4s ease-in-out infinite;
     line-height: 1;
+    border: 2px solid rgba(184,101,74,0.25);
   }
 
   @keyframes float {
-    0%, 100% { transform: translateY(0); }
-    50%      { transform: translateY(-15px); }
+    0%, 100% { transform: translateY(0) rotate(-2deg); }
+    50%      { transform: translateY(-15px) rotate(2deg); }
   }
 
   .cover h1 {
+    font-family: 'Inter', sans-serif;
     font-size: clamp(2.4rem, 4.5vw, 4rem);
-    font-weight: 900;
+    font-weight: 800;
     letter-spacing: -0.03em;
     line-height: 1.1;
-    background: linear-gradient(90deg, #f5e9dc, #e8b86d, #c8795a);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
+    color: var(--ink);
     max-width: 1100px;
+    animation: fadeUp 0.8s ease both;
+  }
+
+  .cover h1 em {
+    color: var(--accent);
+    font-style: italic;
+    font-family: 'Lora', Georgia, serif;
+    font-weight: 500;
   }
 
   .cover p {
-    color: var(--muted);
-    font-size: clamp(1.1rem, 1.5vw, 1.5rem);
+    color: var(--ink-soft);
+    font-size: clamp(1.15rem, 1.55vw, 1.55rem);
     max-width: 900px;
     font-family: 'Lora', Georgia, serif;
     font-style: italic;
     line-height: 1.55;
+    animation: fadeUp 0.8s ease 0.15s both;
   }
 
   .pill {
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
-    background: rgba(200,121,90,0.18);
-    border: 2px solid rgba(200,121,90,0.4);
-    color: #edc9a8;
-    padding: clamp(0.4rem, 0.8vh, 0.6rem) clamp(1rem, 1.5vw, 1.3rem);
+    background: rgba(184,101,74,0.12);
+    border: 2px solid rgba(184,101,74,0.3);
+    color: var(--accent);
+    padding: clamp(0.45rem, 0.9vh, 0.65rem) clamp(1rem, 1.6vw, 1.4rem);
     border-radius: 2rem;
-    font-size: clamp(0.8rem, 0.98vw, 0.98rem);
+    font-size: clamp(0.82rem, 1vw, 1rem);
     font-weight: 600;
     font-family: 'Inter', sans-serif;
   }
@@ -567,23 +632,23 @@
   /* ===== CONTROLES ===== */
   .controls {
     position: fixed;
-    bottom: clamp(1rem, 2vh, 1.8rem);
+    bottom: clamp(1.2rem, 2.5vh, 2rem);
     left: 50%;
     transform: translateX(-50%);
     display: flex;
     align-items: center;
     gap: clamp(0.8rem, 1.2vw, 1.2rem);
-    background: rgba(26,20,16,0.9);
+    background: rgba(247,240,228,0.95);
     backdrop-filter: blur(15px);
-    padding: clamp(0.5rem, 1vh, 0.8rem) clamp(1rem, 1.5vw, 1.4rem);
+    padding: clamp(0.55rem, 1vh, 0.85rem) clamp(1rem, 1.5vw, 1.5rem);
     border-radius: 3rem;
-    box-shadow: 0 12px 35px rgba(0,0,0,0.6), 0 0 0 2px rgba(200,121,90,0.35);
+    box-shadow: 0 15px 40px rgba(0,0,0,0.3), 0 0 0 2px rgba(184,101,74,0.3);
     z-index: 50;
   }
 
   .controls button {
-    background: rgba(200,121,90,0.22);
-    color: var(--text);
+    background: rgba(184,101,74,0.15);
+    color: var(--ink);
     border: none;
     width: clamp(2.6rem, 3.5vw, 3.2rem);
     height: clamp(2.6rem, 3.5vw, 3.2rem);
@@ -598,15 +663,16 @@
 
   .controls button:hover:not(:disabled) {
     background: var(--accent);
+    color: white;
     transform: scale(1.1);
   }
 
   .controls button:disabled { opacity: 0.3; cursor: not-allowed; }
 
   .counter {
-    font-family: 'Fira Code', monospace;
+    font-family: 'Inter', sans-serif;
     font-size: clamp(0.85rem, 1vw, 1rem);
-    color: var(--muted);
+    color: var(--ink-soft);
     min-width: 70px;
     text-align: center;
     font-weight: 600;
@@ -617,7 +683,7 @@
     top: 0; left: 0;
     width: 100%;
     height: 5px;
-    background: rgba(255,255,255,0.06);
+    background: rgba(42,31,24,0.4);
     z-index: 100;
   }
 
@@ -626,7 +692,7 @@
     width: 0%;
     background: linear-gradient(90deg, var(--accent), var(--accent-2));
     transition: width 0.45s ease;
-    box-shadow: 0 0 12px rgba(232,184,109,0.6);
+    box-shadow: 0 0 12px rgba(212,163,80,0.6);
   }
 
   /* ===== CITA CENTRAL ===== */
@@ -637,58 +703,58 @@
     justify-content: center;
     text-align: center;
     height: 100%;
-    gap: clamp(1rem, 2vh, 1.8rem);
+    gap: clamp(1.2rem, 2.5vh, 2rem);
     padding: 2rem;
   }
 
   .center-quote .big-mark {
-    font-size: clamp(4rem, 8vw, 7rem);
+    font-size: clamp(5rem, 10vw, 9rem);
     color: var(--accent);
-    opacity: 0.55;
-    line-height: 1;
+    opacity: 0.35;
+    line-height: 0.8;
     font-family: 'Lora', Georgia, serif;
   }
 
   .center-quote p {
-    font-size: clamp(1.6rem, 2.6vw, 2.6rem);
+    font-size: clamp(1.8rem, 3vw, 3rem);
     font-family: 'Lora', Georgia, serif;
     font-style: italic;
-    color: #f0e3d4;
+    color: var(--ink);
     max-width: 1100px;
-    line-height: 1.4;
+    line-height: 1.35;
     margin: 0;
     font-weight: 500;
   }
 
   .center-quote .author {
-    font-size: clamp(1rem, 1.3vw, 1.3rem);
-    color: var(--accent-2);
+    font-size: clamp(1rem, 1.4vw, 1.4rem);
+    color: var(--accent);
     font-family: 'Inter', sans-serif;
     font-style: normal;
     font-weight: 600;
+    letter-spacing: 0.05em;
   }
 
   /* ===== RESPONSIVE ===== */
   @media (max-width: 900px) {
     .compare { grid-template-columns: 1fr; }
+    .grid { grid-template-columns: 1fr; }
     .stat-grid { grid-template-columns: 1fr; }
   }
 
   @media (max-width: 600px) {
     .slide { padding: 1.5rem 1.2rem 5rem; }
     .slide-title { font-size: 1.6rem; gap: 0.7rem; }
-    .slide-title i { padding: 0.5rem; }
     .cover h1 { font-size: 1.9rem; }
     .cover .big-ico { font-size: 3rem; padding: 0.8rem 1rem; }
-    .center-quote p { font-size: 1.3rem; }
-    .grid { grid-template-columns: 1fr; }
+    .center-quote p { font-size: 1.35rem; }
+    .authors { flex-direction: column; align-items: center; }
   }
 
-  /* Ajuste para pantallas con poca altura (proyectores) */
   @media (max-height: 700px) {
     .slide { padding-top: 1.5rem; padding-bottom: 1.5rem; }
     .slide-title { margin-bottom: 1rem; padding-bottom: 0.6rem; }
-    .cover { gap: 0.7rem; }
+    .cover { gap: 0.8rem; }
     .cover .big-ico { font-size: 3.5rem; padding: 0.8rem 1rem; }
   }
 </style>
@@ -702,9 +768,9 @@
   <!-- 1 · PORTADA -->
   <section class="slide active">
     <div class="cover">
-      <div class="big-ico"><i class="bi bi-graph-up-arrow"></i></div>
-      <h1>Soft Skills en la era de la IA</h1>
-      <p>Por qué el mercado laboral las exige más que nunca. Datos reales, no promesas.</p>
+      <div class="big-ico"><i class="bi bi-heart-pulse"></i></div>
+      <h1>Soft Skills<br><em>En tiempos de IA, aprende de humanidades</em></h1>
+      <p>Lo que la tecnología no puede darnos, y por qué el mercado laboral lo está exigiendo más que nunca.</p>
 
       <div class="authors-title">Presentado por</div>
       <div class="authors">
@@ -714,88 +780,118 @@
       </div>
 
       <div style="display:flex; gap:0.6rem; flex-wrap:wrap; justify-content:center; margin-top:1rem;">
-        <span class="pill"><i class="bi bi-bar-chart"></i> Datos 2025-2026</span>
+        <span class="pill"><i class="bi bi-heart"></i> Habilidades humanas</span>
+        <span class="pill"><i class="bi bi-book"></i> Humanidades</span>
         <span class="pill"><i class="bi bi-briefcase"></i> Mercado laboral</span>
-        <span class="pill"><i class="bi bi-people"></i> Humanidades</span>
       </div>
     </div>
   </section>
 
-  <!-- 2 · EL DATO QUE LO CAMBIA TODO -->
+  <!-- 2 · LA IDEA CENTRAL -->
   <section class="slide">
     <div class="content">
-      <div class="slide-title"><i class="bi bi-exclamation-diamond"></i> El dato que lo cambia todo</div>
+      <div class="slide-title"><i class="bi bi-lightbulb"></i> La idea central</div>
 
-      <p>No es una opinión. Es lo que dicen los reclutadores de todo el mundo en 2026:</p>
+      <p>Durante décadas, el mercado laboral premió lo técnico: saber programar, calcular, analizar datos. Y sigue importando. Pero algo está cambiando.</p>
 
-      <div class="stat-grid">
-        <div class="stat">
-          <div class="num">64%</div>
-          <div class="label">de reclutadores globales dice que la <strong>comunicación</strong> es la habilidad más demandada</div>
-          <div class="source">GMAC, 600+ empleadores, 39 países [1]</div>
-        </div>
-        <div class="stat">
-          <div class="num">14°</div>
-          <div class="label">lugar: así queda "usar herramientas de IA" en el ranking de habilidades más buscadas</div>
-          <div class="source">GMAC 2026 [1]</div>
-        </div>
-        <div class="stat">
-          <div class="num">39%</div>
-          <div class="label">de las habilidades clave cambiarán para 2030</div>
-          <div class="source">Foro Económico Mundial [2]</div>
-        </div>
-      </div>
+      <p>La inteligencia artificial ya hace muchas de esas tareas. Y las hace rápido. Entonces surge la pregunta inevitable: <strong>¿qué queda para nosotros?</strong></p>
 
       <div class="quote">
-        La IA no está eliminando las soft skills. Las está convirtiendo en el <strong>diferencial decisivo</strong>.
+        Queda lo que la máquina no puede imitar: sentir, comprender, decidir con ética, crear con propósito.
+      </div>
+
+      <p>Eso son las <strong>soft skills</strong>. Y las humanidades —la literatura, la filosofía, la historia, el arte— son el gimnasio donde se entrenan. No se trata de elegir entre tecnología y humanidades. Se trata de <em>usar la tecnología con criterio humano</em>.</p>
+    </div>
+  </section>
+
+  <!-- 3 · QUÉ SON LAS SOFT SKILLS -->
+  <section class="slide">
+    <div class="content">
+      <div class="slide-title"><i class="bi bi-question-circle"></i> ¿Qué son las soft skills?</div>
+
+      <p>Son las habilidades que no se miden con un examen. Se cultivan con la vida. Y son las que determinan cómo trabajamos con otros y cómo enfrentamos lo incierto:</p>
+
+      <div class="grid">
+        <div class="card">
+          <i class="bi bi-chat-heart ico"></i>
+          <strong>Comunicación</strong>
+          <span>Saber escuchar, explicar, conectar con otras personas. No es solo hablar bien: es entender a quién le hablas y qué necesita escuchar.</span>
+        </div>
+        <div class="card">
+          <i class="bi bi-people-fill ico"></i>
+          <strong>Empatía</strong>
+          <span>Entender lo que sienten y necesitan los demás. Es la base de la confianza y del trabajo en equipo que perdura.</span>
+        </div>
+        <div class="card">
+          <i class="bi bi-lightbulb ico"></i>
+          <strong>Creatividad</strong>
+          <span>Encontrar caminos nuevos cuando los conocidos no sirven. No es solo "tener ideas": es saber cuáles importan y para qué.</span>
+        </div>
+        <div class="card">
+          <i class="bi bi-compass ico"></i>
+          <strong>Criterio</strong>
+          <span>Decidir con ética y sensatez en situaciones ambiguas. La IA puede sugerir opciones, pero no puede responsabilizarse por ellas.</span>
+        </div>
       </div>
     </div>
   </section>
 
-  <!-- 3 · QUÉ DICE EL MERCADO -->
+  <!-- 4 · QUÉ DICE EL MERCADO (RANKING) -->
   <section class="slide">
     <div class="content">
-      <div class="slide-title"><i class="bi bi-trophy"></i> Lo que el mercado pide (2026)</div>
+      <div class="slide-title"><i class="bi bi-trophy"></i> Lo que el mercado pide en 2026</div>
 
-      <p>Ranking de habilidades más demandadas por empleadores globales, según la encuesta de GMAC a más de 600 empresas:</p>
+      <p>Encuesta de GMAC a más de 600 empleadores en 39 países. Este es el ranking real de habilidades más demandadas:</p>
 
       <div class="rank-box">
-        <div class="rank"><span class="pos">1</span><span class="name">Comunicación</span><span class="pct">64%</span></div>
+        <div class="rank highlight"><span class="pos">1</span><span class="name">Comunicación</span><span class="pct">64%</span></div>
         <div class="rank"><span class="pos">2</span><span class="name">Resolución de problemas</span><span class="pct">62%</span></div>
         <div class="rank"><span class="pos">3</span><span class="name">Adaptabilidad</span><span class="pct">60%</span></div>
         <div class="rank"><span class="pos">4</span><span class="name">Colaboración / trabajo en equipo</span><span class="pct">—</span></div>
-        <div class="rank"><span class="pos">…</span><span class="name">…</span><span class="pct">—</span></div>
-        <div class="rank"><span class="pos">14</span><span class="name">Uso de herramientas de IA</span><span class="pct">50%</span></div>
+        <div class="rank"><span class="pos" style="opacity:0.5;">…</span><span class="name" style="opacity:0.5;">…</span><span class="pct" style="opacity:0.5;">—</span></div>
+        <div class="rank highlight"><span class="pos">14</span><span class="name">Uso de herramientas de IA</span><span class="pct">50%</span></div>
       </div>
 
-      <div class="note warn">
+      <div class="note warm">
         <i class="bi bi-exclamation-triangle"></i>
-        <span>El uso de IA queda en el puesto 14. Las habilidades humanas ocupan los primeros lugares. Pero ojo: más de la mitad de los reclutadores espera que la IA gane peso en 5 años. <strong>El futuro es híbrido: IA + humanidad</strong> [1].</span>
+        <span>El uso de IA queda en el puesto 14. Las habilidades humanas ocupan los primeros lugares. Pero atención: más de la mitad de los reclutadores espera que la IA gane peso en los próximos cinco años. <strong>El futuro es híbrido: IA + humanidad</strong>.</span>
       </div>
     </div>
   </section>
 
-  <!-- 4 · POR QUÉ LA IA NO LAS REEMPLAZA -->
+  <!-- 5 · QUÉ APORTAN LAS HUMANIDADES -->
   <section class="slide">
     <div class="content">
-      <div class="slide-title"><i class="bi bi-cpu"></i> Por qué la IA no puede reemplazarlas</div>
+      <div class="slide-title"><i class="bi bi-book-half"></i> Qué aportan las humanidades</div>
 
-      <p>La IA procesa, genera, predice. Pero no <strong>siente, no juzga con ética, no asume responsabilidad</strong>. Expertos en empleo lo resumen así:</p>
+      <p>No es un adorno cultural. Es entrenamiento directo en las habilidades que los empleadores buscan. Cada disciplina entrena algo concreto:</p>
 
-      <ul class="list">
-        <li><i class="bi bi-heart"></i> <span><strong>Empatía:</strong> interpretar el lenguaje corporal, leer entre líneas, acompañar el dolor. Una enfermera humana no se reemplaza con un robot [3].</span></li>
-        <li><i class="bi bi-shield-check"></i> <span><strong>Juicio ético:</strong> decidir lo correcto cuando no hay reglas claras. La IA puede sugerir, pero no cargar con las consecuencias [3].</span></li>
-        <li><i class="bi bi-people"></i> <span><strong>Construir confianza:</strong> relaciones de años con clientes, colegas, equipos. Eso no se transfiere a un modelo [3].</span></li>
-        <li><i class="bi bi-lightbulb"></i> <span><strong>Pensamiento crítico:</strong> cuestionar lo que la IA genera. Detectives de errores, no repetidores de respuestas [4].</span></li>
-      </ul>
-
-      <div class="quote">
-        "Las habilidades más resistentes al desplazamiento por la IA son las que son más propiamente humanas." — Maria Flynn, Jobs for the Future [3]
+      <div class="grid">
+        <div class="card">
+          <i class="bi bi-journal-bookmark ico"></i>
+          <strong>Literatura → Empatía</strong>
+          <span>Leer ficción entrena la capacidad de entender perspectivas ajenas. La empatía es la base de la inteligencia emocional, una habilidad cuya demanda creció un 95% en los últimos años.</span>
+        </div>
+        <div class="card">
+          <i class="bi bi-lightbulb ico"></i>
+          <strong>Filosofía → Pensamiento crítico</strong>
+          <span>El pensamiento analítico es la habilidad número uno para el Foro Económico Mundial: el 65% de los empleadores la considera esencial. La filosofía es su gimnasio natural.</span>
+        </div>
+        <div class="card">
+          <i class="bi bi-chat-quote ico"></i>
+          <strong>Historia → Contexto y criterio</strong>
+          <span>Entender de dónde vienen las decisiones ayuda a anticipar sus consecuencias. El Ministerio de Trabajo de Perú lo incluye como competencia clave para 2026.</span>
+        </div>
+        <div class="card">
+          <i class="bi bi-palette ico"></i>
+          <strong>Arte → Creatividad con propósito</strong>
+          <span>El pensamiento creativo es la segunda habilidad más valorada: el 59% de los empleadores la busca. No se trata de "tener ideas", sino de saber <em>por qué</em> importan.</span>
+        </div>
       </div>
     </div>
   </section>
 
-  <!-- 5 · CITA -->
+  <!-- 6 · CITA CENTRAL -->
   <section class="slide">
     <div class="center-quote">
       <div class="big-mark">“</div>
@@ -804,53 +900,41 @@
     </div>
   </section>
 
-  <!-- 6 · QUÉ APORTAN LAS HUMANIDADES -->
+  <!-- 7 · POR QUÉ LA IA NO LAS REEMPLAZA -->
   <section class="slide">
     <div class="content">
-      <div class="slide-title"><i class="bi bi-book-half"></i> Qué aportan las humanidades al mercado laboral</div>
+      <div class="slide-title"><i class="bi bi-cpu"></i> Por qué la IA no puede reemplazarlas</div>
 
-      <p>No es un adorno cultural. Es entrenamiento directo en las habilidades que los empleadores buscan:</p>
+      <p>La IA procesa, genera, predice. Pero no siente, no juzga con ética, no asume responsabilidad. Expertos en empleo lo resumen con claridad:</p>
 
-      <div class="grid">
-        <div class="card">
-          <i class="bi bi-journal-bookmark ico"></i>
-          <strong>Literatura → Empatía</strong>
-          <span>Leer ficción entrena la capacidad de entender perspectivas ajenas. La empatía es la base de la inteligencia emocional, que Cornerstone reporta con <strong>+95% de demanda</strong> [5].</span>
-        </div>
-        <div class="card">
-          <i class="bi bi-lightbulb ico"></i>
-          <strong>Filosofía → Pensamiento crítico</strong>
-          <span>El pensamiento analítico es la habilidad #1 para el Foro Económico Mundial (65% de empleadores la considera esencial). La filosofía es su gimnasio [2].</span>
-        </div>
-        <div class="card">
-          <i class="bi bi-chat-quote ico"></i>
-          <strong>Historia → Contexto y criterio</strong>
-          <span>Entender de dónde vienen las decisiones ayuda a anticipar consecuencias. El MTPE de Perú lo incluye como competencia clave para 2026 [6].</span>
-        </div>
-        <div class="card">
-          <i class="bi bi-palette ico"></i>
-          <strong>Arte → Creatividad con propósito</strong>
-          <span>El pensamiento creativo es la segunda habilidad más valorada (59% de empleadores). No se trata de "tener ideas", sino de saber <em>por qué</em> importan [2].</span>
-        </div>
+      <ul class="list">
+        <li><i class="bi bi-heart"></i> <span><strong>Empatía:</strong> interpretar el lenguaje corporal, leer entre líneas, acompañar el dolor. Una enfermera humana no se reemplaza con un robot.</span></li>
+        <li><i class="bi bi-shield-check"></i> <span><strong>Juicio ético:</strong> decidir lo correcto cuando no hay reglas claras. La IA puede sugerir, pero no cargar con las consecuencias.</span></li>
+        <li><i class="bi bi-people"></i> <span><strong>Construir confianza:</strong> relaciones de años con clientes, colegas y equipos. Eso no se transfiere a un modelo.</span></li>
+        <li><i class="bi bi-lightbulb"></i> <span><strong>Pensamiento crítico:</strong> cuestionar lo que la IA genera. Ser detectives de errores, no repetidores de respuestas.</span></li>
+      </ul>
+
+      <div class="quote">
+        "Las habilidades más resistentes al desplazamiento por la IA son las que son más propiamente humanas." — Maria Flynn, Jobs for the Future
       </div>
     </div>
   </section>
 
-  <!-- 7 · EL PARADIGMA HÍBRIDO -->
+  <!-- 8 · EL PERFIL HÍBRIDO -->
   <section class="slide">
     <div class="content">
-      <div class="slide-title"><i class="bi bi-arrow-left-right"></i> El nuevo perfil: híbrido (IA + humanidad)</div>
+      <div class="slide-title"><i class="bi bi-arrow-left-right"></i> El nuevo perfil: híbrido</div>
 
-      <p>El mercado no pide "humanidades en vez de tecnología". Pide <strong>las dos cosas juntas</strong>. El Ministerio de Trabajo de Perú lo define como "modelo híbrido que combina dominio técnico con habilidades socioemocionales avanzadas" [6].</p>
+      <p>El mercado no pide "humanidades en vez de tecnología". Pide las dos cosas juntas. El Ministerio de Trabajo de Perú lo define como un modelo híbrido que combina dominio técnico con habilidades socioemocionales avanzadas.</p>
 
       <div class="compare">
         <div class="compare-col ia">
           <h4><i class="bi bi-robot"></i> Lo que la IA aporta</h4>
           <ul>
-            <li><i class="bi bi-check" style="color:var(--accent-3);"></i> Velocidad y escala</li>
-            <li><i class="bi bi-check" style="color:var(--accent-3);"></i> Procesamiento de datos</li>
-            <li><i class="bi bi-check" style="color:var(--accent-3);"></i> Generación de borradores</li>
-            <li><i class="bi bi-check" style="color:var(--accent-3);"></i> Automatización de lo repetitivo</li>
+            <li><i class="bi bi-check" style="color:var(--sage);"></i> Velocidad y escala</li>
+            <li><i class="bi bi-check" style="color:var(--sage);"></i> Procesamiento de datos</li>
+            <li><i class="bi bi-check" style="color:var(--sage);"></i> Generación de borradores</li>
+            <li><i class="bi bi-check" style="color:var(--sage);"></i> Automatización de lo repetitivo</li>
           </ul>
         </div>
         <div class="compare-col humano">
@@ -871,19 +955,33 @@
     </div>
   </section>
 
-  <!-- 8 · EJEMPLO CONCRETO -->
+  <!-- 9 · EJEMPLO CONCRETO -->
   <section class="slide">
     <div class="content">
-      <div class="slide-title"><i class="bi bi-briefcase"></i> Ejemplo real: el correo que la IA no puede enviar sola</div>
+      <div class="slide-title"><i class="bi bi-briefcase"></i> Un ejemplo real: el correo que la IA no puede enviar sola</div>
 
-      <p>Usas IA para redactar un correo a un cliente molesto. La IA escribe un texto impecable. Pero:</p>
+      <p>Ana trabaja en atención al cliente. Un cliente importante escribe furioso porque su pedido llegó tarde y en mal estado. Ana abre la IA y le pide que redacte una respuesta. En segundos tiene un texto impecable:</p>
 
-      <ul class="list">
-        <li><i class="bi bi-robot"></i> <span><strong>La IA no sabe</strong> si el cliente está enfadado o decepcionado. Tú sí.</span></li>
-        <li><i class="bi bi-robot"></i> <span><strong>La IA no sabe</strong> que una frase suena fría en tu cultura. Tú sí.</span></li>
-        <li><i class="bi bi-robot"></i> <span><strong>La IA no asume</strong> la responsabilidad si el cliente se ofende. Tú sí.</span></li>
-        <li><i class="bi bi-person-heart"></i> <span><strong>Tú decides</strong> el tono, quitas lo que sobra, añades la disculpa sincera. El correo final lleva tu nombre.</span></li>
-      </ul>
+      <div class="dialog">
+        <div class="dialog-line">
+          <span class="who ia">IA</span>
+          <span class="what">Estimado cliente, lamentamos profundamente las molestias ocasionadas. A continuación le presentamos las opciones disponibles para resolver su caso...</span>
+        </div>
+        <div class="dialog-line">
+          <span class="who">Ana</span>
+          <span class="what">Está bien escrito. Pero este cliente no está decepcionado: está furioso. Lleva tres días esperando. La primera frase suena fría, automática.</span>
+        </div>
+        <div class="dialog-line">
+          <span class="who ia">IA</span>
+          <span class="what">Puedo ofrecerle una versión con tono más cálido y una disculpa más directa.</span>
+        </div>
+        <div class="dialog-line">
+          <span class="who">Ana</span>
+          <span class="what">Mejor lo escribo yo. Necesito que sienta que lo escuché de verdad, no que recibió una plantilla. El correo final lleva mi nombre y mi responsabilidad.</span>
+        </div>
+      </div>
+
+      <p style="margin-top:1rem;">Ana reescribe el correo en cinco minutos. No es perfecto. Tiene una coma mal puesta. Pero el cliente responde: <em>"Gracias por entenderme"</em>. Esa respuesta no la habría conseguido un texto impecable generado por una máquina.</p>
 
       <div class="note tip">
         <i class="bi bi-lightbulb"></i>
@@ -892,22 +990,24 @@
     </div>
   </section>
 
-  <!-- 9 · LAS 5 SOFT SKILLS MÁS DEMANDADAS -->
+  <!-- 10 · LAS 5 SOFT SKILLS MÁS DEMANDADAS -->
   <section class="slide">
     <div class="content">
-      <div class="slide-title"><i class="bi bi-gem"></i> Las 5 soft skills que el mercado exige</div>
+      <div class="slide-title"><i class="bi bi-gem"></i> Las cinco soft skills que el mercado exige</div>
+
+      <p>Estas son las habilidades que aparecen una y otra vez en los informes de empleo de los últimos años:</p>
 
       <ul class="list">
-        <li><i class="bi bi-1-circle-fill"></i> <span><strong>Comunicación (64%):</strong> la habilidad #1 según reclutadores globales. Entender audiencias, conectar equipos, hacer que las ideas resuenen [1].</span></li>
-        <li><i class="bi bi-2-circle-fill"></i> <span><strong>Resolución de problemas (62%):</strong> la IA sugiere, tú decides. El juicio humano es insustituible cuando hay que priorizar [1].</span></li>
-        <li><i class="bi bi-3-circle-fill"></i> <span><strong>Adaptabilidad (60%):</strong> el trabajo cambia cada año. Saber reconvertir lo que sabes es más valioso que saber mucho de una sola cosa [1].</span></li>
-        <li><i class="bi bi-4-circle-fill"></i> <span><strong>Pensamiento crítico:</strong> la IA puede alucinar. Detectarlo exige conocimiento profundo y capacidad de dudar [2].</span></li>
-        <li><i class="bi bi-5-circle-fill"></i> <span><strong>Empatía e inteligencia emocional:</strong> la demanda de inteligencia emocional creció +95% según Cornerstone. Es la base de la confianza y el liderazgo [5].</span></li>
+        <li><i class="bi bi-1-circle-fill"></i> <span><strong>Comunicación.</strong> La habilidad número uno según reclutadores globales: el 64% la pone primero. Entender audiencias, conectar equipos, hacer que las ideas resuenen.</span></li>
+        <li><i class="bi bi-2-circle-fill"></i> <span><strong>Resolución de problemas.</strong> El 62% de los empleadores la busca. La IA sugiere, tú decides. El juicio humano es insustituible cuando hay que priorizar.</span></li>
+        <li><i class="bi bi-3-circle-fill"></i> <span><strong>Adaptabilidad.</strong> El 60% la demanda. El trabajo cambia cada año. Saber reconvertir lo que sabes es más valioso que saber mucho de una sola cosa.</span></li>
+        <li><i class="bi bi-4-circle-fill"></i> <span><strong>Pensamiento crítico.</strong> La IA puede equivocarse con total seguridad. Detectarlo exige conocimiento profundo y capacidad de dudar.</span></li>
+        <li><i class="bi bi-5-circle-fill"></i> <span><strong>Empatía e inteligencia emocional.</strong> Su demanda creció un 95% en los últimos años. Es la base de la confianza y del liderazgo que perdura.</span></li>
       </ul>
     </div>
   </section>
 
-  <!-- 10 · QUÉ HACER -->
+  <!-- 11 · QUÉ HACER -->
   <section class="slide">
     <div class="content">
       <div class="slide-title"><i class="bi bi-flower1"></i> Qué puedes hacer desde hoy</div>
@@ -918,7 +1018,7 @@
         <div class="card">
           <i class="bi bi-book ico"></i>
           <strong>Lee literatura</strong>
-          <span>Una novela al mes. Cada libro es un entrenamiento en empatía y perspectiva.</span>
+          <span>Una novela al mes. Cada libro es un entrenamiento en empatía y perspectiva. No hay mejor gimnasio para ponerse en el lugar del otro.</span>
         </div>
         <div class="card">
           <i class="bi bi-chat-quote ico"></i>
@@ -928,7 +1028,7 @@
         <div class="card">
           <i class="bi bi-pencil ico"></i>
           <strong>Escribe</strong>
-          <span>Un diario, una idea, una carta. Escribir ordena el pensamiento y clarifica el criterio.</span>
+          <span>Un diario, una idea, una carta. Escribir ordena el pensamiento y clarifica el criterio. Es pensar en voz baja.</span>
         </div>
         <div class="card">
           <i class="bi bi-compass ico"></i>
@@ -937,100 +1037,86 @@
         </div>
       </div>
 
-      <div class="note tip">
+      <div class="note warm">
         <i class="bi bi-lightbulb"></i>
-        <span>El Foro Económico Mundial proyecta que el <strong>39% de las habilidades clave cambiarán para 2030</strong>. Las técnicas se actualizan. Las humanas se profundizan. Invierte en las que no caducan [2].</span>
+        <span>El Foro Económico Mundial proyecta que el <strong>39% de las habilidades clave cambiarán para 2030</strong>. Las técnicas se actualizan. Las humanas se profundizan. Invierte en las que no caducan.</span>
       </div>
     </div>
   </section>
 
-  <!-- 11 · RESUMEN -->
+  <!-- 12 · RESUMEN -->
   <section class="slide">
     <div class="content">
-      <div class="slide-title"><i class="bi bi-list-check"></i> Resumen: lo que el mercado dice</div>
+      <div class="slide-title"><i class="bi bi-list-check"></i> En una mirada</div>
 
       <div class="grid">
         <div class="card">
-          <i class="bi bi-trophy ico"></i>
-          <strong>Comunicación #1</strong>
-          <span>64% de reclutadores la pone primero. Por encima de la IA (puesto 14) [1].</span>
+          <i class="bi bi-heart ico"></i>
+          <strong>Soft skills</strong>
+          <span>Habilidades humanas: empatía, comunicación, criterio, creatividad.</span>
         </div>
         <div class="card">
-          <i class="bi bi-heart ico"></i>
-          <strong>Empatía +95%</strong>
-          <span>Demanda de inteligencia emocional según Cornerstone [5].</span>
+          <i class="bi bi-book-half ico"></i>
+          <strong>Humanidades</strong>
+          <span>El gimnasio donde se entrenan esas habilidades, día a día.</span>
         </div>
         <div class="card">
           <i class="bi bi-cpu ico"></i>
-          <strong>IA no reemplaza</strong>
-          <span>Las habilidades "más resistentes al desplazamiento" son las humanas [3].</span>
+          <strong>IA</strong>
+          <span>Potencia lo técnico, pero no reemplaza lo humano.</span>
+        </div>
+        <div class="card">
+          <i class="bi bi-trophy ico"></i>
+          <strong>Comunicación #1</strong>
+          <span>El 64% de los reclutadores la pone primero, por encima de la IA.</span>
         </div>
         <div class="card">
           <i class="bi bi-arrow-left-right ico"></i>
           <strong>Perfil híbrido</strong>
-          <span>Técnica + humanidad. Lo que el mercado premia [6].</span>
-        </div>
-        <div class="card">
-          <i class="bi bi-book-half ico"></i>
-          <strong>Humanidades entrenan</strong>
-          <span>Literatura → empatía. Filosofía → criterio. Historia → contexto.</span>
+          <span>Técnica y humanidad juntas. Lo que el mercado premia hoy.</span>
         </div>
         <div class="card">
           <i class="bi bi-graph-up ico"></i>
           <strong>39% cambiará</strong>
-          <span>Habilidades clave para 2030. Las humanas no caducan [2].</span>
+          <span>Las habilidades clave para 2030. Las humanas no caducan.</span>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- 12 · FUENTES -->
+  <!-- 13 · FUENTES (resumidas) -->
   <section class="slide">
     <div class="content">
-      <div class="slide-title"><i class="bi bi-link-45deg"></i> Fuentes consultadas</div>
+      <div class="slide-title"><i class="bi bi-link-45deg"></i> Fuentes</div>
 
-      <p style="font-size:clamp(0.95rem,1.1vw,1.1rem); color:var(--muted); margin-bottom:0.5rem;">Datos citados en la presentación, verificables en las siguientes referencias:</p>
+      <p style="font-size:clamp(0.95rem,1.1vw,1.1rem); color:var(--ink-soft); opacity:0.8; margin-bottom:0.6rem;">Referencias clave que sustentan los datos de esta presentación:</p>
 
-      <ol class="source-list">
+      <ul class="source-list">
         <li>
-          <strong>GMAC (Graduate Management Admission Council).</strong> <em>Corporate Recruiters Survey 2026.</em> Encuesta a más de 600 empleadores en 39 países. Habilidades más demandadas: comunicación (64%), resolución de problemas (62%), adaptabilidad (60%); uso de IA en puesto 14 (50%).<br>
-          <a href="https://www.gmac.com" target="_blank" rel="noopener">gmac.com</a>
+          <strong>GMAC · Corporate Recruiters Survey 2026.</strong> 600+ empleadores, 39 países. Ranking de habilidades y peso de la IA en la contratación. <a href="https://www.gmac.com" target="_blank" rel="noopener">gmac.com</a>
         </li>
         <li>
-          <strong>World Economic Forum.</strong> <em>Future of Jobs Report 2025.</em> Proyección: 39% de las habilidades clave cambiarán para 2030. Pensamiento analítico como habilidad #1 (65% de empleadores), pensamiento creativo #2 (59%).<br>
-          <a href="https://www.weforum.org/reports/the-future-of-jobs-report-2025" target="_blank" rel="noopener">weforum.org/reports/the-future-of-jobs-report-2025</a>
+          <strong>World Economic Forum · Future of Jobs Report 2025.</strong> Proyección de habilidades clave para 2030 y peso del pensamiento analítico y creativo. <a href="https://www.weforum.org/reports/the-future-of-jobs-report-2025" target="_blank" rel="noopener">weforum.org</a>
         </li>
         <li>
-          <strong>BBC Worklife.</strong> <em>"The skills AI can't replace" (2025).</em> Declaraciones de Maria Flynn (Jobs for the Future) sobre habilidades resistentes al desplazamiento por IA: empatía, juicio ético, construcción de confianza.<br>
-          <a href="https://www.bbc.com/worklife" target="_blank" rel="noopener">bbc.com/worklife</a>
+          <strong>Cornerstone · Skills Report 2025.</strong> Crecimiento del 95% en la demanda de inteligencia emocional. <a href="https://www.cornerstoneondemand.com" target="_blank" rel="noopener">cornerstoneondemand.com</a>
         </li>
         <li>
-          <strong>Harvard Business Review.</strong> <em>"Critical Thinking in the Age of Generative AI" (2025).</em> Sobre el pensamiento crítico como habilidad indispensable para detectar alucinaciones y errores de la IA.<br>
-          <a href="https://hbr.org" target="_blank" rel="noopener">hbr.org</a>
+          <strong>BBC Worklife · "The skills AI can't replace" (2025).</strong> Declaraciones de Maria Flynn (Jobs for the Future) sobre habilidades humanas insustituibles. <a href="https://www.bbc.com/worklife" target="_blank" rel="noopener">bbc.com/worklife</a>
         </li>
         <li>
-          <strong>Cornerstone OnDemand.</strong> <em>Skills Report 2025.</em> Crecimiento del +95% en la demanda de inteligencia emocional y habilidades socioemocionales en ofertas laborales globales.<br>
-          <a href="https://www.cornerstoneondemand.com" target="_blank" rel="noopener">cornerstoneondemand.com</a>
+          <strong>MTPE Perú · Prospectiva del mercado laboral 2026.</strong> Modelo híbrido: dominio técnico + habilidades socioemocionales. <a href="https://www.gob.pe/mtpe" target="_blank" rel="noopener">gob.pe/mtpe</a>
         </li>
-        <li>
-          <strong>Ministerio de Trabajo y Promoción del Empleo (MTPE), Perú.</strong> <em>Prospectiva del mercado laboral 2026.</em> Modelo híbrido: dominio técnico + habilidades socioemocionales avanzadas. Competencias clave para 2026.<br>
-          <a href="https://www.gob.pe/mtpe" target="_blank" rel="noopener">gob.pe/mtpe</a>
-        </li>
-      </ol>
-
-      <div class="note tip" style="margin-top:1rem;">
-        <i class="bi bi-info-circle"></i>
-        <span>Todos los porcentajes citados provienen de las fuentes anteriores. Las cifras pueden variar según la metodología de cada encuesta, pero coinciden en la misma tendencia: las soft skills son el diferencial del mercado laboral en la era de la IA.</span>
-      </div>
+      </ul>
     </div>
   </section>
 
-  <!-- 13 · CIERRE -->
+  <!-- 14 · CIERRE -->
   <section class="slide">
     <div class="cover">
       <div class="big-ico" style="animation-delay:0.2s;"><i class="bi bi-flower2"></i></div>
-      <h1 style="font-size:clamp(2rem,3.6vw,3.2rem);">La IA nos da poder.<br>Las humanidades, dirección.</h1>
-      <p>El mercado laboral ya lo entendió: las habilidades que la máquina no puede copiar son las que más valen. Cuídalas.</p>
+      <h1 style="font-size:clamp(2rem,3.6vw,3.2rem);">La IA nos da poder.<br><em>Las humanidades, dirección.</em></h1>
+      <p>En un mundo que automatiza todo lo posible, lo humano se vuelve el diferencial más valioso. Cuídalo.</p>
 
       <div class="authors-title">Autores</div>
       <div class="authors">
@@ -1050,7 +1136,7 @@
 
 <div class="controls">
   <button id="prev" aria-label="Anterior"><i class="bi bi-chevron-left"></i></button>
-  <span class="counter" id="counter">1 / 13</span>
+  <span class="counter" id="counter">1 / 14</span>
   <button id="next" aria-label="Siguiente"><i class="bi bi-chevron-right"></i></button>
 </div>
 
