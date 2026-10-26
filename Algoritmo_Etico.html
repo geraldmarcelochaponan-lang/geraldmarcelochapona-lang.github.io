@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ética Profesional · El Algoritmo Refleja Quién Eres</title>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --bg-dark: #0f172a;
+    --bg-slide: #f8fafc;
+    --text-main: #1e293b;
+    --text-muted: #475569;
+    
+    --c-blue: #3b82f6;
+    --c-blue-bg: #eff6ff;
+    --c-green: #22c55e;
+    --c-green-bg: #f0fdf4;
+    --c-purple: #a855f7;
+    --c-purple-bg: #faf5ff;
+    --c-orange: #f97316;
+    --c-orange-bg: #fff7ed;
+    --c-red: #ef4444;
+    --c-red-bg: #fef2f2;
+    
+    --code-bg: #1e293b;
+    --code-text: #e2e8f0;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html, body {
+    height: 100%;
+    width: 100%;
+    font-family: 'Inter', system-ui, sans-serif;
+    background: var(--bg-dark);
+    color: var(--text-main);
+    overflow: hidden;
+  }
+
+  .deck {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .slide {
+    position: absolute;
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+    background: var(--bg-slide);
+    padding: clamp(1.5rem, 4vw, 4rem) clamp(1.5rem, 6vw, 7rem);
+    opacity: 0;
+    transform: translateY(30px) scale(0.98);
+    pointer-events: none;
+    transition: opacity 0.5s ease, transform 0.5s cubic-bezier(.2,.8,.2,1);
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .slide.active {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    pointer-events: auto;
+    z-index: 2;
+  }
+
+  .slide::-webkit-scrollbar { width: 10px; }
+  .slide::-webkit-scrollbar-thumb { background: rgba(148,163,184,0.4); border-radius: 10px; }
+
+  .content {
+    width: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ===== TÍTULOS ===== */
+  .slide-title {
+    font-size: clamp(1.8rem, 3.2vw, 3rem);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+    margin-bottom: clamp(1.2rem, 2.5vh, 2rem);
+    padding-bottom: clamp(0.6rem, 1.2vh, 1rem);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    animation: fadeDown 0.6s ease both;
+  }
+
+  .slide-title i { font-size: 1em; flex-shrink: 0; }
+
+  .title-blue { color: var(--c-blue); border-bottom: 4px solid var(--c-blue); }
+  .title-blue i { color: var(--c-blue); }
+  .title-green { color: var(--c-green); border-bottom: 4px solid var(--c-green); }
+  .title-green i { color: var(--c-green); }
+  .title-purple { color: var(--c-purple); border-bottom: 4px solid var(--c-purple); }
+  .title-purple i { color: var(--c-purple); }
+  .title-orange { color: var(--c-orange); border-bottom: 4px solid var(--c-orange); }
+  .title-orange i { color: var(--c-orange); }
+  .title-red { color: var(--c-red); border-bottom: 4px solid var(--c-red); }
+  .title-red i { color: var(--c-red); }
+
+  @keyframes fadeDown {
+    from { opacity: 0; transform: translateY(-15px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ===== TEXTO ===== */
+  p {
+    font-size: clamp(1rem, 1.3vw, 1.25rem);
+    line-height: 1.65;
+    color: var(--text-muted);
+    margin-bottom: 0.9rem;
+  }
+
+  strong { color: var(--text-main); font-weight: 700; }
+  code {
+    background: #e2e8f0;
+    padding: 0.15rem 0.4rem;
+    border-radius: 0.3rem;
+    font-family: 'Fira Code', monospace;
+    font-size: 0.9em;
+    color: #0f172a;
+    font-weight: 600;
+  }
+
+  /* ===== TARJETAS ===== */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.2rem;
+    margin-top: 1.2rem;
+  }
+
+  .card {
+    background: #ffffff;
+    border-radius: 1.2rem;
+    padding: 1.5rem;
+    box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05), 0 0 0 1px rgba(0,0,0,0.03);
+    transition: transform 0.3s ease;
+    animation: fadeUp 0.7s ease both;
+  }
+
+  .card:hover { transform: translateY(-5px); }
+  .card:nth-child(2) { animation-delay: 0.1s; }
+  .card:nth-child(3) { animation-delay: 0.2s; }
+
+  .card-icon { font-size: 2.2rem; margin-bottom: 0.8rem; display: block; }
+  .card h3 { font-size: 1.15rem; margin-bottom: 0.5rem; color: var(--text-main); }
+  .card p { font-size: 0.95rem; margin-bottom: 0; }
+
+  .card-blue { border-top: 4px solid var(--c-blue); }
+  .card-blue .card-icon { color: var(--c-blue); }
+  .card-green { border-top: 4px solid var(--c-green); }
+  .card-green .card-icon { color: var(--c-green); }
+  .card-purple { border-top: 4px solid var(--c-purple); }
+  .card-purple .card-icon { color: var(--c-purple); }
+  .card-orange { border-top: 4px solid var(--c-orange); }
+  .card-orange .card-icon { color: var(--c-orange); }
+  .card-red { border-top: 4px solid var(--c-red); }
+  .card-red .card-icon { color: var(--c-red); }
+
+  /* ===== LISTAS ===== */
+  .list { list-style: none; margin: 0.8rem 0; }
+  .list li {
+    display: flex; gap: 1rem; align-items: flex-start;
+    padding: 0.8rem 0; border-bottom: 1px dashed #e2e8f0;
+    font-size: 1.05rem; line-height: 1.6; color: var(--text-muted);
+  }
+  .list li:last-child { border-bottom: none; }
+  .list li i { font-size: 1.3rem; flex-shrink: 0; margin-top: 0.1rem; }
+
+  /* ===== CÓDIGO ===== */
+  .code-block {
+    background: var(--code-bg);
+    border-radius: 0.8rem;
+    padding: 1.2rem 1.5rem;
+    font-family: 'Fira Code', monospace;
+    font-size: 0.95rem;
+    color: var(--code-text);
+    margin: 0.8rem 0;
+    overflow-x: auto;
+    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+    line-height: 1.6;
+  }
+  
+  .code-block .comment { color: #64748b; font-style: italic; }
+  .code-block .cmd { color: #38bdf8; font-weight: bold; }
+  .code-block .arg { color: #fbbf24; }
+  .code-block .str { color: #a78bfa; }
+  .code-block .out { color: #94a3b8; }
+
+  /* ===== FLUJO ===== */
+  .flow-container { display: flex; flex-direction: column; gap: 1rem; margin-top: 1rem; }
+  .flow-step {
+    display: flex; align-items: center; gap: 1.2rem;
+    background: white; padding: 1.2rem;
+    border-radius: 1rem; border-left: 6px solid var(--c-orange);
+    box-shadow: 0 4px 15px -3px rgba(0,0,0,0.05);
+  }
+  .flow-num {
+    width: 2.8rem; height: 2.8rem; background: var(--c-orange); color: white;
+    border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    font-size: 1.3rem; font-weight: bold; flex-shrink: 0;
+  }
+  .flow-content { flex: 1; }
+  .flow-content h4 { font-size: 1.1rem; color: var(--text-main); margin-bottom: 0.2rem; }
+  .flow-content p { margin: 0; font-size: 0.95rem; }
+  .flow-icon { font-size: 2.2rem; color: var(--c-orange); }
+
+  /* ===== BADGES ===== */
+  .badge {
+    display: inline-flex; align-items: center; gap: 0.4rem;
+    padding: 0.35rem 0.9rem; border-radius: 2rem;
+    font-weight: 600; font-size: 0.9rem;
+  }
+  .badge-verified { background: #dcfce7; color: #166534; border: 1px solid #bbf7d0; }
+  .badge-unverified { background: #fef3c7; color: #92400e; border: 1px solid #fde68a; }
+
+  /* ===== AUTORES ===== */
+  .authors { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.8rem; margin-top: 1.5rem; }
+  .author-badge {
+    background: white; border: 2px solid #e2e8f0; padding: 0.5rem 1rem;
+    border-radius: 2rem; font-weight: 600; font-size: 0.9rem;
+    color: var(--text-muted); display: flex; align-items: center; gap: 0.5rem;
+  }
+
+  /* ===== CONTROLES ===== */
+  .controls {
+    position: fixed; bottom: 1.2rem; left: 50%; transform: translateX(-50%);
+    display: flex; align-items: center; gap: 1rem;
+    background: rgba(15, 23, 42, 0.9); backdrop-filter: blur(10px);
+    padding: 0.5rem 1rem; border-radius: 3rem;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2); z-index: 50;
+  }
+  .controls button {
+    background: rgba(255,255,255,0.1); color: white; border: none;
+    width: 2.6rem; height: 2.6rem; border-radius: 50%;
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+    font-size: 1.1rem; transition: all 0.2s ease;
+  }
+  .controls button:hover:not(:disabled) { background: var(--c-blue); transform: scale(1.1); }
+  .controls button:disabled { opacity: 0.3; cursor: not-allowed; }
+  .counter { color: #94a3b8; font-family: 'Fira Code', monospace; font-weight: 600; font-size: 0.9rem; min-width: 60px; text-align: center; }
+
+  .progress { position: fixed; top: 0; left: 0; width: 100%; height: 4px; background: rgba(255,255,255,0.1); z-index: 100; }
+  .progress .bar { height: 100%; width: 0%; background: linear-gradient(90deg, var(--c-blue), var(--c-green), var(--c-purple), var(--c-orange)); transition: width 0.4s ease; }
+
+  /* ===== PORTADA ===== */
+  .cover {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    text-align: center; height: 100%; background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    color: white; padding: 2rem;
+  }
+  .cover .big-ico { font-size: 5rem; color: #e2e8f0; margin-bottom: 1rem; animation: float 3s ease-in-out infinite; }
+  @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
+  .cover h1 { font-size: clamp(2.2rem, 4.5vw, 3.8rem); font-weight: 900; margin-bottom: 1rem; background: linear-gradient(to right, #60a5fa, #a78bfa, #f472b6); -webkit-background-clip: text; background-clip: text; color: transparent; line-height: 1.2; }
+  .cover p { color: #94a3b8; font-size: clamp(1rem, 1.5vw, 1.3rem); max-width: 800px; }
+  .subtitle-pills { display: flex; gap: 1rem; margin-top: 2rem; flex-wrap: wrap; justify-content: center; }
+  .subtitle-pills span { background: rgba(255,255,255,0.1); padding: 0.4rem 1rem; border-radius: 2rem; font-size: 0.9rem; color: #e2e8f0; border: 1px solid rgba(255,255,255,0.2); }
+
+  /* ===== DIAGRAMA ===== */
+  .diagram-row {
+    display: flex; align-items: center; justify-content: center; gap: 1.5rem; flex-wrap: wrap;
+    margin: 1.5rem 0; background: white; padding: 1.5rem; border-radius: 1.2rem;
+    box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05);
+  }
+  .diagram-item { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 0.4rem; }
+  .diagram-item i { font-size: 2.5rem; color: var(--text-main); }
+  .diagram-item span { font-weight: 600; font-size: 0.9rem; }
+  .diagram-arrow { font-size: 1.8rem; color: #cbd5e1; }
+
+  /* ===== IMÁGENES ===== */
+  .img-frame {
+    width: 100%;
+    border-radius: 1.2rem;
+    overflow: hidden;
+    box-shadow: 0 15px 30px -10px rgba(0,0,0,0.25), 0 0 0 1px rgba(0,0,0,0.05);
+    background: #e2e8f0;
+    margin: 1rem 0;
+    transition: transform 0.3s ease;
+  }
+  .img-frame:hover { transform: scale(1.01); }
+  .img-frame img {
+    display: block;
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+  }
+  .img-frame.small img { height: 150px; }
+  .img-caption {
+    text-align: center;
+    font-size: 0.85rem;
+    color: #94a3b8;
+    font-style: italic;
+    margin-top: -0.4rem;
+    margin-bottom: 0.8rem;
+  }
+
+  /* ===== EJEMPLOS ÉTICA ===== */
+  .ethics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+
+  .ethics-card {
+    background: white;
+    border-radius: 1rem;
+    padding: 1.2rem;
+    border-left: 5px solid var(--c-red);
+    box-shadow: 0 6px 20px -5px rgba(0,0,0,0.08);
+    transition: all 0.25s ease;
+    animation: fadeUp 0.6s ease both;
+  }
+
+  .ethics-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 25px -8px rgba(239,68,68,0.25);
+  }
+
+  .ethics-card .ec-header {
+    display: flex; align-items: center; gap: 0.7rem;
+    margin-bottom: 0.6rem;
+  }
+
+  .ethics-card .ec-icon {
+    font-size: 1.8rem;
+    color: var(--c-red);
+    line-height: 1;
+  }
+
+  .ethics-card h4 {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--text-main);
+    letter-spacing: 0.1px;
+  }
+
+  .ethics-card p {
+    font-size: 0.92rem;
+    line-height: 1.5;
+    color: var(--text-muted);
+    margin: 0;
+  }
+
+  .ethics-card .ec-tag {
+    display: inline-block;
+    margin-top: 0.6rem;
+    font-size: 0.75rem;
+    color: var(--c-red);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 700;
+    background: var(--c-red-bg);
+    padding: 0.15rem 0.6rem;
+    border-radius: 1rem;
+  }
+
+  /* ===== PRINCIPIOS ===== */
+  .principles-row {
+    display: flex; flex-wrap: wrap; gap: 0.8rem;
+    margin: 1rem 0;
+  }
+
+  .principle-badge {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    background: white;
+    border: 2px solid #e2e8f0;
+    padding: 0.6rem 1.2rem;
+    border-radius: 2rem;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-main);
+    transition: all 0.2s;
+    box-shadow: 0 4px 10px -3px rgba(0,0,0,0.05);
+  }
+
+  .principle-badge:hover {
+    border-color: var(--c-blue);
+    color: var(--c-blue);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px -4px rgba(59,130,246,0.2);
+  }
+
+  .principle-badge i { color: var(--c-blue); font-size: 1.2rem; }
+
+  @media (max-width: 768px) {
+    .diagram-row { flex-direction: column; gap: 0.8rem; }
+    .diagram-arrow { transform: rotate(90deg); }
+    .flow-step { flex-direction: column; text-align: center; }
+    .img-frame img { height: 160px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="progress"><div class="bar" id="bar"></div></div>
+
+<main class="deck" id="deck">
+
+  <!-- 1 · PORTADA -->
+  <section class="slide active cover">
+    <div class="big-ico"><i class="bi bi-cpu"></i></div>
+    <h1>El Algoritmo<br>Refleja Quién Eres</h1>
+    <p>Ética profesional en el desarrollo de algoritmos. Cada línea de código, cada decisión de diseño, cada sesgo ignorado: todo habla de la ética de quien lo crea.</p>
+    
+    <div class="authors">
+      <span class="author-badge" style="background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.2); color: #e2e8f0;"><i class="bi bi-person-fill"></i> Bancayán Valera Kevin Roger</span>
+      <span class="author-badge" style="background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.2); color: #e2e8f0;"><i class="bi bi-person-fill"></i> Marcelo Chapoñan Gerald Fernando</span>
+      <span class="author-badge" style="background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.2); color: #e2e8f0;"><i class="bi bi-person-fill"></i> Valdera Soto Joel Alberto</span>
+    </div>
+
+    <div class="subtitle-pills">
+      <span><i class="bi bi-cpu"></i> Algoritmos</span>
+      <span><i class="bi bi-shield-check"></i> Ética</span>
+      <span><i class="bi bi-people"></i> Responsabilidad</span>
+    </div>
+  </section>
+
+  <!-- 2 · ¿QUÉ ES UN ALGORITMO? (AZUL) -->
+  <section class="slide" style="background: var(--c-blue-bg);">
+    <div class="content">
+      <h2 class="slide-title title-blue"><i class="bi bi-1-circle-fill"></i> ¿Qué es un Algoritmo?</h2>
+      
+      <p style="max-width: 1000px; margin-bottom: 1rem;">
+        Un <strong>algoritmo</strong> es una secuencia finita y ordenada de instrucciones bien definidas que, a partir de una entrada, produce una salida resolviendo un problema o realizando una tarea.
+      </p>
+
+      <div class="grid">
+        <div class="card card-blue">
+          <i class="bi bi-journal-code card-icon"></i>
+          <h3>Definición formal</h3>
+          <p>Conjunto ordenado y finito de operaciones que permite hallar la solución de un problema. Debe ser preciso, definido y finito.</p>
+        </div>
+        <div class="card card-blue">
+          <i class="bi bi-gear-wide-connected card-icon"></i>
+          <h3>En la práctica</h3>
+          <p>Es la "receta" que sigue una computadora para procesar datos: desde ordenar una lista hasta recomendar contenido en redes sociales.</p>
+        </div>
+        <div class="card card-blue">
+          <i class="bi bi-diagram-3 card-icon"></i>
+          <h3>Más allá del código</h3>
+          <p>También son algoritmos: una receta de cocina, el procedimiento de una oficina, o la forma en que decides qué ver en streaming.</p>
+        </div>
+      </div>
+
+      <div class="diagram-row">
+        <div class="diagram-item">
+          <i class="bi bi-box-arrow-in-right" style="color: var(--c-blue);"></i>
+          <span>Entrada</span>
+          <small>Datos</small>
+        </div>
+        <div class="diagram-arrow"><i class="bi bi-arrow-right"></i></div>
+        <div class="diagram-item">
+          <i class="bi bi-cpu" style="color: var(--c-blue);"></i>
+          <span>Algoritmo</span>
+          <small>Procesamiento</small>
+        </div>
+        <div class="diagram-arrow"><i class="bi bi-arrow-right"></i></div>
+        <div class="diagram-item">
+          <i class="bi bi-box-arrow-right" style="color: var(--text-main);"></i>
+          <span>Salida</span>
+          <small>Resultado</small>
+        </div>
+      </div>
+
+      <div class="img-frame">
+        <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?w=1200&q=80&auto=format&fit=crop" 
+             alt="Circuitos y lógica algorítmica"
+             onerror="this.parentElement.innerHTML='<div style=\'padding:40px;text-align:center;color:#64748b;\'><i class=\'bi bi-image\' style=\'font-size:3rem;\'></i><p>Imagen: lógica y circuitos</p></div>'">
+      </div>
+      <p class="img-caption">Los algoritmos están en el corazón de cada sistema computacional moderno.</p>
+    </div>
+  </section>
+
+  <!-- 3 · EL ALGORITMO COMO ESPEJO (VERDE) -->
+  <section class="slide" style="background: var(--c-green-bg);">
+    <div class="content">
+      <h2 class="slide-title title-green"><i class="bi bi-2-circle-fill"></i> El Algoritmo como Espejo</h2>
+      
+      <p style="max-width: 1000px; margin-bottom: 1rem;">
+        Los algoritmos <strong>no son neutros</strong>. Reflejan los valores, prioridades y sesgos de sus desarrolladores. Lo que decidimos optimizar, ignorar o priorizar deja una huella ética imborrable.
+      </p>
+
+      <div class="grid" style="grid-template-columns: 1fr 1fr;">
+        <div class="card card-green">
+          <i class="bi bi-bar-chart-line card-icon"></i>
+          <h3>Lo que elegimos medir</h3>
+          <p>El éxito, el engagement, la eficiencia... ¿pero a costa de qué? Cada métrica que elegimos optimizar define lo que el sistema valora.</p>
+        </div>
+        <div class="card card-green">
+          <i class="bi bi-eye-slash card-icon"></i>
+          <h3>Lo que decidimos ignorar</h3>
+          <p>Los sesgos de datos, los efectos secundarios, los grupos vulnerables. Lo que no se mide, no se corrige.</p>
+        </div>
+      </div>
+
+      <div class="img-frame small">
+        <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1200&q=80&auto=format&fit=crop" 
+             alt="Datos y métricas"
+             onerror="this.parentElement.innerHTML='<div style=\'padding:25px;text-align:center;color:#64748b;\'><i class=\'bi bi-bar-chart\' style=\'font-size:2.5rem;\'></i><p>Imagen: métricas</p></div>'">
+      </div>
+      <p class="img-caption">Cada decisión de diseño es una declaración de valores.</p>
+    </div>
+  </section>
+
+  <!-- 4 · SESGOS Y RESPONSABILIDAD (PURPLE) -->
+  <section class="slide" style="background: var(--c-purple-bg);">
+    <div class="content">
+      <h2 class="slide-title title-purple"><i class="bi bi-3-circle-fill"></i> Sesgos: La Huella Invisible</h2>
+      
+      <p style="max-width: 1000px; margin-bottom: 1rem;">
+        Los sesgos no siempre son intencionales. Pero la ética profesional exige <strong>auditar, cuestionar y corregir</strong> activamente.
+      </p>
+
+      <ul class="list">
+        <li>
+          <i class="bi bi-database-exclamation" style="color: var(--c-purple);"></i>
+          <div><strong>Sesgo de datos:</strong> Datos históricos que perpetúan desigualdades. Si el pasado fue injusto, el algoritmo lo repetirá.</div>
+        </li>
+        <li>
+          <i class="bi bi-sliders" style="color: var(--c-purple);"></i>
+          <div><strong>Sesgo de diseño:</strong> Métricas que priorizan el beneficio económico sobre el bienestar humano.</div>
+        </li>
+        <li>
+          <i class="bi bi-person-x" style="color: var(--c-purple);"></i>
+          <div><strong>Sesgo de omisión:</strong> No preguntarnos quién queda fuera del sistema. La exclusión silenciosa también es violencia.</div>
+        </li>
+      </ul>
+
+      <div style="margin-top: 1.2rem; background: white; padding: 1.2rem; border-radius: 1rem; border-left: 6px solid var(--c-purple);">
+        <p style="margin: 0; font-size: 1rem;">
+          <i class="bi bi-info-circle-fill" style="color: var(--c-purple);"></i> 
+          <strong>Dato clave:</strong> Un algoritmo entrenado con datos sesgados no "corrige" el sesgo: lo amplifica y lo escala a millones de personas.
+        </p>
+      </div>
+
+      <div class="img-frame small">
+        <img src="https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=1200&q=80&auto=format&fit=crop" 
+             alt="Red neuronal y sesgos"
+             onerror="this.parentElement.innerHTML='<div style=\'padding:25px;text-align:center;color:#64748b;\'><i class=\'bi bi-diagram-2\' style=\'font-size:2.5rem;\'></i><p>Imagen: redes y sesgos</p></div>'">
+      </div>
+    </div>
+  </section>
+
+  <!-- 5 · EJEMPLOS DE FALTA DE ÉTICA (ROJO) -->
+  <section class="slide" style="background: var(--c-red-bg);">
+    <div class="content">
+      <h2 class="slide-title title-red"><i class="bi bi-shield-exclamation"></i> Ejemplos Reales de Falta de Ética</h2>
+      
+      <p style="max-width: 1000px; margin-bottom: 0.5rem;">
+        Casos documentados donde el algoritmo falló —o fue diseñado para fallar— contra las personas:
+      </p>
+
+      <div class="ethics-grid">
+        <div class="ethics-card">
+          <div class="ec-header">
+            <i class="bi bi-people-fill ec-icon"></i>
+            <h4>Sesgo racial en contratación</h4>
+          </div>
+          <p>Un sistema de IA para filtrar currículums penalizaba CVs con palabras como "mujer" o asociadas a minorías, perpetuando la exclusión laboral.</p>
+          <span class="ec-tag">Discriminación algorítmica</span>
+        </div>
+
+        <div class="ethics-card">
+          <div class="ec-header">
+            <i class="bi bi-megaphone ec-icon"></i>
+            <h4>Amplificación de desinformación</h4>
+          </div>
+          <p>Algoritmos de recomendación que priorizan engagement viral sobre veracidad, difundiendo noticias falsas y discursos de odio.</p>
+          <span class="ec-tag">Manipulación y polarización</span>
+        </div>
+
+        <div class="ethics-card">
+          <div class="ec-header">
+            <i class="bi bi-cash-coin ec-icon"></i>
+            <h4>Precios dinámicos abusivos</h4>
+          </div>
+          <p>Algoritmos que ajustan precios según datos personales o urgencia, aprovechándose de la vulnerabilidad del usuario.</p>
+          <span class="ec-tag">Explotación económica</span>
+        </div>
+
+        <div class="ethics-card">
+          <div class="ec-header">
+            <i class="bi bi-incognito ec-icon"></i>
+            <h4>Vigilancia encubierta</h4>
+          </div>
+          <p>Recopilación masiva de datos sin consentimiento claro, usados para perfilado y control social.</p>
+          <span class="ec-tag">Violación de privacidad</span>
+        </div>
+
+        <div class="ethics-card">
+          <div class="ec-header">
+            <i class="bi bi-heart-pulse ec-icon"></i>
+            <h4>Diagnósticos médicos sesgados</h4>
+          </div>
+          <p>Modelos entrenados con datos de un solo grupo demográfico que fallan al diagnosticar a otros grupos.</p>
+          <span class="ec-tag">Riesgo para la salud</span>
+        </div>
+
+        <div class="ethics-card">
+          <div class="ec-header">
+            <i class="bi bi-emoji-frown ec-icon"></i>
+            <h4>Optimización de adicción</h4>
+          </div>
+          <p>Diseño de feeds y notificaciones que explotan la psicología humana para maximizar el tiempo en pantalla.</p>
+          <span class="ec-tag">Manipulación conductual</span>
+        </div>
+      </div>
+
+      <p style="margin-top: 1rem; font-size: 1rem; text-align: center;">
+        <i class="bi bi-lightbulb-fill" style="color: var(--c-orange);"></i> 
+        Detrás de cada caso hay una <strong>decisión ética</strong> que alguien tomó —o evitó tomar.
+      </p>
+    </div>
+  </section>
+
+  <!-- 6 · PRINCIPIOS ÉTICOS (NARANJA) -->
+  <section class="slide" style="background: var(--c-orange-bg);">
+    <div class="content">
+      <h2 class="slide-title title-orange"><i class="bi bi-4-circle-fill"></i> Principios para un Desarrollo Consciente</h2>
+      
+      <p style="max-width: 1000px; margin-bottom: 1rem;">
+        La ética no es un añadido de última hora. Es la <strong>base</strong> sobre la que se construye tecnología que respeta a las personas.
+      </p>
+
+      <div class="principles-row">
+        <span class="principle-badge"><i class="bi bi-search"></i> Transparencia</span>
+        <span class="principle-badge"><i class="bi bi-scales"></i> Justicia</span>
+        <span class="principle-badge"><i class="bi bi-person-check"></i> Responsabilidad</span>
+        <span class="principle-badge"><i class="bi bi-lock"></i> Privacidad</span>
+      </div>
+
+      <ul class="list">
+        <li>
+          <i class="bi bi-check-circle-fill" style="color: var(--c-orange);"></i>
+          <div><strong>Transparencia:</strong> Explicar cómo funciona el algoritmo, qué datos usa y qué decisiones toma.</div>
+        </li>
+        <li>
+          <i class="bi bi-check-circle-fill" style="color: var(--c-orange);"></i>
+          <div><strong>Justicia:</strong> Auditar los resultados para detectar y corregir discriminación algorítmica.</div>
+        </li>
+        <li>
+          <i class="bi bi-check-circle-fill" style="color: var(--c-orange);"></i>
+          <div><strong>Responsabilidad:</strong> Asumir las consecuencias de nuestras decisiones técnicas, incluso las no previstas.</div>
+        </li>
+        <li>
+          <i class="bi bi-check-circle-fill" style="color: var(--c-orange);"></i>
+          <div><strong>Privacidad:</strong> Respetar la autonomía y los datos de las personas. El dato no es solo un recurso: es una extensión de alguien.</div>
+        </li>
+      </ul>
+
+      <div class="img-frame small">
+        <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=1200&q=80&auto=format&fit=crop" 
+             alt="Equipo trabajando con ética"
+             onerror="this.parentElement.innerHTML='<div style=\'padding:25px;text-align:center;color:#64748b;\'><i class=\'bi bi-people\' style=\'font-size:2.5rem;\'></i><p>Imagen: equipo</p></div>'">
+      </div>
+      <p class="img-caption">La ética es una responsabilidad colectiva, no solo individual.</p>
+    </div>
+  </section>
+
+  <!-- 7 · CONCLUSIÓN -->
+  <section class="slide cover">
+    <div class="big-ico"><i class="bi bi-patch-check-fill" style="color: var(--c-green);"></i></div>
+    <h1 style="font-size: clamp(2rem, 4vw, 3rem);">Construye con Integridad</h1>
+    <p style="color: #94a3b8; max-width: 700px;">"El algoritmo que escribes hoy es el reflejo de la persona que serás mañana."</p>
+    
+    <div style="margin-top: 2rem; background: rgba(255,255,255,0.08); padding: 1.5rem 2.5rem; border-radius: 1.5rem; border: 1px solid rgba(255,255,255,0.15); max-width: 700px;">
+      <p style="color: #e2e8f0; font-size: 1.15rem; font-weight: 500; margin: 0;">
+        <i class="bi bi-question-circle-fill" style="color: #60a5fa;"></i> 
+        Pregúntate siempre: <strong style="color: #ffffff;">¿qué dice mi código sobre mí?</strong>
+      </p>
+    </div>
+
+    <div style="margin-top: 2.5rem; color: #64748b; font-size: 1rem;">
+      <p>Usa las flechas ← → para navegar</p>
+    </div>
+  </section>
+
+</main>
+
+<div class="controls">
+  <button id="prev" aria-label="Anterior"><i class="bi bi-chevron-left"></i></button>
+  <span class="counter" id="counter">1 / 7</span>
+  <button id="next" aria-label="Siguiente"><i class="bi bi-chevron-right"></i></button>
+</div>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  const bar = document.getElementById('bar');
+  const counter = document.getElementById('counter');
+  const prevBtn = document.getElementById('prev');
+  const nextBtn = document.getElementById('next');
+  let current = 0;
+
+  function update() {
+    slides.forEach((s, i) => s.classList.toggle('active', i === current));
+    const total = slides.length;
+    bar.style.width = ((current + 1) / total * 100) + '%';
+    counter.textContent = (current + 1) + ' / ' + total;
+    prevBtn.disabled = current === 0;
+    nextBtn.disabled = current === total - 1;
+  }
+
+  function goTo(index) {
+    if (index < 0 || index >= slides.length) return;
+    current = index;
+    update();
+  }
+
+  prevBtn.addEventListener('click', () => goTo(current - 1));
+  nextBtn.addEventListener('click', () => goTo(current + 1));
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight' || e.key === 'PageDown' || e.key === ' ') {
+      e.preventDefault(); goTo(current + 1);
+    } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+      e.preventDefault(); goTo(current - 1);
+    }
+  });
+
+  let touchStartX = 0;
+  document.addEventListener('touchstart', (e) => {
+    touchStartX = e.changedTouches[0].screenX;
+  }, { passive: true });
+  document.addEventListener('touchend', (e) => {
+    const dx = e.changedTouches[0].screenX - touchStartX;
+    if (Math.abs(dx) > 60) {
+      if (dx < 0) goTo(current + 1);
+      else goTo(current - 1);
+    }
+  }, { passive: true });
+
+  update();
+</script>
+
+</body>
+</html>
