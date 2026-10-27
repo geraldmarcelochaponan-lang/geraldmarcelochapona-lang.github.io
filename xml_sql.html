@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mind Map · XML Data in SQL Server</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<style>
+  :root{
+    --bg:#f4f8ff;
+    --ink:#0b1f4d;
+    --blue:#1236e8;
+    --blueM:#0a8fb8;
+    --terra:#e0661b;
+    --green:#0b8a4a;
+    --purple:#6b21a8;
+    --brown:#b45309;
+    --sun:#FFC234;
+  }
+  *{ box-sizing:border-box; margin:0; padding:0; }
+  body{
+    background:var(--bg);
+    font-family:"Segoe UI", Arial, sans-serif;
+    color:var(--ink);
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+    overflow:hidden;
+    position:relative;
+  }
+
+  /* Partículas de fondo */
+  .particles{
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    z-index:0;
+    overflow:hidden;
+  }
+  .particle{
+    position:absolute;
+    border-radius:50%;
+    opacity:.15;
+    animation:float 18s infinite ease-in-out;
+  }
+  .particle:nth-child(1){ width:120px; height:120px; background:var(--blue); left:5%; top:10%; animation-duration:22s; }
+  .particle:nth-child(2){ width:80px; height:80px; background:var(--blueM); left:85%; top:5%; animation-duration:18s; }
+  .particle:nth-child(3){ width:160px; height:160px; background:var(--terra); left:10%; top:75%; animation-duration:25s; }
+  .particle:nth-child(4){ width:100px; height:100px; background:var(--green); left:80%; top:80%; animation-duration:20s; }
+  .particle:nth-child(5){ width:60px; height:60px; background:var(--sun); left:50%; top:90%; animation-duration:16s; }
+  .particle:nth-child(6){ width:140px; height:140px; background:var(--purple); left:90%; top:40%; animation-duration:24s; }
+
+  @keyframes float{
+    0%,100%{ transform:translate(0,0) scale(1); }
+    25%{ transform:translate(30px,-40px) scale(1.1); }
+    50%{ transform:translate(-20px,30px) scale(.9); }
+    75%{ transform:translate(40px,20px) scale(1.05); }
+  }
+
+  /* Contenedor del mapa - TAMAÑO FIJO PARA MANTENER EL RADIAL */
+  #map{
+    position:relative;
+    width:1100px;
+    height:700px;
+    margin:0 auto;
+    z-index:1;
+  }
+
+  /* Conectores SVG */
+  svg.connectors{
+    position:absolute;
+    left:0; top:0;
+    width:100%; height:100%;
+    pointer-events:none;
+    z-index:1;
+  }
+  .connector{
+    fill:none;
+    stroke-width:4;
+    stroke-linecap:round;
+    stroke-dasharray:900;
+    stroke-dashoffset:900;
+    animation:draw 1.5s ease forwards;
+  }
+  .connector.c1{ stroke:var(--blue); }
+  .connector.c2{ stroke:var(--blueM); }
+  .connector.c3{ stroke:var(--terra); }
+  .connector.c4{ stroke:var(--green); }
+  .connector.c5{ stroke:var(--purple); }
+  .connector.c6{ stroke:var(--brown); }
+  .connector:nth-child(1){ animation-delay:.2s; }
+  .connector:nth-child(2){ animation-delay:.3s; }
+  .connector:nth-child(3){ animation-delay:.4s; }
+  .connector:nth-child(4){ animation-delay:.5s; }
+  .connector:nth-child(5){ animation-delay:.6s; }
+  .connector:nth-child(6){ animation-delay:.7s; }
+  @keyframes draw{ to{ stroke-dashoffset:0; } }
+
+  /* Nodo central */
+  .center{
+    position:absolute;
+    left:50%; top:50%;
+    transform:translate(-50%,-50%);
+    width:280px;
+    height:140px;
+    border-radius:70px;
+    background:linear-gradient(135deg, #1236e8 0%, #0b1f4d 100%);
+    color:#fff;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    padding:10px 20px;
+    box-shadow:0 10px 40px rgba(18,54,232,.45), 0 0 0 6px rgba(255,255,255,.4);
+    border:4px solid #00e5ff;
+    z-index:4;
+    animation:centerPop 1s cubic-bezier(.34,1.56,.64,1) both;
+    cursor:default;
+  }
+  .center::before{
+    content:"";
+    position:absolute;
+    inset:-12px;
+    border-radius:85px;
+    border:3px dashed rgba(0,229,255,.5);
+    animation:spinSlow 20s linear infinite;
+  }
+  @keyframes spinSlow{ to{ transform:rotate(360deg); } }
+  @keyframes centerPop{
+    from{ opacity:0; transform:translate(-50%,-50%) scale(.5); }
+    to{ opacity:1; transform:translate(-50%,-50%) scale(1); }
+  }
+  .center .ttl{
+    font-size:24px;
+    font-weight:800;
+    line-height:1.1;
+    text-shadow:0 2px 8px rgba(0,0,0,.3);
+  }
+  .center .sub{
+    font-size:10px;
+    margin-top:8px;
+    opacity:.85;
+    letter-spacing:.15em;
+    text-transform:uppercase;
+  }
+
+  /* Ramas */
+  .branch{
+    position:absolute;
+    width:260px;
+    height:75px;
+    border-radius:18px;
+    color:#fff;
+    display:flex;
+    align-items:center;
+    gap:12px;
+    padding:0 16px;
+    cursor:pointer;
+    border:none;
+    text-align:left;
+    font-family:inherit;
+    box-shadow:0 8px 20px rgba(0,0,0,.2);
+    transition:transform .25s cubic-bezier(.34,1.56,.64,1), box-shadow .25s;
+    z-index:3;
+    animation:branchFloat 4s ease-in-out infinite;
+  }
+  .branch:hover, .branch:focus-visible{
+    transform:translateY(-6px) scale(1.06);
+    box-shadow:0 16px 32px rgba(0,0,0,.3);
+    outline:none;
+  }
+  .branch i{
+    font-size:24px;
+    flex:none;
+  }
+  .branch .txt{
+    display:flex;
+    flex-direction:column;
+    line-height:1.15;
+  }
+  .branch .txt b{
+    font-size:14px;
+    font-weight:800;
+  }
+  .branch .txt small{
+    font-size:11px;
+    opacity:.9;
+    margin-top:3px;
+  }
+
+  /* POSICIONES RADIALES (Izquierda y Derecha) */
+  .b1{ left:40px;   top:100px; background:linear-gradient(135deg,#1236e8,#0a2bb8); animation-delay:0s; }
+  .b2{ left:40px;   top:310px; background:linear-gradient(135deg,#0a8fb8,#086d8c); animation-delay:1s; }
+  .b3{ left:40px;   top:520px; background:linear-gradient(135deg,#e0661b,#b84f12); animation-delay:2s; }
+  .b4{ right:40px;  top:100px; background:linear-gradient(135deg,#0b8a4a,#086a38); animation-delay:3s; }
+  .b5{ right:40px;  top:310px; background:linear-gradient(135deg,#6b21a8,#4c1580); animation-delay:4s; }
+  .b6{ right:40px;  top:520px; background:linear-gradient(135deg,#b45309,#8a3d07); animation-delay:5s; }
+
+  @keyframes branchFloat{
+    0%,100%{ transform:translateY(0); }
+    50%{ transform:translateY(-6px); }
+  }
+  @keyframes popIn{
+    from{ opacity:0; transform:scale(.7); }
+    to{ opacity:1; transform:scale(1); }
+  }
+
+  /* Animación de entrada */
+  .b1{ animation:popIn .7s cubic-bezier(.34,1.56,.64,1) both, branchFloat 4s ease-in-out infinite .7s; }
+  .b2{ animation:popIn .7s cubic-bezier(.34,1.56,.64,1) .15s both, branchFloat 4s ease-in-out infinite 1.5s; }
+  .b3{ animation:popIn .7s cubic-bezier(.34,1.56,.64,1) .3s both, branchFloat 4s ease-in-out infinite 2s; }
+  .b4{ animation:popIn .7s cubic-bezier(.34,1.56,.64,1) .45s both, branchFloat 4s ease-in-out infinite 2.5s; }
+  .b5{ animation:popIn .7s cubic-bezier(.34,1.56,.64,1) .6s both, branchFloat 4s ease-in-out infinite 3s; }
+  .b6{ animation:popIn .7s cubic-bezier(.34,1.56,.64,1) .75s both, branchFloat 4s ease-in-out infinite 3.5s; }
+
+  .branch::after{
+    content:"";
+    position:absolute;
+    right:-6px; top:-6px;
+    width:18px; height:18px;
+    border-radius:50%;
+    background:var(--sun);
+    border:3px solid #fff;
+    box-shadow:0 0 0 0 rgba(255,194,52,.7);
+    animation:pulse 2s infinite;
+  }
+  @keyframes pulse{
+    0%{ box-shadow:0 0 0 0 rgba(255,194,52,.7); }
+    70%{ box-shadow:0 0 0 12px rgba(255,194,52,0); }
+    100%{ box-shadow:0 0 0 0 rgba(255,194,52,0); }
+  }
+
+  /* Modal */
+  .overlay{
+    position:fixed; inset:0;
+    background:rgba(11,31,77,.7);
+    backdrop-filter:blur(4px);
+    display:none;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+    z-index:100;
+  }
+  .overlay.open{ display:flex; animation:fadeIn .25s ease; }
+  @keyframes fadeIn{ from{ opacity:0; } to{ opacity:1; } }
+
+  .modal{
+    background:#fff;
+    border-radius:24px;
+    max-width:680px;
+    width:100%;
+    max-height:88vh;
+    overflow-y:auto;
+    box-shadow:0 30px 80px rgba(0,0,0,.5);
+    border-top:10px solid var(--accent, var(--blue));
+    animation:slideUp .4s cubic-bezier(.34,1.56,.64,1);
+    position:relative;
+  }
+  @keyframes slideUp{
+    from{ transform:translateY(60px) scale(.95); opacity:0; }
+    to{ transform:translateY(0) scale(1); opacity:1; }
+  }
+
+  .modal-head{
+    display:flex;
+    align-items:center;
+    gap:18px;
+    padding:26px 30px 18px;
+    border-bottom:2px solid #eef1f8;
+    position:sticky; top:0;
+    background:#fff;
+    border-radius:24px 24px 0 0;
+    z-index:3;
+  }
+  .modal-head .m-icon{
+    width:60px; height:60px;
+    border-radius:16px;
+    background:var(--accent, var(--blue));
+    color:#fff;
+    display:flex; align-items:center; justify-content:center;
+    font-size:30px;
+    flex:none;
+    box-shadow:0 8px 20px rgba(0,0,0,.25);
+  }
+  .modal-head h2{
+    font-size:22px;
+    line-height:1.15;
+    color:var(--ink);
+  }
+  .modal-head .eyebrow{
+    font-size:11px;
+    font-weight:800;
+    letter-spacing:.25em;
+    color:var(--accent, var(--blue));
+    text-transform:uppercase;
+    margin-bottom:4px;
+  }
+
+  .close{
+    margin-left:auto;
+    border:none;
+    background:#0b1f4d;
+    color:#fff;
+    border-radius:12px;
+    padding:10px 16px;
+    font-size:14px;
+    font-weight:700;
+    cursor:pointer;
+    transition:background .15s, transform .2s;
+    flex:none;
+  }
+  .close:hover{ background:var(--accent, var(--blue)); transform:scale(1.08); }
+
+  .modal-body{
+    padding:20px 30px 30px;
+    font-size:16px;
+    line-height:1.7;
+    color:#1b2540;
+  }
+  .modal-body p{ margin:12px 0; }
+  .modal-body b{ color:var(--accent, var(--blue)); }
+  .modal-body ul{ margin:10px 0 10px 20px; }
+  .modal-body li{ margin:6px 0; }
+
+  .note{
+    background:#fff7d6;
+    border-left:6px solid #e3a72f;
+    border-radius:4px 14px 14px 4px;
+    padding:14px 18px;
+    margin:20px 0 0;
+    font-size:14px;
+  }
+
+  /* RESPONSIVE: En móviles cambia a lista vertical */
+  @media (max-width:1150px){
+    body{ overflow:auto; }
+    #map{
+      width:100%;
+      height:auto;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      gap:15px;
+      padding:20px 0;
+    }
+    svg.connectors{ display:none; }
+    .center{ position:relative; left:auto; top:auto; transform:none; margin-bottom:20px; width:90%; max-width:320px; }
+    .center::before{ display:none; }
+    .branch{ position:relative; left:auto !important; right:auto !important; top:auto !important; width:90%; max-width:400px; }
+  }
+
+  /* Visual illustrations for XML / SQL Server topics */
+  .hero-visual{
+    position:absolute; left:50%; top:50%; transform:translate(-50%,-50%);
+    width:430px; height:280px; opacity:.10; z-index:0; pointer-events:none;
+  }
+  .center, .branch, svg.connectors { z-index:4; }
+  .topic-visual{
+    display:flex; justify-content:center; align-items:center;
+    margin:0 auto 18px; padding:12px;
+    background:linear-gradient(135deg,#f2f7ff,#ffffff);
+    border:1px solid #e1e9f8; border-radius:18px;
+  }
+  .topic-visual svg{ width:100%; max-width:420px; height:auto; display:block; }
+  .topic-visual figcaption{ font-size:12px; color:#62708d; text-align:center; }
+  @media (max-width:600px){
+    .topic-visual{padding:8px;}
+    .topic-visual svg{max-width:100%;}
+  }
+
+</style>
+</head>
+<body>
+
+<div class="particles">
+  <div class="particle"></div><div class="particle"></div><div class="particle"></div>
+  <div class="particle"></div><div class="particle"></div><div class="particle"></div>
+</div>
+
+<div id="map">
+
+  <svg class="hero-visual" viewBox="0 0 440 280" aria-hidden="true">
+    <g fill="none" stroke="#1236e8" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="90" y="45" width="260" height="190" rx="22" fill="#dbeafe"/>
+      <path d="M145 90h150M145 125h110M145 160h150M145 195h90"/>
+      <circle cx="120" cy="90" r="7" fill="#0a8fb8" stroke="none"/>
+      <circle cx="120" cy="125" r="7" fill="#e0661b" stroke="none"/>
+      <circle cx="120" cy="160" r="7" fill="#0b8a4a" stroke="none"/>
+      <path d="M55 140h30M355 140h30M220 15v20M220 245v20"/>
+    </g>
+  </svg>
+
+  <svg class="connectors" viewBox="0 0 1100 700" preserveAspectRatio="none">
+    <!-- Centro exacto: 550, 350 -->
+    <defs>
+      <path id="path1" d="M 420 320 C 320 280, 260 220, 180 137" />
+      <path id="path2" d="M 400 350 C 300 350, 260 350, 180 347" />
+      <path id="path3" d="M 420 380 C 320 420, 260 480, 180 557" />
+      
+      <path id="path4" d="M 680 320 C 780 280, 840 220, 920 137" />
+      <path id="path5" d="M 700 350 C 800 350, 840 350, 920 347" />
+      <path id="path6" d="M 680 380 C 780 420, 840 480, 920 557" />
+    </defs>
+    <use href="#path1" class="connector c1" />
+    <use href="#path2" class="connector c2" />
+    <use href="#path3" class="connector c3" />
+    <use href="#path4" class="connector c4" />
+    <use href="#path5" class="connector c5" />
+    <use href="#path6" class="connector c6" />
+  </svg>
+
+  <div class="center">
+    <div class="ttl">XML Data in<br>SQL Server</div>
+    <div class="sub">SENTAI · Information Technology</div>
+  </div>
+
+  <button class="branch b1" data-target="p1">
+    <i class="bi bi-flag-fill"></i>
+    <span class="txt">
+      <b>1. Starting Point</b>
+      <small>XML · SQL Server native</small>
+    </span>
+  </button>
+  <button class="branch b2" data-target="p2">
+    <i class="bi bi-arrow-left-right"></i>
+    <span class="txt">
+      <b>2. SQL → XML</b>
+      <small>AUTO · PATH</small>
+    </span>
+  </button>
+  <button class="branch b3" data-target="p3">
+    <i class="bi bi-sliders"></i>
+    <span class="txt">
+      <b>3. PATH Customization</b>
+      <small>@ · / · ROOT</small>
+    </span>
+  </button>
+  <button class="branch b4" data-target="p4">
+    <i class="bi bi-database-add"></i>
+    <span class="txt">
+      <b>4. XML → SQL Tables</b>
+      <small>OPENXML · Mode 1 / 2</small>
+    </span>
+  </button>
+  <button class="branch b5" data-target="p5">
+    <i class="bi bi-diagram-3"></i>
+    <span class="txt">
+      <b>5. Relational vs XML</b>
+      <small>Schema · Structure</small>
+    </span>
+  </button>
+  <button class="branch b6" data-target="p6">
+    <i class="bi bi-check2-circle"></i>
+    <span class="txt">
+      <b>6. Conclusions</b>
+      <small>Native XML advantages</small>
+    </span>
+  </button>
+</div>
+
+<div class="overlay" id="overlay">
+  <div class="modal" id="modal" style="--accent:#1236e8;">
+    <div class="modal-head">
+      <div class="m-icon" id="modal-icon"><i class="bi bi-flag-fill"></i></div>
+      <div>
+        <div class="eyebrow" id="modal-eyebrow">TOPIC 1</div>
+        <h2 id="modal-title">Title</h2>
+      </div>
+      <button class="close" id="close-btn">✕ Close</button>
+    </div>
+    <div class="modal-body" id="modal-body"></div>
+  </div>
+</div>
+
+<script>
+const CONTENT = {
+  p1: {
+    eyebrow: "TOPIC 1",
+    title: "XML and SQL Server: Starting Point",
+    icon: "bi-flag-fill",
+    accent: "#1236e8",
+    html: `
+      <figure class="topic-visual"><svg viewBox="0 0 420 170" role="img" aria-label="XML document connected to SQL Server database">
+<rect x="18" y="22" width="120" height="126" rx="12" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+<path d="M42 52h68M42 72h55M42 92h68M42 112h45" stroke="#2563eb" stroke-width="5" stroke-linecap="round"/>
+<text x="78" y="139" text-anchor="middle" font-size="12" fill="#1e40af" font-weight="700">XML</text>
+<path d="M150 85h115" stroke="#64748b" stroke-width="4" stroke-linecap="round"/><path d="M253 75l14 10-14 10" fill="none" stroke="#64748b" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+<ellipse cx="335" cy="48" rx="58" ry="22" fill="#bfdbfe" stroke="#1d4ed8" stroke-width="2"/><path d="M277 48v74c0 12 26 22 58 22s58-10 58-22V48" fill="#dbeafe" stroke="#1d4ed8" stroke-width="2"/><path d="M277 82c0 12 26 22 58 22s58-10 58-22M277 112c0 12 26 22 58 22s58-10 58-22" fill="none" stroke="#1d4ed8" stroke-width="2"/><text x="335" y="85" text-anchor="middle" font-size="12" fill="#1e40af" font-weight="700">SQL SERVER</text>
+</svg></figure>
+      <p><b>XML (eXtensible Markup Language)</b> is one of the most common formats for sharing information across platforms. Its simplicity and readability have made it the de facto standard for data exchange, and it is easily extensible.</p>
+      <p>SQL Server includes native features for working with XML. The content is organized into four areas:</p>
+      <ul>
+        <li>Working with XML data</li>
+        <li>Converting SQL tables to XML</li>
+        <li>FOR XML AUTO</li>
+        <li>Creating SQL tables from XML documents</li>
+      </ul>
+      <div class="note"><b>💡 Key idea:</b> SQL Server doesn't just store XML as text — it interprets, transforms, and queries it natively.</div>
+    `
+  },
+  p2: {
+    eyebrow: "TOPIC 2",
+    title: "Working with XML Data & Converting Tables to XML",
+    icon: "bi-arrow-left-right",
+    accent: "#0a8fb8",
+    html: `
+      <figure class="topic-visual"><svg viewBox="0 0 420 170" role="img" aria-label="SQL table transformed into XML">
+<rect x="20" y="28" width="145" height="112" rx="10" fill="#e0f2fe" stroke="#0284c7" stroke-width="2"/>
+<text x="92" y="48" text-anchor="middle" font-size="12" fill="#075985" font-weight="700">SQL TABLE</text>
+<path d="M32 60h121M32 86h121M32 112h121M82 60v52M120 60v52" stroke="#0284c7" stroke-width="1.5"/>
+<path d="M178 85h62m-14-12 14 12-14 12" fill="none" stroke="#64748b" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+<rect x="255" y="20" width="145" height="130" rx="10" fill="#cffafe" stroke="#0891b2" stroke-width="2"/>
+<text x="327" y="42" text-anchor="middle" font-size="12" fill="#155e75" font-weight="700">XML</text>
+<path d="M275 58h18l-8 8m8-8-8-8M293 58h88M293 58l8 8m-8-8 8-8M293 86h78M293 114h88" fill="none" stroke="#0891b2" stroke-width="2.5" stroke-linecap="round"/>
+</svg></figure>
+      <p>SQL Server can interpret data as XML: a query using <b>OPENQUERY</b> and <b>CAST(... AS XML)</b> transforms the content of a column into XML format.</p>
+      <p>The simplest way to convert SQL tables to XML is to use <b>FOR XML AUTO</b> and <b>FOR XML PATH</b>.</p>
+      <p><b>AUTO</b> converts each column into an <b>attribute</b>. For each record, an element is created, and for each column, an attribute with the same name is added.</p>
+      <p><b>PATH</b> converts each record into an <b>element</b> and each column into a <b>nested element</b>. By default, the parent is named <b>"row"</b>.</p>
+      <div class="note"><b>💡 Key idea:</b> AUTO = columns as attributes. PATH = columns as nested elements.</div>
+    `
+  },
+  p3: {
+    eyebrow: "TOPIC 3",
+    title: "Customizing Structure with FOR XML PATH",
+    icon: "bi-sliders",
+    accent: "#e0661b",
+    html: `
+      <figure class="topic-visual"><svg viewBox="0 0 420 170" role="img" aria-label="XML hierarchy with attributes and nested elements">
+<rect x="145" y="12" width="130" height="35" rx="10" fill="#ffedd5" stroke="#ea580c" stroke-width="2"/><text x="210" y="34" text-anchor="middle" font-size="13" fill="#9a3412" font-weight="700">Cars (ROOT)</text>
+<path d="M210 47v20M92 67h236M92 67v15M210 67v15M328 67v15" stroke="#ea580c" stroke-width="2.5" fill="none"/>
+<rect x="35" y="82" width="115" height="36" rx="9" fill="#fed7aa" stroke="#ea580c" stroke-width="2"/><text x="92" y="104" text-anchor="middle" font-size="12" fill="#9a3412">Car @ID</text>
+<rect x="152" y="82" width="116" height="36" rx="9" fill="#fed7aa" stroke="#ea580c" stroke-width="2"/><text x="210" y="104" text-anchor="middle" font-size="12" fill="#9a3412">CarInfo/Name</text>
+<rect x="270" y="82" width="115" height="36" rx="9" fill="#fed7aa" stroke="#ea580c" stroke-width="2"/><text x="327" y="104" text-anchor="middle" font-size="12" fill="#9a3412">Price</text>
+<text x="210" y="148" text-anchor="middle" font-size="12" fill="#9a3412" font-weight="700">PATH · @ attributes · / nested elements · ROOT</text>
+</svg></figure>
+      <p>PATH lets you control the final structure of the document:</p>
+      <ul>
+        <li><b>Parent element name:</b> <b>FOR XML PATH ('Car')</b>.</li>
+        <li><b>Root element:</b> <b>ROOT ('Cars')</b>, required for a well-formed document.</li>
+        <li><b>Column as attribute:</b> using the <b>@</b> prefix, for example <b>CarId as [@CarID]</b>.</li>
+        <li><b>Nesting levels:</b> using paths like <b>Name AS [CarInfo/Name]</b>, which groups elements inside CarInfo.</li>
+        <li><b>Elements as attributes of a nested level:</b> it is possible to make Name and Make attributes of CarInfo.</li>
+      </ul>
+      <div class="note"><b>💡 Key idea:</b> <b>@</b> creates attributes, <b>/</b> nests elements, and <b>ROOT</b> adds the root for well-formed XML.</div>
+    `
+  },
+  p4: {
+    eyebrow: "TOPIC 4",
+    title: "Creating SQL Tables from XML (OPENXML)",
+    icon: "bi-database-add",
+    accent: "#0b8a4a",
+    html: `
+      <figure class="topic-visual"><svg viewBox="0 0 420 170" role="img" aria-label="XML parsed and loaded into SQL table">
+<rect x="18" y="30" width="112" height="112" rx="12" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/><text x="74" y="52" text-anchor="middle" font-size="12" fill="#166534" font-weight="700">XML FILE</text><path d="M42 68h68M42 86h55M42 104h68" stroke="#16a34a" stroke-width="4" stroke-linecap="round"/>
+<path d="M140 85h48m-12-12 12 12-12 12" fill="none" stroke="#64748b" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+<rect x="196" y="42" width="82" height="86" rx="12" fill="#bbf7d0" stroke="#16a34a" stroke-width="2"/><text x="237" y="72" text-anchor="middle" font-size="11" fill="#166534" font-weight="700">OPENXML</text><text x="237" y="94" text-anchor="middle" font-size="11" fill="#166534">Mode 1 / 2</text>
+<path d="M284 85h38m-12-12 12 12-12 12" fill="none" stroke="#64748b" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+<ellipse cx="365" cy="52" rx="42" ry="16" fill="#bbf7d0" stroke="#16a34a" stroke-width="2"/><path d="M323 52v62c0 9 19 16 42 16s42-7 42-16V52" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/><path d="M323 82c0 9 19 16 42 16s42-7 42-16" fill="none" stroke="#16a34a" stroke-width="2"/><text x="365" y="83" text-anchor="middle" font-size="11" fill="#166534" font-weight="700">SQL</text>
+</svg></figure>
+      <p>The process has four steps:</p>
+      <ul>
+        <li><b>Load the XML:</b> an <b>xml</b> variable stores the result of <b>OPENROWSET</b>, which retrieves the file in binary format. Printing it with <b>SELECT</b> loads the document into memory.</li>
+        <li><b>Prepare the document:</b> <b>sp_xml_preparedocument</b> creates a handle associated with the XML, needed to read its attributes and elements.</li>
+        <li><b>Read with OPENXML:</b> it receives the handle, the node path, and the mode. Mode 1 returns attributes; mode 2 returns elements. In <b>WITH</b>, the names and types of the resulting columns are defined.
+          <ul>
+            <li><b>Mode 1:</b> extracts Name and Make from <b>/Cars/Car/CarInfo</b>.</li>
+            <li><b>Mode 2:</b> extracts the CarInfo, Price, and Type elements from <b>/Cars/Car</b>.</li>
+          </ul>
+        </li>
+        <li><b>Free memory:</b> <b>sp_xml_removedocument</b> removes the document from memory.</li>
+      </ul>
+      <div class="note"><b>💡 Key idea:</b> Mode <b>1</b> = attributes, Mode <b>2</b> = elements. Always free memory with <b>sp_xml_removedocument</b>.</div>
+    `
+  },
+  p5: {
+    eyebrow: "TOPIC 5",
+    title: "Relational or XML Data Model",
+    icon: "bi-diagram-3",
+    accent: "#6b21a8",
+    html: `
+      <figure class="topic-visual"><svg viewBox="0 0 420 170" role="img" aria-label="Comparison between relational and XML data models">
+<rect x="18" y="20" width="180" height="130" rx="12" fill="#ede9fe" stroke="#7c3aed" stroke-width="2"/><text x="108" y="42" text-anchor="middle" font-size="13" fill="#5b21b6" font-weight="700">RELATIONAL</text><path d="M32 55h152M32 82h152M32 109h152M82 55v54M132 55v54" stroke="#7c3aed" stroke-width="1.5"/><text x="108" y="137" text-anchor="middle" font-size="11" fill="#5b21b6">Known schema</text>
+<rect x="222" y="20" width="180" height="130" rx="12" fill="#f3e8ff" stroke="#9333ea" stroke-width="2"/><text x="312" y="42" text-anchor="middle" font-size="13" fill="#6b21a8" font-weight="700">XML</text><path d="M312 52v16M312 68h-52v18M312 68h52v18M260 86v18M364 86v18" stroke="#9333ea" stroke-width="2.5" fill="none"/><rect x="238" y="104" width="44" height="22" rx="5" fill="#e9d5ff"/><rect x="290" y="104" width="44" height="22" rx="5" fill="#e9d5ff"/><rect x="342" y="104" width="44" height="22" rx="5" fill="#e9d5ff"/><text x="312" y="140" text-anchor="middle" font-size="11" fill="#6b21a8">Flexible structure</text>
+</svg></figure>
+      <ul>
+        <li><b>Highly structured data with a known schema:</b> the relational model is best, and SQL Server provides the necessary tools.</li>
+        <li><b>Semi-structured, unstructured, or unknown data:</b> other modeling approaches must be considered.</li>
+      </ul>
+      <p>XML processing involves components such as the <b>query interpreter</b>, <b>XML parser</b>, <b>data map</b>, <b>object composer</b>, and <b>object processor</b>, which connect XML output, queries, and XML/DTD objects to the data store.</p>
+      <div class="note"><b>💡 Key idea:</b> it's not about replacing one model with another, but choosing based on the nature of the data.</div>
+    `
+  },
+  p6: {
+    eyebrow: "TOPIC 6",
+    title: "Conclusions",
+    icon: "bi-check2-circle",
+    accent: "#b45309",
+    html: `
+      <figure class="topic-visual"><svg viewBox="0 0 420 170" role="img" aria-label="Benefits of native XML support in SQL Server">
+<circle cx="210" cy="85" r="48" fill="#fef3c7" stroke="#d97706" stroke-width="3"/><path d="M185 85l17 17 34-38" fill="none" stroke="#d97706" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+<g fill="#fffbeb" stroke="#d97706" stroke-width="2"><rect x="18" y="18" width="112" height="38" rx="10"/><rect x="290" y="18" width="112" height="38" rx="10"/><rect x="18" y="114" width="112" height="38" rx="10"/><rect x="290" y="114" width="112" height="38" rx="10"/></g>
+<g font-size="11" font-weight="700" fill="#92400e" text-anchor="middle"><text x="74" y="41">Interoperability</text><text x="346" y="41">Transactions</text><text x="74" y="137">Validation</text><text x="346" y="137">Query &amp; modify</text></g>
+<g stroke="#d97706" stroke-width="2" fill="none"><path d="M130 37l45 28M290 37l-45 28M130 133l45-28M290 133l-45-28"/></g>
+</svg></figure>
+      <p>Using SQL Server's native XML features, instead of managing XML in the file system, provides advantages:</p>
+      <ul>
+        <li>Share, query, and modify XML data <b>efficiently and transactionally</b>.</li>
+        <li><b>Interoperability</b> between relational and XML data in the same application.</li>
+        <li><b>Language support</b> for queries and modifications across different domains.</li>
+        <li>Ensure data is <b>well-formed</b> and optionally validate it against XML schemas.</li>
+      </ul>
+      <div class="note"><b>💡 Closing:</b> FOR XML AUTO and PATH convert tables to XML; OPENXML in mode 1 or 2 rebuilds tables from XML, all within SQL Server with transactional and validation support.</div>
+    `
+  }
+};
+
+const overlay = document.getElementById('overlay');
+const modal = document.getElementById('modal');
+const modalIcon = document.getElementById('modal-icon');
+const modalEyebrow = document.getElementById('modal-eyebrow');
+const modalTitle = document.getElementById('modal-title');
+const modalBody = document.getElementById('modal-body');
+const closeBtn = document.getElementById('close-btn');
+
+function openModal(id){
+  const data = CONTENT[id];
+  if(!data) return;
+  modal.style.setProperty('--accent', data.accent);
+  modalIcon.innerHTML = `<i class="bi ${data.icon}"></i>`;
+  modalEyebrow.textContent = data.eyebrow;
+  modalTitle.textContent = data.title;
+  modalBody.innerHTML = data.html;
+  overlay.classList.add('open');
+  document.body.style.overflow = 'hidden';
+  modal.scrollTop = 0;
+}
+
+function closeModal(){
+  overlay.classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+document.querySelectorAll('.branch').forEach(btn => {
+  btn.addEventListener('click', () => openModal(btn.dataset.target));
+});
+
+closeBtn.addEventListener('click', closeModal);
+overlay.addEventListener('click', e => { if(e.target === overlay) closeModal(); });
+document.addEventListener('keydown', e => { if(e.key === 'Escape') closeModal(); });
+</script>
+</body>
+</html>
