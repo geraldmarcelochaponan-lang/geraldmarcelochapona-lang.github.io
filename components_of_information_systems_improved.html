@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mind Map · Components of Information Systems</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<style>
+  :root{
+    --bg:#f4f8ff;
+    --ink:#0b1f4d;
+    --blue:#1236e8;
+    --blueM:#0a8fb8;
+    --terra:#e0661b;
+    --green:#0b8a4a;
+    --purple:#6b21a8;
+    --brown:#b45309;
+    --sun:#FFC234;
+    --pink:#db2777;
+  }
+  *{ box-sizing:border-box; margin:0; padding:0; }
+  body{
+    background:var(--bg);
+    font-family:"Segoe UI", Arial, sans-serif;
+    color:var(--ink);
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+    overflow:hidden;
+    position:relative;
+  }
+
+  /* Background Particles */
+  .particles{
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    z-index:0;
+    overflow:hidden;
+  }
+  .particle{
+    position:absolute;
+    border-radius:50%;
+    opacity:.15;
+    animation:float 18s infinite ease-in-out;
+  }
+  .particle:nth-child(1){ width:120px; height:120px; background:var(--blue); left:5%; top:10%; animation-duration:22s; }
+  .particle:nth-child(2){ width:80px; height:80px; background:var(--blueM); left:85%; top:5%; animation-duration:18s; }
+  .particle:nth-child(3){ width:160px; height:160px; background:var(--terra); left:10%; top:75%; animation-duration:25s; }
+  .particle:nth-child(4){ width:100px; height:100px; background:var(--green); left:80%; top:80%; animation-duration:20s; }
+  .particle:nth-child(5){ width:60px; height:60px; background:var(--sun); left:50%; top:90%; animation-duration:16s; }
+  .particle:nth-child(6){ width:140px; height:140px; background:var(--purple); left:90%; top:40%; animation-duration:24s; }
+  .particle:nth-child(7){ width:90px; height:90px; background:var(--pink); left:20%; top:30%; animation-duration:21s; }
+
+  @keyframes float{
+    0%,100%{ transform:translate(0,0) scale(1); }
+    25%{ transform:translate(30px,-40px) scale(1.1); }
+    50%{ transform:translate(-20px,30px) scale(.9); }
+    75%{ transform:translate(40px,20px) scale(1.05); }
+  }
+
+  /* Map Container */
+  #map{
+    position:relative;
+    width:1100px;
+    height:700px;
+    margin:0 auto;
+    z-index:1;
+  }
+
+  /* SVG Connectors */
+  svg.connectors{
+    position:absolute;
+    left:0; top:0;
+    width:100%; height:100%;
+    pointer-events:none;
+    z-index:1;
+  }
+  .connector{
+    fill:none;
+    stroke-width:4;
+    stroke-linecap:round;
+    stroke-dasharray:900;
+    stroke-dashoffset:900;
+    animation:draw 1.5s ease forwards;
+  }
+  .connector.c1{ stroke:var(--blue); }
+  .connector.c2{ stroke:var(--blueM); }
+  .connector.c3{ stroke:var(--terra); }
+  .connector.c4{ stroke:var(--green); }
+  .connector.c5{ stroke:var(--purple); }
+  .connector.c6{ stroke:var(--brown); }
+  .connector:nth-child(1){ animation-delay:.2s; }
+  .connector:nth-child(2){ animation-delay:.3s; }
+  .connector:nth-child(3){ animation-delay:.4s; }
+  .connector:nth-child(4){ animation-delay:.5s; }
+  .connector:nth-child(5){ animation-delay:.6s; }
+  .connector:nth-child(6){ animation-delay:.7s; }
+  @keyframes draw{ to{ stroke-dashoffset:0; } }
+
+  /* Central Node */
+  .center{
+    position:absolute;
+    left:50%; top:50%;
+    transform:translate(-50%,-50%);
+    width:290px;
+    height:150px;
+    border-radius:75px;
+    background:linear-gradient(135deg, #1236e8 0%, #0b1f4d 100%);
+    color:#fff;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    padding:10px 20px;
+    box-shadow:0 10px 40px rgba(18,54,232,.45), 0 0 0 6px rgba(255,255,255,.4);
+    border:4px solid #00e5ff;
+    z-index:4;
+    animation:centerPop 1s cubic-bezier(.34,1.56,.64,1) both;
+    cursor:pointer;
+    transition:transform .3s;
+  }
+  .center:hover{
+    transform:translate(-50%,-50%) scale(1.05);
+    box-shadow:0 15px 50px rgba(18,54,232,.6), 0 0 0 8px rgba(255,255,255,.5);
+  }
+  .center::before{
+    content:"";
+    position:absolute;
+    inset:-12px;
+    border-radius:85px;
+    border:3px dashed rgba(0,229,255,.5);
+    animation:spinSlow 20s linear infinite;
+  }
+  @keyframes spinSlow{ to{ transform:rotate(360deg); } }
+  @keyframes centerPop{
+    from{ opacity:0; transform:translate(-50%,-50%) scale(.5); }
+    to{ opacity:1; transform:translate(-50%,-50%) scale(1); }
+  }
+  .center .ttl{
+    font-size:21px;
+    font-weight:800;
+    line-height:1.1;
+    text-shadow:0 2px 8px rgba(0,0,0,.3);
+  }
+  .center .sub{
+    font-size:10px;
+    margin-top:6px;
+    opacity:.85;
+    letter-spacing:.15em;
+    text-transform:uppercase;
+  }
+  .center .people-badge {
+    margin-top: 8px;
+    background: var(--pink);
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 10px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    box-shadow: 0 2px 8px rgba(0,0,0,.3);
+  }
+
+  /* Branches */
+  .branch{
+    position:absolute;
+    width:270px;
+    height:75px;
+    border-radius:18px;
+    color:#fff;
+    display:flex;
+    align-items:center;
+    gap:12px;
+    padding:0 16px;
+    cursor:pointer;
+    border:none;
+    text-align:left;
+    font-family:inherit;
+    box-shadow:0 8px 20px rgba(0,0,0,.2);
+    transition:transform .25s cubic-bezier(.34,1.56,.64,1), box-shadow .25s;
+    z-index:3;
+    animation:branchFloat 4s ease-in-out infinite;
+  }
+  .branch:hover, .branch:focus-visible{
+    transform:translateY(-6px) scale(1.06);
+    box-shadow:0 16px 32px rgba(0,0,0,.3);
+    outline:none;
+  }
+  .branch i{
+    font-size:24px;
+    flex:none;
+  }
+  .branch .txt{
+    display:flex;
+    flex-direction:column;
+    line-height:1.15;
+  }
+  .branch .txt b{
+    font-size:14px;
+    font-weight:800;
+  }
+  .branch .txt small{
+    font-size:11px;
+    opacity:.9;
+    margin-top:3px;
+  }
+
+  /* Radial Positions */
+  .b1{ left:30px;   top:100px; background:linear-gradient(135deg,#1236e8,#0a2bb8); animation-delay:0s; }
+  .b2{ left:30px;   top:310px; background:linear-gradient(135deg,#0a8fb8,#086d8c); animation-delay:1s; }
+  .b3{ left:30px;   top:520px; background:linear-gradient(135deg,#e0661b,#b84f12); animation-delay:2s; }
+  .b4{ right:30px;  top:100px; background:linear-gradient(135deg,#0b8a4a,#086a38); animation-delay:3s; }
+  .b5{ right:30px;  top:310px; background:linear-gradient(135deg,#6b21a8,#4c1580); animation-delay:4s; }
+  .b6{ right:30px;  top:520px; background:linear-gradient(135deg,#b45309,#8a3d07); animation-delay:5s; }
+
+  @keyframes branchFloat{
+    0%,100%{ transform:translateY(0); }
+    50%{ transform:translateY(-6px); }
+  }
+  @keyframes popIn{
+    from{ opacity:0; transform:scale(.7); }
+    to{ opacity:1; transform:scale(1); }
+  }
+
+  .b1{ animation:popIn .7s cubic-bezier(.34,1.56,.64,1) both, branchFloat 4s ease-in-out infinite .7s; }
+  .b2{ animation:popIn .7s cubic-bezier(.34,1.56,.64,1) .15s both, branchFloat 4s ease-in-out infinite 1.5s; }
+  .b3{ animation:popIn .7s cubic-bezier(.34,1.56,.64,1) .3s both, branchFloat 4s ease-in-out infinite 2s; }
+  .b4{ animation:popIn .7s cubic-bezier(.34,1.56,.64,1) .45s both, branchFloat 4s ease-in-out infinite 2.5s; }
+  .b5{ animation:popIn .7s cubic-bezier(.34,1.56,.64,1) .6s both, branchFloat 4s ease-in-out infinite 3s; }
+  .b6{ animation:popIn .7s cubic-bezier(.34,1.56,.64,1) .75s both, branchFloat 4s ease-in-out infinite 3.5s; }
+
+  .branch::after{
+    content:"";
+    position:absolute;
+    right:-6px; top:-6px;
+    width:18px; height:18px;
+    border-radius:50%;
+    background:var(--sun);
+    border:3px solid #fff;
+    box-shadow:0 0 0 0 rgba(255,194,52,.7);
+    animation:pulse 2s infinite;
+  }
+  @keyframes pulse{
+    0%{ box-shadow:0 0 0 0 rgba(255,194,52,.7); }
+    70%{ box-shadow:0 0 0 12px rgba(255,194,52,0); }
+    100%{ box-shadow:0 0 0 0 rgba(255,194,52,0); }
+  }
+
+  /* Modal */
+  .overlay{
+    position:fixed; inset:0;
+    background:rgba(11,31,77,.7);
+    backdrop-filter:blur(4px);
+    display:none;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+    z-index:100;
+  }
+  .overlay.open{ display:flex; animation:fadeIn .25s ease; }
+  @keyframes fadeIn{ from{ opacity:0; } to{ opacity:1; } }
+
+  .modal{
+    background:#fff;
+    border-radius:24px;
+    max-width:680px;
+    width:100%;
+    max-height:88vh;
+    overflow-y:auto;
+    box-shadow:0 30px 80px rgba(0,0,0,.5);
+    border-top:10px solid var(--accent, var(--blue));
+    animation:slideUp .4s cubic-bezier(.34,1.56,.64,1);
+    position:relative;
+  }
+  @keyframes slideUp{
+    from{ transform:translateY(60px) scale(.95); opacity:0; }
+    to{ transform:translateY(0) scale(1); opacity:1; }
+  }
+
+  .modal-head{
+    display:flex;
+    align-items:center;
+    gap:18px;
+    padding:26px 30px 18px;
+    border-bottom:2px solid #eef1f8;
+    position:sticky; top:0;
+    background:#fff;
+    border-radius:24px 24px 0 0;
+    z-index:3;
+  }
+  .modal-head .m-icon{
+    width:60px; height:60px;
+    border-radius:16px;
+    background:var(--accent, var(--blue));
+    color:#fff;
+    display:flex; align-items:center; justify-content:center;
+    font-size:30px;
+    flex:none;
+    box-shadow:0 8px 20px rgba(0,0,0,.25);
+  }
+  .modal-head h2{
+    font-size:22px;
+    line-height:1.15;
+    color:var(--ink);
+  }
+  .modal-head .eyebrow{
+    font-size:11px;
+    font-weight:800;
+    letter-spacing:.25em;
+    color:var(--accent, var(--blue));
+    text-transform:uppercase;
+    margin-bottom:4px;
+  }
+
+  .close{
+    margin-left:auto;
+    border:none;
+    background:#0b1f4d;
+    color:#fff;
+    border-radius:12px;
+    padding:10px 16px;
+    font-size:14px;
+    font-weight:700;
+    cursor:pointer;
+    transition:background .15s, transform .2s;
+    flex:none;
+  }
+  .close:hover{ background:var(--accent, var(--blue)); transform:scale(1.08); }
+
+  .modal-body{
+    padding:20px 30px 30px;
+    font-size:16px;
+    line-height:1.7;
+    color:#1b2540;
+  }
+  .modal-body p{ margin:12px 0; }
+  .modal-body b{ color:var(--accent, var(--blue)); }
+  .modal-body ul{ margin:10px 0 10px 20px; }
+  .modal-body li{ margin:6px 0; }
+
+  .note{
+    background:#fff7d6;
+    border-left:6px solid #e3a72f;
+    border-radius:4px 14px 14px 4px;
+    padding:14px 18px;
+    margin:20px 0 0;
+    font-size:14px;
+  }
+
+  /* Responsive */
+  @media (max-width:1150px){
+    body{ overflow:auto; }
+    #map{
+      width:100%;
+      height:auto;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      gap:15px;
+      padding:20px 0;
+    }
+    svg.connectors{ display:none; }
+    .center{ position:relative; left:auto; top:auto; transform:none; margin-bottom:20px; width:90%; max-width:340px; }
+    .center::before{ display:none; }
+    .branch{ position:relative; left:auto !important; right:auto !important; top:auto !important; width:90%; max-width:400px; }
+  }
+
+  /* Enhanced imagery and accessibility */
+  .topic-photo{width:100%;height:225px;object-fit:cover;border-radius:17px;margin:4px 0 16px;box-shadow:0 8px 22px rgba(11,31,77,.13)}
+  .branch .mini-photo{width:57px;height:57px;object-fit:cover;border-radius:13px;flex:none;border:2px solid rgba(255,255,255,.65)}
+  .branch .txt{min-width:0}
+  .branch .txt small{line-height:1.35}
+  .page-heading{position:fixed;top:12px;left:0;right:0;text-align:center;font-size:13px;letter-spacing:.08em;color:#34517a;font-weight:700;z-index:2;pointer-events:none}
+  @media(max-width:1150px){body{overflow:auto;display:block;padding:60px 14px 25px}.page-heading{position:absolute;top:16px}.center{min-height:150px;height:auto}.branch{height:88px}.modal-head{padding:18px;gap:10px}.modal-body{padding:18px}.modal-head h2{font-size:19px}.close{padding:9px;font-size:12px}}
+  @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="page-heading">INTERACTIVE MIND MAP · SELECT A COMPONENT TO EXPLORE</div>
+
+<div class="particles">
+  <div class="particle"></div><div class="particle"></div><div class="particle"></div>
+  <div class="particle"></div><div class="particle"></div><div class="particle"></div>
+  <div class="particle"></div>
+</div>
+
+<div id="map">
+  <svg class="connectors" viewBox="0 0 1100 700" preserveAspectRatio="none">
+    <defs>
+      <path id="path1" d="M 420 320 C 320 280, 260 220, 180 137" />
+      <path id="path2" d="M 400 350 C 300 350, 260 350, 180 347" />
+      <path id="path3" d="M 420 380 C 320 420, 260 480, 180 557" />
+      
+      <path id="path4" d="M 680 320 C 780 280, 840 220, 920 137" />
+      <path id="path5" d="M 700 350 C 800 350, 840 350, 920 347" />
+      <path id="path6" d="M 680 380 C 780 420, 840 480, 920 557" />
+    </defs>
+    <use href="#path1" class="connector c1" />
+    <use href="#path2" class="connector c2" />
+    <use href="#path3" class="connector c3" />
+    <use href="#path4" class="connector c4" />
+    <use href="#path5" class="connector c5" />
+    <use href="#path6" class="connector c6" />
+  </svg>
+
+  <!-- Nodo Central ahora es un botón para la sección People -->
+  <div class="center" data-target="p7" role="button" tabindex="0">
+    <div class="ttl">Components of<br>Information Systems</div>
+    <div class="sub">INFORMATION TECHNOLOGY</div>
+    <div class="people-badge"><i class="bi bi-people-fill"></i> Click for People</div>
+  </div>
+
+  <!-- 6 Ramas Principales -->
+  <button class="branch b1" data-target="p1">
+    <img class="mini-photo" src="https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1100&q=80" alt="" loading="lazy">
+    <span class="txt">
+      <b>1. Technology</b>
+      <small>Applied scientific knowledge</small>
+    </span>
+  </button>
+  <button class="branch b2" data-target="p2">
+    <img class="mini-photo" src="https://images.unsplash.com/photo-1587831990711-23ca6441447b?auto=format&fit=crop&w=1100&q=80" alt="" loading="lazy">
+    <span class="txt">
+      <b>2. Hardware</b>
+      <small>Physical components</small>
+    </span>
+  </button>
+  <button class="branch b3" data-target="p3">
+    <img class="mini-photo" src="https://images.unsplash.com/photo-1461749280684-dccba630e2f6?auto=format&fit=crop&w=1100&q=80" alt="" loading="lazy">
+    <span class="txt">
+      <b>3. Software</b>
+      <small>Instructions for hardware</small>
+    </span>
+  </button>
+  <button class="branch b4" data-target="p4">
+    <img class="mini-photo" src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1100&q=80" alt="" loading="lazy">
+    <span class="txt">
+      <b>4. Data</b>
+      <small>Raw facts & information</small>
+    </span>
+  </button>
+  <button class="branch b5" data-target="p5">
+    <img class="mini-photo" src="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=1100&q=80" alt="" loading="lazy">
+    <span class="txt">
+      <b>5. Networking</b>
+      <small>Protocols & communication</small>
+    </span>
+  </button>
+  <button class="branch b6" data-target="p6">
+    <img class="mini-photo" src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=1100&q=80" alt="" loading="lazy">
+    <span class="txt">
+      <b>6. Process</b>
+      <small>Value & competitive advantage</small>
+    </span>
+  </button>
+</div>
+
+<div class="overlay" id="overlay">
+  <div class="modal" id="modal" style="--accent:#1236e8;">
+    <div class="modal-head">
+      <div class="m-icon" id="modal-icon"><i class="bi bi-gear-fill"></i></div>
+      <div>
+        <div class="eyebrow" id="modal-eyebrow">TOPIC 1</div>
+        <h2 id="modal-title">Title</h2>
+      </div>
+      <button class="close" id="close-btn">✕ Close</button>
+    </div>
+    <div class="modal-body" id="modal-body"></div>
+  </div>
+</div>
+
+<script>
+const CONTENT = {
+  p1: {
+    eyebrow: "TOPIC 1",
+    title: "Technology",
+    icon: "bi-gear-fill",
+    accent: "#1236e8",
+    html: `
+      <img class="topic-photo" src="https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1100&q=80" alt="Illustration for p1" loading="lazy" onerror="this.style.display='none'">
+      <p>The application of scientific knowledge for practical purposes. From the invention of the wheel to the harnessing of electricity for artificial lighting, technology is a part of our lives in so many ways that we tend to take it for granted.</p>
+      <p>The components of information systems: <b>hardware, software, network communication, and data</b>, are all technologies that must integrate well together.</p>
+      <div class="note"><b>💡 Key idea:</b> Technology is the umbrella under which the other physical and digital components of an IS operate.</div>
+    `
+  },
+  p2: {
+    eyebrow: "TOPIC 2",
+    title: "Hardware",
+    icon: "bi-pc-display",
+    accent: "#0a8fb8",
+    html: `
+      <img class="topic-photo" src="https://images.unsplash.com/photo-1587831990711-23ca6441447b?auto=format&fit=crop&w=1100&q=80" alt="Illustration for p2" loading="lazy" onerror="this.style.display='none'">
+      <p>Hardware represents the <b>physical components</b> of an information system.</p>
+      <p>Some can be seen or touched easily: keyboards, mice, pens, disk drives, iPads, printers, and flash drives. Others reside inside a device that can only be seen by opening up the device's case: computer chips, motherboards, and internal memory chips.</p>
+      <div class="note"><b>💡 Key idea:</b> If you can touch it, it's hardware. It's the physical body of the Information System.</div>
+    `
+  },
+  p3: {
+    eyebrow: "TOPIC 3",
+    title: "Software",
+    icon: "bi-code-slash",
+    accent: "#e0661b",
+    html: `
+      <img class="topic-photo" src="https://images.unsplash.com/photo-1461749280684-dccba630e2f6?auto=format&fit=crop&w=1100&q=80" alt="Illustration for p3" loading="lazy" onerror="this.style.display='none'">
+      <p>Software is a <b>set of instructions</b> that tell the hardware what to do. Software is not tangible — it cannot be touched.</p>
+      <p>Programmers create software programs by following a specific process to enter a list of instructions that tell the hardware what to do. The two main categories are: <b>operating-system</b> and <b>application software</b>.</p>
+      <div class="note"><b>💡 Key idea:</b> Hardware is the body; Software is the mind that tells it what to do.</div>
+    `
+  },
+  p4: {
+    eyebrow: "TOPIC 4",
+    title: "Data",
+    icon: "bi-database-fill",
+    accent: "#0b8a4a",
+    html: `
+      <img class="topic-photo" src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1100&q=80" alt="Illustration for p4" loading="lazy" onerror="this.style.display='none'">
+      <p>A collection of <b>non-disputable raw facts</b>: your first name, driver's license number, the city you live in, your phone number, are pieces of raw data. You can see or hear your data, but by themselves, they don't give you any additional meanings beyond the data itself.</p>
+      <p>However, once these raw data are aggregated, indexed, and organized together into a logical fashion using software such as a spreadsheet or a database, the collection of these organized data will present <b>new information and insights</b> that a single raw fact can't convey.</p>
+      <div class="note"><b>💡 Key idea:</b> Data is raw; Information is processed data that provides meaning.</div>
+    `
+  },
+  p5: {
+    eyebrow: "TOPIC 5",
+    title: "Networking Communication",
+    icon: "bi-diagram-3-fill",
+    accent: "#6b21a8",
+    html: `
+      <img class="topic-photo" src="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=1100&q=80" alt="Illustration for p5" loading="lazy" onerror="this.style.display='none'">
+      <p>An IS component that some believe should be in its own category. Network communication, or internetworking, defines a set of <b>protocols</b> (that is, rules and standards) that allow application programs to talk with each other without regard to the hardware and operating systems where they are run.</p>
+      <div class="note"><b>💡 Key idea:</b> It's the bridge that allows different devices and systems to communicate and share data.</div>
+    `
+  },
+  p6: {
+    eyebrow: "TOPIC 6",
+    title: "Process",
+    icon: "bi-gear-wide-connected",
+    accent: "#b45309",
+    html: `
+      <img class="topic-photo" src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=1100&q=80" alt="Illustration for p6" loading="lazy" onerror="this.style.display='none'">
+      <p>The last component of information systems. Information systems are becoming more and more integrated with organizational processes to deliver value in revenue-generating and cost-saving activities that can give companies <b>competitive advantages</b> over their competitors.</p>
+      <p>Businesses hoping to gain an advantage over their competitors are highly focused on this component of information systems.</p>
+      <div class="note"><b>💡 Key idea:</b> Process is how the system is used to achieve business goals and create value.</div>
+    `
+  },
+  p7: {
+    eyebrow: "EXTRA TOPIC",
+    title: "People",
+    icon: "bi-people-fill",
+    accent: "#db2777",
+    html: `
+      <img class="topic-photo" src="https://images.unsplash.com/photo-1521737711867-e3b97375f902?auto=format&fit=crop&w=1100&q=80" alt="Illustration for p7" loading="lazy" onerror="this.style.display='none'">
+      <p>There are many different categories in the development and management of IS to help organizations to create value and improve productivity, such as:</p>
+      <ul>
+        <li><b>Users:</b> People who actually use an IS to perform a job function or task (e.g., a student uses a spreadsheet or a word processing software program).</li>
+        <li><b>Technical Developers:</b> The people who actually create the technologies used to build an information system (e.g., a computer chip engineer, a software programmer, and an application programmer).</li>
+        <li><b>Business Professionals:</b> CEOs, owners, managers, entrepreneurs, employees who use IS to start or expand their business to perform their job functions such as accounting, marketing, sales, human resources, support customers, etc. Examples include CEOs such as Jeff Bezos of Amazon, Steve Jobs of Apple, Bill Gates of Microsoft.</li>
+      </ul>
+      <div class="note"><b>💡 Key idea:</b> People are the ones who design, build, manage, and use the information systems.</div>
+    `
+  }
+};
+
+const overlay = document.getElementById('overlay');
+const modal = document.getElementById('modal');
+const modalIcon = document.getElementById('modal-icon');
+const modalEyebrow = document.getElementById('modal-eyebrow');
+const modalTitle = document.getElementById('modal-title');
+const modalBody = document.getElementById('modal-body');
+const closeBtn = document.getElementById('close-btn');
+
+function openModal(id){
+  const data = CONTENT[id];
+  if(!data) return;
+  modal.style.setProperty('--accent', data.accent);
+  modalIcon.innerHTML = `<i class="bi ${data.icon}"></i>`;
+  modalEyebrow.textContent = data.eyebrow;
+  modalTitle.textContent = data.title;
+  modalBody.innerHTML = data.html;
+  overlay.classList.add('open');
+  document.body.style.overflow = 'hidden';
+  modal.scrollTop = 0;
+}
+
+function closeModal(){
+  overlay.classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+// Add click and keyboard events for branches and the center node
+document.querySelectorAll('.branch, .center').forEach(btn => {
+  btn.addEventListener('click', () => openModal(btn.dataset.target));
+  btn.addEventListener('keydown', (e) => {
+    if(e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      openModal(btn.dataset.target);
+    }
+  });
+});
+
+closeBtn.addEventListener('click', closeModal);
+overlay.addEventListener('click', e => { if(e.target === overlay) closeModal(); });
+document.addEventListener('keydown', e => { if(e.key === 'Escape') closeModal(); });
+</script>
+</body>
+</html>
