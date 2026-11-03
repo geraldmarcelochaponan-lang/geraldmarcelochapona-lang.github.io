@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>.NET — Guion de Exposición (Español)</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<style>
+:root{
+  --bg:#f7f9fd;
+  --ink:#0d1b3e;
+  --muted:#5a6a86;
+  --blue:#2849d8;
+  --cyan:#0786a8;
+  --orange:#df7628;
+  --green:#168653;
+  --purple:#7042a5;
+  --pink:#c43c82;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:'Segoe UI',system-ui,-apple-system,Arial,sans-serif;
+  background:radial-gradient(circle at 10% 10%,#e5edff,transparent 35%),
+             radial-gradient(circle at 90% 90%,#e1f5ee,transparent 35%),
+             var(--bg);
+  color:var(--ink);
+  min-height:100vh;
+  padding:40px 20px 80px;
+  line-height:1.7;
+}
+.container{max-width:960px;margin:0 auto}
+
+/* === HEADER === */
+header{
+  text-align:center;
+  margin-bottom:50px;
+  padding-bottom:30px;
+  border-bottom:2px solid #e1e7f3;
+}
+header .kicker{
+  font-size:.78rem;
+  font-weight:800;
+  letter-spacing:.18em;
+  color:var(--blue);
+  text-transform:uppercase;
+  margin-bottom:10px;
+}
+header h1{
+  font-size:clamp(2rem,4vw,2.8rem);
+  color:#172c69;
+  margin-bottom:12px;
+  letter-spacing:-.02em;
+}
+header p{
+  color:var(--muted);
+  font-size:1.05rem;
+  max-width:680px;
+  margin:0 auto;
+}
+header .team{
+  display:flex;
+  justify-content:center;
+  gap:10px;
+  flex-wrap:wrap;
+  margin-top:20px;
+}
+header .team span{
+  background:#fff;
+  border:1px solid #dce4f5;
+  border-radius:30px;
+  padding:8px 16px;
+  font-size:.88rem;
+  box-shadow:0 5px 15px rgba(32,54,108,.06);
+}
+header .team span b{color:var(--blue)}
+
+/* === NAV INDEX === */
+.index{
+  background:#fff;
+  border:1px solid #e1e7f3;
+  border-radius:18px;
+  padding:22px 26px;
+  margin-bottom:40px;
+  box-shadow:0 8px 24px rgba(38,59,105,.05);
+}
+.index h3{
+  font-size:.85rem;
+  font-weight:800;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  color:var(--muted);
+  margin-bottom:14px;
+}
+.index ol{
+  list-style:none;
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:8px;
+}
+.index a{
+  display:block;
+  padding:9px 14px;
+  border-radius:10px;
+  color:var(--ink);
+  text-decoration:none;
+  font-size:.92rem;
+  font-weight:600;
+  transition:.15s;
+  border:1px solid transparent;
+}
+.index a:hover{
+  background:#f1f4fb;
+  border-color:#dde4f2;
+  color:var(--blue);
+}
+.index a i{color:var(--blue);margin-right:6px}
+
+/* === SLIDE SECTION === */
+.slide-doc{
+  background:#fff;
+  border:1px solid #e1e7f3;
+  border-radius:22px;
+  padding:36px 40px;
+  margin-bottom:28px;
+  box-shadow:0 12px 32px rgba(38,59,105,.06);
+  border-top:6px solid var(--accent);
+  scroll-margin-top:24px;
+  transition:.3s;
+}
+.slide-doc:hover{box-shadow:0 18px 42px rgba(38,59,105,.10)}
+
+.slide-head{
+  display:flex;
+  align-items:center;
+  gap:16px;
+  margin-bottom:24px;
+  flex-wrap:wrap;
+}
+.slide-head .num{
+  width:56px;height:56px;
+  border-radius:16px;
+  background:var(--accent);
+  color:#fff;
+  display:grid;place-items:center;
+  font-size:1.5rem;
+  font-weight:900;
+  flex:none;
+  box-shadow:0 8px 20px color-mix(in srgb,var(--accent) 35%,transparent);
+}
+.slide-head .title-block{flex:1;min-width:200px}
+.slide-head .eyebrow{
+  font-size:.72rem;
+  font-weight:800;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+  color:var(--accent);
+  margin-bottom:4px;
+}
+.slide-head h2{
+  font-size:1.6rem;
+  line-height:1.2;
+  color:var(--ink);
+  letter-spacing:-.01em;
+}
+
+/* === BLOCK: QUÉ DECIR === */
+.block{
+  margin-bottom:22px;
+  padding-left:18px;
+  border-left:3px solid color-mix(in srgb,var(--accent) 30%,transparent);
+}
+.block h4{
+  font-size:.78rem;
+  font-weight:800;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  color:var(--accent);
+  margin-bottom:10px;
+  display:flex;
+  align-items:center;
+  gap:7px;
+}
+.block h4 i{font-size:1rem}
+.block p{
+  color:#2c3a5c;
+  font-size:1rem;
+  margin-bottom:10px;
+}
+.block p:last-child{margin-bottom:0}
+.block strong{color:var(--accent);font-weight:800}
+.block ul{margin:8px 0 8px 20px;color:#2c3a5c}
+.block li{margin:5px 0;font-size:.98rem}
+
+/* === TERM TABLE === */
+.terms{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  margin-top:6px;
+}
+.term{
+  display:grid;
+  grid-template-columns:auto 1fr;
+  gap:14px;
+  padding:12px 16px;
+  background:color-mix(in srgb,var(--accent) 5%,white);
+  border-radius:12px;
+  border-left:3px solid var(--accent);
+}
+.term .sigla{
+  font-weight:800;
+  color:var(--accent);
+  font-size:.95rem;
+  white-space:nowrap;
+  padding-top:1px;
+}
+.term .def{
+  font-size:.95rem;
+  color:#2c3a5c;
+  line-height:1.55;
+}
+
+/* === QUOTE / FRASE === */
+.phrase{
+  margin-top:24px;
+  padding:16px 22px;
+  background:color-mix(in srgb,var(--accent) 8%,white);
+  border-radius:0 14px 14px 0;
+  border-left:4px solid var(--accent);
+  font-size:1.02rem;
+  line-height:1.6;
+  color:#1e2b4a;
+  font-weight:600;
+}
+.phrase::before{
+  content:"💬 ";
+  font-size:1rem;
+  margin-right:4px;
+}
+
+/* === TIP BOX === */
+.tip{
+  margin-top:18px;
+  padding:14px 18px;
+  background:#fff7d6;
+  border-left:4px solid #e3a72f;
+  border-radius:0 12px 12px 0;
+  font-size:.9rem;
+  color:#5c4410;
+}
+.tip b{color:#8a5f00}
+.tip i{margin-right:4px;color:#c58b13}
+
+/* === FOOTER === */
+footer{
+  text-align:center;
+  color:var(--muted);
+  font-size:.85rem;
+  margin-top:40px;
+  padding-top:22px;
+  border-top:1px solid #e1e7f3;
+}
+footer a{
+  color:var(--blue);
+  text-decoration:none;
+  font-weight:700;
+}
+footer a:hover{text-decoration:underline}
+
+/* === BACK TO TOP === */
+.top-btn{
+  position:fixed;
+  right:24px;
+  bottom:24px;
+  width:48px;height:48px;
+  border-radius:50%;
+  background:var(--blue);
+  color:#fff;
+  border:none;
+  display:grid;place-items:center;
+  font-size:1.2rem;
+  cursor:pointer;
+  box-shadow:0 10px 28px rgba(40,73,216,.35);
+  transition:.2s;
+  z-index:100;
+}
+.top-btn:hover{transform:translateY(-3px);background:#1c34b0}
+.top-btn.hidden{opacity:0;pointer-events:none}
+
+/* === RESPONSIVE === */
+@media(max-width:700px){
+  body{padding:26px 12px 70px}
+  .slide-doc{padding:24px 20px}
+  .slide-head .num{width:46px;height:46px;font-size:1.2rem}
+  .slide-head h2{font-size:1.28rem}
+  .term{grid-template-columns:1fr;gap:4px;padding:11px 14px}
+}
+@media print{
+  body{background:#fff;padding:0}
+  .top-btn,footer a,header .team{display:none}
+  .slide-doc{break-inside:avoid;box-shadow:none;border:1px solid #ccc}
+  .index{page-break-after:always}
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+
+<!-- HEADER -->
+<header>
+  <div class="kicker">Guion de Exposición · Documento Interno</div>
+  <h1>Plataforma .NET</h1>
+  <p>Guía detallada en español para leer, entender y explicar cada diapositiva. Cada concepto técnico está explicado con palabras simples, con su sigla y significado completo.</p>
+  <div class="team">
+    <span><b>Kevin Roger</b> Bancayán Valera</span>
+    <span><b>Gerald Fernando</b> Marcelo Chapoñan</span>
+    <span><b>Jesús Ángel</b> Pravia Purihuaman</span>
+  </div>
+</header>
+
+<!-- INDEX -->
+<nav class="index">
+  <h3>Índice de contenidos</h3>
+  <ol>
+    <li><a href="#s1"><i class="bi bi-cpu"></i>1. ¿Qué es .NET y de qué está hecho?</a></li>
+    <li><a href="#s2"><i class="bi bi-code-slash"></i>2. Lenguajes y tecnologías clave</a></li>
+    <li><a href="#s3"><i class="bi bi-gear"></i>3. ¿Cómo funciona por dentro?</a></li>
+    <li><a href="#s4"><i class="bi bi-lightning-charge"></i>4. Rendimiento y unificación</a></li>
+    <li><a href="#s5"><i class="bi bi-cloud-arrow-up"></i>5. IA nativa y Nube</a></li>
+    <li><a href="#s6"><i class="bi bi-rocket-takeoff"></i>6. Native AOT y conclusión</a></li>
+  </ol>
+</nav>
+
+<!-- ============ SLIDE 1 ============ -->
+<article class="slide-doc" id="s1" style="--accent:#2849d8">
+  <div class="slide-head">
+    <div class="num">1</div>
+    <div class="title-block">
+      <div class="eyebrow">Diapositiva 01 · Base</div>
+      <h2>¿Qué es .NET y de qué está hecho?</h2>
+    </div>
+  </div>
+
+  <div class="block">
+    <h4><i class="bi bi-chat-left-text"></i>Qué decir en voz alta</h4>
+    <p>.NET es una plataforma que creó Microsoft para que los programadores puedan construir aplicaciones. Es importante aclarar desde el inicio que <strong>.NET no es un lenguaje de programación</strong>, sino el ambiente donde el código se ejecuta. Los lenguajes como C# se usan sobre esta plataforma.</p>
+    <p>Es una plataforma <strong>gratuita, de código abierto y multiplataforma</strong>: funciona en Windows, Linux y macOS sin tener que cambiar el código. Una aplicación hecha en .NET puede correr en cualquiera de esos tres sistemas.</p>
+  </div>
+
+  <div class="block">
+    <h4><i class="bi bi-puzzle"></i>Las piezas que forman .NET</h4>
+    <div class="terms">
+      <div class="term">
+        <div class="sigla">CLR (Common Language Runtime)</div>
+        <div class="def">Es el componente principal. Su trabajo es ejecutar el programa y administrar la memoria automáticamente, para que el programador no tenga que liberar memoria manualmente.</div>
+      </div>
+      <div class="term">
+        <div class="sigla">BCL (Base Class Library)</div>
+        <div class="def">Es un conjunto de bibliotecas de código ya escritas que se pueden reutilizar. Por ejemplo: funciones para leer archivos, manejar texto, hacer conexiones de red. Evita empezar de cero.</div>
+      </div>
+      <div class="term">
+        <div class="sigla">Compiler (Compilador)</div>
+        <div class="def">Es el programa que convierte el código que escribe el programador en un formato que la máquina puede entender y procesar.</div>
+      </div>
+      <div class="term">
+        <div class="sigla">SDK (Software Development Kit) + CLI (Command Line Interface)</div>
+        <div class="def">Son las herramientas que permiten crear proyectos, compilarlos y publicarlos. Se usan desde la línea de comandos (CLI) o desde un editor de código.</div>
+      </div>
+      <div class="term">
+        <div class="sigla">NuGet</div>
+        <div class="def">Es un repositorio o "tienda" donde los desarrolladores descargan librerías ya hechas por otras personas. Permite agregar funcionalidad extra sin escribir todo desde cero.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="phrase">Con .NET no empiezas de cero: el runtime, las bibliotecas y las herramientas ya vienen incluidos. Tú solo escribes la lógica de tu aplicación.</div>
+
+  <div class="tip"><i class="bi bi-lightbulb-fill"></i><b>Consejo para exponer:</b> si alguien pregunta "¿entonces .NET es lo mismo que C#?", responde: "No. C# es el lenguaje; .NET es la plataforma que lo ejecuta. Es como la diferencia entre un idioma y el país donde se habla."</div>
+</article>
+
+<!-- ============ SLIDE 2 ============ -->
+<article class="slide-doc" id="s2" style="--accent:#df7628">
+  <div class="slide-head">
+    <div class="num">2</div>
+    <div class="title-block">
+      <div class="eyebrow">Diapositiva 02 · Herramientas</div>
+      <h2>Lenguajes y tecnologías clave</h2>
+    </div>
+  </div>
+
+  <div class="block">
+    <h4><i class="bi bi-chat-left-text"></i>Qué decir en voz alta</h4>
+    <p>.NET no obliga a usar un solo lenguaje. Ofrece tres lenguajes principales, cada uno pensado para un tipo de trabajo distinto. Y también ofrece diferentes tecnologías según el tipo de aplicación que se quiera construir.</p>
+  </div>
+
+  <div class="block">
+    <h4><i class="bi bi-translate"></i>Los tres lenguajes</h4>
+    <div class="terms">
+      <div class="term">
+        <div class="sigla">C# (C Sharp)</div>
+        <div class="def">Es el lenguaje más usado en la industria. Con él se construyen desde aplicaciones web hasta videojuegos. Es la primera opción para la mayoría de proyectos.</div>
+      </div>
+      <div class="term">
+        <div class="sigla">F# (F Sharp)</div>
+        <div class="def">Es un lenguaje enfocado en cálculos y procesamiento de datos. Se usa en proyectos donde la matemática o el análisis de información son importantes.</div>
+      </div>
+      <div class="term">
+        <div class="sigla">Visual Basic</div>
+        <div class="def">Es un lenguaje que aún se usa en empresas que tienen sistemas Windows antiguos o desarrollos internos. Es más sencillo de leer y escribir.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="block">
+    <h4><i class="bi bi-tools"></i>Tecnologías según el tipo de aplicación</h4>
+    <div class="terms">
+      <div class="term">
+        <div class="sigla">ASP.NET Core</div>
+        <div class="def">Es el framework para crear sitios web y servicios de internet. Permite que una aplicación reciba peticiones y devuelva respuestas a través de internet.</div>
+      </div>
+      <div class="term">
+        <div class="sigla">Entity Framework Core</div>
+        <div class="def">Es la herramienta para trabajar con bases de datos. Permite leer y guardar información sin tener que escribir consultas SQL manuales; se usan objetos en C#.</div>
+      </div>
+      <div class="term">
+        <div class="sigla">.NET MAUI (Multi-platform App UI)</div>
+        <div class="def">Con un solo proyecto de código se puede crear una aplicación para Android, iOS, Windows y macOS. No hay que programar cada sistema por separado.</div>
+      </div>
+      <div class="term">
+        <div class="sigla">WPF (Windows Presentation Foundation) y WinForms</div>
+        <div class="def">Son tecnologías para crear programas de escritorio en Windows. WPF es más moderna; WinForms es más antigua pero todavía se usa en empresas.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="phrase">El lenguaje es el mismo para todos los proyectos. Lo que cambia es la tecnología que eliges según si haces una web, una app móvil o un programa de escritorio.</div>
+
+  <div class="tip"><i class="bi bi-lightbulb-fill"></i><b>Consejo para exponer:</b> aclara que se puede combinar. Un proyecto puede usar C# como lenguaje, ASP.NET Core para el backend y MAUI para la app móvil. No son excluyentes.</div>
+</article>
+
+<!-- ============ SLIDE 3 ============ -->
+<article class="slide-doc" id="s3" style="--accent:#7042a5">
+  <div class="slide-head">
+    <div class="num">3</div>
+    <div class="title-block">
+      <div class="eyebrow">Diapositiva 03 · Motor</div>
+      <h2>¿Cómo funciona por dentro?</h2>
+    </div>
+  </div>
+
+  <div class="block">
+    <h4><i class="bi bi-chat-left-text"></i>Qué decir en voz alta</h4>
+    <p>Cuando un programador escribe código en C#, ese código no se ejecuta directamente. Pasa por un proceso de traducción en dos etapas. Este proceso es lo que permite que el mismo programa funcione en distintos sistemas operativos.</p>
+  </div>
+
+  <div class="block">
+    <h4><i class="bi bi-signpost-split"></i>Las cuatro etapas</h4>
+    <div class="terms">
+      <div class="term">
+        <div class="sigla">1. Escribir el código</div>
+        <div class="def">El programador escribe las instrucciones en C#. Es el código fuente que se ve en el editor.</div>
+      </div>
+      <div class="term">
+        <div class="sigla">2. Compilación a IL (Intermediate Language)</div>
+        <div class="def">El compilador convierte el código C# en un lenguaje intermedio. Este lenguaje no depende del tipo de procesador, por eso es el mismo para cualquier máquina.</div>
+      </div>
+      <div class="term">
+        <div class="sigla">3. JIT (Just-In-Time)</div>
+        <div class="def">Al momento de ejecutar, el JIT toma el código intermedio y lo convierte en código de máquina específico para el procesador donde corre el programa. Se llama "Just-In-Time" porque se hace en el momento necesario.</div>
+      </div>
+      <div class="term">
+        <div class="sigla">4. El CLR ejecuta</div>
+        <div class="def">Finalmente el CLR (Common Language Runtime) ejecuta el programa y controla la memoria y la seguridad durante todo el proceso.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="phrase">El código se compila una vez y se adapta al sistema donde corre. Por eso el mismo programa funciona en Windows, Linux y macOS sin cambios.</div>
+
+  <div class="tip"><i class="bi bi-lightbulb-fill"></i><b>Consejo para exponer:</b> si el público no entiende por qué hay dos compilaciones, di: "La primera compilación genera un formato universal. La segunda lo traduce al idioma específico de la máquina donde se ejecuta. Así el mismo archivo sirve en cualquier sistema."</div>
+</article>
+
+<!-- ============ SLIDE 4 ============ -->
+<article class="slide-doc" id="s4" style="--accent:#168653">
+  <div class="slide-head">
+    <div class="num">4</div>
+    <div class="title-block">
+      <div class="eyebrow">Diapositiva 04 · Impacto</div>
+      <h2>Rendimiento y unificación</h2>
+    </div>
+  </div>
+
+  <div class="block">
+    <h4><i class="bi bi-chat-left-text"></i>Qué decir en voz alta</h4>
+    <p>Hay dos cosas importantes que destacar de .NET hoy: es rápido, y ya no está fragmentado. Antes existían tres versiones separadas de .NET y los desarrolladores tenían que elegir cuál usar según el sistema. Desde .NET 5 hay una sola versión para todos los sistemas.</p>
+  </div>
+
+  <div class="block">
+    <h4><i class="bi bi-speedometer2"></i>Rendimiento</h4>
+    <p>En pruebas públicas de rendimiento (TechEmpower) que miden cuántas solicitudes web puede procesar un servidor al mismo tiempo, .NET ha demostrado procesar <strong>más solicitudes concurrentes que Node.js y Java</strong>. Esto significa que puede atender a más usuarios al mismo tiempo sin perder velocidad.</p>
+  </div>
+
+  <div class="block">
+    <h4><i class="bi bi-diagram-3"></i>Unificación</h4>
+    <p>Antes, un desarrollador tenía que elegir entre:</p>
+    <ul>
+      <li><strong>.NET Framework:</strong> solo funcionaba en Windows.</li>
+      <li><strong>.NET Core:</strong> funcionaba en varios sistemas, pero era una versión separada.</li>
+      <li><strong>Mono:</strong> pensada para aplicaciones móviles.</li>
+    </ul>
+    <p>Desde <strong>.NET 5</strong> hay una sola versión que unifica todo. Esto elimina la confusión y estandariza el desarrollo para todos los sistemas.</p>
+  </div>
+
+  <div class="phrase">Hoy hay una sola versión de .NET para todos los sistemas, y está optimizada para manejar muchas solicitudes al mismo tiempo sin perder velocidad.</div>
+
+  <div class="tip"><i class="bi bi-lightbulb-fill"></i><b>Consejo para exponer:</b> si te preguntan "¿qué gana una empresa con esto?", responde: "Menos confusión al elegir versión, y un solo equipo puede mantener el mismo código para todos sus sistemas."</div>
+</article>
+
+<!-- ============ SLIDE 5 ============ -->
+<article class="slide-doc" id="s5" style="--accent:#0786a8">
+  <div class="slide-head">
+    <div class="num">5</div>
+    <div class="title-block">
+      <div class="eyebrow">Diapositiva 05 · Futuro</div>
+      <h2>IA nativa y Nube</h2>
+    </div>
+  </div>
+
+  <div class="block">
+    <h4><i class="bi bi-chat-left-text"></i>Qué decir en voz alta</h4>
+    <p>.NET ha incorporado dos tendencias muy importantes del presente: la inteligencia artificial y la computación en la nube. Esto significa que las empresas que ya usan .NET pueden agregar estas capacidades sin cambiar de tecnología ni reescribir sus sistemas desde cero.</p>
+  </div>
+
+  <div class="block">
+    <h4><i class="bi bi-robot"></i>Inteligencia Artificial</h4>
+    <div class="terms">
+      <div class="term">
+        <div class="sigla">Semantic Kernel</div>
+        <div class="def">Es una librería de .NET que permite integrar modelos de lenguaje (como ChatGPT) directamente en aplicaciones hechas en C#. No se necesita usar Python ni cambiar de lenguaje para trabajar con IA.</div>
+      </div>
+    </div>
+    <p>Esto permite que una aplicación empresarial existente pueda, por ejemplo, tener un asistente que responda preguntas usando inteligencia artificial, sin cambiar de plataforma.</p>
+  </div>
+
+  <div class="block">
+    <h4><i class="bi bi-cloud"></i>Computación en la nube</h4>
+    <div class="terms">
+      <div class="term">
+        <div class="sigla">.NET Aspire</div>
+        <div class="def">Es una herramienta para crear, monitorear y desplegar aplicaciones distribuidas (varios servicios que trabajan juntos). Facilita la administración de sistemas en la nube.</div>
+      </div>
+      <div class="term">
+        <div class="sigla">Docker</div>
+        <div class="def">Es una tecnología de contenedores que empaqueta una aplicación con todo lo que necesita para funcionar. .NET genera imágenes pequeñas y con arranque rápido, lo que ahorra recursos en los servidores.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="phrase">Si tu aplicación ya está hecha en .NET, puedes integrarle inteligencia artificial sin migrar a otro lenguaje ni reescribir el proyecto.</div>
+
+  <div class="tip"><i class="bi bi-lightbulb-fill"></i><b>Consejo para exponer:</b> aclara que "nube" significa que la aplicación corre en servidores de internet en lugar de en una computadora local. .NET está diseñado para funcionar bien en ese entorno.</div>
+</article>
+
+<!-- ============ SLIDE 6 ============ -->
+<article class="slide-doc" id="s6" style="--accent:#c43c82">
+  <div class="slide-head">
+    <div class="num">6</div>
+    <div class="title-block">
+      <div class="eyebrow">Diapositiva 06 · Cierre</div>
+      <h2>Native AOT y conclusión</h2>
+    </div>
+  </div>
+
+  <div class="block">
+    <h4><i class="bi bi-chat-left-text"></i>Qué decir en voz alta</h4>
+    <p>Para cerrar, hablemos de una característica que está marcando el futuro de .NET: la compilación Native AOT. Después de esto, damos la conclusión general de toda la exposición.</p>
+  </div>
+
+  <div class="block">
+    <h4><i class="bi bi-rocket-takeoff"></i>Native AOT</h4>
+    <div class="terms">
+      <div class="term">
+        <div class="sigla">AOT (Ahead-Of-Time)</div>
+        <div class="def">Es una forma de compilación que traduce el código directamente al código de máquina antes de ejecutar el programa. A diferencia del JIT (que traduce en el momento), AOT lo hace todo antes.</div>
+      </div>
+    </div>
+    <p><strong>Resultado:</strong> la aplicación arranca de inmediato y usa menos memoria. Es ideal para dos escenarios:</p>
+    <ul>
+      <li><strong>Servicios en la nube que inician y se detienen constantemente</strong> (como AWS Lambda o Azure Functions), porque el tiempo de arranque es casi cero.</li>
+      <li><strong>Dispositivos con recursos limitados</strong> (Edge Computing), donde la memoria es escasa.</li>
+    </ul>
+  </div>
+
+  <div class="block">
+    <h4><i class="bi bi-flag"></i>Conclusión general</h4>
+    <p>.NET es una sola plataforma que permite construir cualquier aplicación moderna: web, móvil, escritorio, nube e inteligencia artificial. Incluye varios lenguajes (principalmente C#), herramientas completas y un rendimiento optimizado. Es gratuita, de código abierto y funciona en todos los sistemas principales.</p>
+  </div>
+
+  <div class="phrase">Con Native AOT, la aplicación queda compilada para esa máquina específica: arranca de inmediato y consume menos memoria. Por eso sirve para servicios en la nube que se encienden y apagan todo el tiempo, y para dispositivos con poca capacidad.</div>
+
+  <div class="tip"><i class="bi bi-lightbulb-fill"></i><b>Consejo para cerrar:</b> puedes terminar diciendo: ".NET ya no es solo una herramienta para hacer páginas web. Es una plataforma completa que cubre las necesidades actuales de las empresas: nube, inteligencia artificial y rendimiento."</div>
+
+  <div class="block" style="margin-top:28px">
+    <h4><i class="bi bi-youtube"></i>Video de apoyo</h4>
+    <p>Para complementar la exposición, pueden mostrar el siguiente video:</p>
+    <p><a href="https://youtu.be/eE9RQf8NPZY?si=EyR_ISBqbexMr8w-" target="_blank" rel="noopener noreferrer" style="display:inline-flex;align-items:center;gap:8px;padding:10px 18px;background:#fff;border:1px solid #e6ecf7;border-radius:10px;color:#b42335;text-decoration:none;font-weight:800;margin-top:6px;box-shadow:0 5px 15px rgba(32,54,108,.06)"><i class="bi bi-play-circle-fill" style="font-size:1.2rem"></i> Abrir video en YouTube <i class="bi bi-box-arrow-up-right"></i></a></p>
+  </div>
+</article>
+
+<footer>
+  <p>Documento de apoyo para la exposición · Plataforma .NET</p>
+  <p style="margin-top:6px">Equipo: Kevin Bancayán · Gerald Marcelo · Jesús Pravia</p>
+</footer>
+
+</div>
+
+<button class="top-btn hidden" id="topBtn" aria-label="Volver arriba"><i class="bi bi-arrow-up"></i></button>
+
+<script>
+const topBtn = document.getElementById('topBtn');
+window.addEventListener('scroll', () => {
+  if(window.scrollY > 400) topBtn.classList.remove('hidden');
+  else topBtn.classList.add('hidden');
+});
+topBtn.addEventListener('click', () => window.scrollTo({top:0, behavior:'smooth'}));
+</script>
+
+</body>
+</html>
