@@ -1,0 +1,899 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Distribución de frecuencias y medidas de tendencia central</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=JetBrains+Mono:wght@500;700&family=Sora:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<style>
+:root{
+  --bg:#050814; --panel:rgba(255,255,255,.05); --line:rgba(120,200,255,.22);
+  --tx:#eaf3ff; --mut:#9fb2d8;
+  --cy:#38e8ff; --am:#ffd23f; --ro:#ff5c8a; --vi:#b388ff; --gr:#3ef2a0;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{font-size:max(14px,min(1.15vw,2.1vh))}
+body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(--tx);height:100vh;width:100vw;overflow:hidden}
+
+body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:
+   radial-gradient(70rem 45rem at 88% -12%,rgba(179,136,255,.30),transparent 62%),
+   radial-gradient(55rem 40rem at -12% 112%,rgba(56,232,255,.24),transparent 62%),
+   radial-gradient(40rem 30rem at 50% 120%,rgba(255,92,138,.15),transparent 65%),
+   linear-gradient(180deg,#050814,#070c1e 55%,#050814);}
+body::after{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.55;
+  background-image:
+    linear-gradient(rgba(56,232,255,.10) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(56,232,255,.10) 1px,transparent 1px);
+  background-size:2.8rem 2.8rem;
+  -webkit-mask-image:radial-gradient(ellipse at center,#000 35%,transparent 82%);
+  mask-image:radial-gradient(ellipse at center,#000 35%,transparent 82%);
+  animation:grid 18s linear infinite}
+@keyframes grid{to{background-position:2.8rem 2.8rem}}
+
+#deck{position:fixed;inset:0;z-index:1}
+.slide{position:absolute;inset:0;padding:1.6rem 2.5rem 4.4rem;display:flex;flex-direction:column;gap:.9rem;overflow-y:auto;
+  opacity:0;visibility:hidden;transform:translateX(3.5rem);transition:opacity .45s ease,transform .45s ease,visibility 0s .45s}
+.slide.active{opacity:1;visibility:visible;transform:none;transition:opacity .45s ease,transform .45s ease}
+.slide.past{transform:translateX(-3.5rem)}
+.slide::-webkit-scrollbar{width:9px}
+.slide::-webkit-scrollbar-thumb{background:linear-gradient(var(--cy),var(--vi));border-radius:9px}
+
+h1,h2,h3{font-family:'Sora',sans-serif;line-height:1.12}
+h1{font-size:4.2rem;font-weight:800;letter-spacing:-.025em;text-shadow:0 0 32px rgba(56,232,255,.35)}
+h1 em{font-style:normal;background:linear-gradient(90deg,var(--cy),var(--vi),var(--ro));
+  -webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 0 14px rgba(56,232,255,.55))}
+h2{font-size:3rem;font-weight:700;letter-spacing:-.015em;
+   background:linear-gradient(90deg,#fff,#b9e6ff);-webkit-background-clip:text;background-clip:text;color:transparent}
+h3{font-size:1.7rem;font-weight:700;margin-bottom:.35rem}
+p,li{font-size:1.34rem;line-height:1.5;color:var(--tx)}
+.lead{font-size:1.75rem;color:var(--mut);max-width:42rem;line-height:1.45}
+.mut{color:var(--mut)}
+.sh{display:flex;flex-direction:column;gap:.35rem;align-items:flex-start}
+.tag{display:inline-flex;align-items:center;gap:.55rem;padding:.38rem 1rem;border-radius:99px;font-size:1rem;font-weight:700;
+  letter-spacing:.08em;text-transform:uppercase;color:var(--cy);
+  background:rgba(56,232,255,.10);border:1px solid rgba(56,232,255,.45);
+  box-shadow:0 0 16px rgba(56,232,255,.25),inset 0 0 12px rgba(56,232,255,.08)}
+.tag.vi{color:var(--vi);background:rgba(179,136,255,.10);border-color:rgba(179,136,255,.5);box-shadow:0 0 16px rgba(179,136,255,.28)}
+.tag.am{color:var(--am);background:rgba(255,210,63,.10);border-color:rgba(255,210,63,.5);box-shadow:0 0 16px rgba(255,210,63,.25)}
+.ds-sub{display:flex;align-items:center;gap:.6rem;color:var(--mut);font-size:1.26rem}
+.ds-sub i{color:var(--am)}.ds-sub b{color:var(--tx)}
+sub{font-size:.7em}.ov{text-decoration:overline}
+
+/* eslogan */
+.slogan{display:inline-flex;align-items:center;gap:.7rem;padding:.6rem 1.1rem;border-radius:.9rem;
+  font-family:'Sora';font-weight:700;font-size:1.28rem;letter-spacing:.01em;color:var(--tx);
+  background:linear-gradient(100deg,rgba(56,232,255,.16),rgba(179,136,255,.16));
+  border:1px solid rgba(56,232,255,.45);box-shadow:0 0 24px rgba(56,232,255,.25)}
+.slogan i{color:var(--am);font-size:1.6rem;filter:drop-shadow(0 0 12px var(--am))}
+.slogan b{color:var(--cy)}
+
+.card{position:relative;background:linear-gradient(160deg,rgba(255,255,255,.07),rgba(255,255,255,.02));
+  border:1px solid var(--line);border-radius:1.1rem;padding:1rem 1.15rem;backdrop-filter:blur(10px);
+  box-shadow:0 10px 30px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.07);
+  transition:transform .25s,box-shadow .25s,border-color .25s}
+.card:hover{transform:translateY(-3px);border-color:rgba(56,232,255,.55);box-shadow:0 16px 40px rgba(0,0,0,.45),0 0 26px rgba(56,232,255,.18)}
+.card::before{content:"";position:absolute;inset:-1px;border-radius:inherit;padding:1px;pointer-events:none;
+  background:linear-gradient(130deg,rgba(56,232,255,.45),transparent 35%,transparent 65%,rgba(179,136,255,.45));
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+  -webkit-mask-composite:xor;mask-composite:exclude;opacity:.5}
+.grow{flex:1;min-height:0}
+.row{display:flex;gap:1rem}.col{display:flex;flex-direction:column;gap:.8rem}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
+.ic{font-size:2.9rem;color:var(--c,var(--cy));filter:drop-shadow(0 0 12px var(--c,var(--cy)))}
+.list{list-style:none;display:flex;flex-direction:column;gap:.55rem}
+.list li{display:flex;gap:.65rem;align-items:flex-start}
+.list li>i{color:var(--c,var(--gr));margin-top:.2rem;font-size:1.3rem;filter:drop-shadow(0 0 8px var(--c,var(--gr)))}
+
+.formula{font-family:'JetBrains Mono',monospace;font-weight:500;font-size:1.42rem;
+  background:linear-gradient(160deg,rgba(0,0,0,.45),rgba(56,232,255,.06));
+  border-left:5px solid var(--c,var(--cy));padding:.7rem .95rem;border-radius:.7rem;line-height:1.45;
+  box-shadow:inset 0 0 24px rgba(56,232,255,.07)}
+.formula small{display:block;font-family:'DM Sans',sans-serif;font-size:.92rem;font-weight:700;letter-spacing:.07em;
+  text-transform:uppercase;color:var(--mut);margin-bottom:.2rem}
+.sym{font-family:'DM Sans',sans-serif;font-size:1.08rem;color:var(--mut);line-height:1.55;margin-top:.4rem}
+.sym b{color:var(--tx);font-family:'JetBrains Mono',monospace}
+.c-mean{--c:var(--cy)}.c-med{--c:var(--am)}.c-mode{--c:var(--ro)}.c-vi{--c:var(--vi)}.c-gr{--c:var(--gr)}
+.topbar-c{border-top:4px solid var(--c);box-shadow:0 -1px 22px -4px var(--c)}
+.illus{width:100%;height:auto;color:var(--c);filter:drop-shadow(0 0 10px var(--c))}
+.pill{display:inline-flex;align-items:center;gap:.55rem;padding:.42rem .85rem;border-radius:.7rem;
+  background:rgba(255,255,255,.05);border:1px solid var(--line);font-size:1.22rem}
+.pill i{color:var(--c,var(--cy));filter:drop-shadow(0 0 8px var(--c,var(--cy)))}
+.num{font-family:'Sora';font-weight:800;font-size:3.4rem;line-height:1;color:var(--c,var(--cy));opacity:.95;
+  filter:drop-shadow(0 0 14px var(--c,var(--cy)))}
+.badge-n{display:inline-grid;place-items:center;width:2.5rem;height:2.5rem;border-radius:50%;
+  background:linear-gradient(135deg,var(--cy),var(--vi));color:#04101f;font-weight:800;font-family:'Sora';
+  box-shadow:0 0 16px rgba(56,232,255,.55)}
+.note{display:flex;gap:.75rem;align-items:flex-start;padding:.75rem 1rem;border-radius:.85rem;
+  background:rgba(255,210,63,.08);border:1px solid rgba(255,210,63,.35);box-shadow:0 0 18px rgba(255,210,63,.12)}
+.note i{color:var(--am);font-size:1.5rem;filter:drop-shadow(0 0 10px var(--am))}
+.note.cy{background:rgba(56,232,255,.08);border-color:rgba(56,232,255,.35);box-shadow:0 0 18px rgba(56,232,255,.12)}
+.note.cy i{color:var(--cy);filter:drop-shadow(0 0 10px var(--cy))}
+
+.tbl{width:100%;border-collapse:separate;border-spacing:0;border:1px solid var(--line);border-radius:.85rem;
+  overflow:hidden;font-variant-numeric:tabular-nums;box-shadow:0 0 26px rgba(56,232,255,.08)}
+.tbl th{background:linear-gradient(180deg,rgba(56,232,255,.22),rgba(56,232,255,.08));color:var(--cy);
+  font-family:'Sora';font-size:1.15rem;padding:.55rem .65rem;text-align:center;font-weight:700;letter-spacing:.03em}
+.tbl td{padding:.46rem .65rem;text-align:center;font-size:1.26rem;border-top:1px solid var(--line)}
+.tbl tbody tr:nth-child(even) td{background:rgba(255,255,255,.035)}
+.tbl tfoot td{font-weight:700;background:rgba(255,210,63,.12);color:var(--am)}
+.tbl tr.hl td{background:rgba(255,92,138,.18)!important;box-shadow:inset 0 0 18px rgba(255,92,138,.18)}
+.cmp td:first-child,.cmp th:first-child{text-align:left}
+.cmp td{text-align:left;vertical-align:top;font-size:1.2rem}
+
+.cover{flex-direction:row;align-items:center;gap:2.4rem;padding-bottom:4.5rem}
+.cover-left{flex:1.1;display:flex;flex-direction:column;gap:1.1rem;align-items:flex-start}
+.cover-right{flex:.9}
+.cover-right svg{width:100%;height:auto;filter:drop-shadow(0 0 34px rgba(56,232,255,.45))}
+.hint{display:flex;gap:.6rem;align-items:center;color:var(--mut);font-size:1.12rem}
+.hint i{color:var(--cy)}
+
+label.fl{display:flex;align-items:center;gap:.55rem;font-weight:700;margin-bottom:.35rem;font-size:1.24rem}
+label.fl i{color:var(--cy);filter:drop-shadow(0 0 8px var(--cy))}
+input[type=text],textarea{width:100%;background:rgba(0,0,0,.45);border:1.5px solid var(--line);border-radius:.85rem;
+  color:var(--tx);padding:.75rem .9rem;font:inherit;font-size:1.26rem;outline:none;transition:border .2s,box-shadow .2s}
+textarea{font-family:'JetBrains Mono',monospace;resize:none;height:10rem;line-height:1.55}
+input:focus,textarea:focus{border-color:var(--cy);box-shadow:0 0 0 4px rgba(56,232,255,.18),0 0 26px rgba(56,232,255,.3)}
+.btn{display:inline-flex;align-items:center;gap:.6rem;padding:.72rem 1.25rem;border:none;border-radius:.9rem;cursor:pointer;
+  font:inherit;font-weight:700;font-size:1.2rem;color:#04101f;background:linear-gradient(135deg,var(--cy),var(--vi));
+  box-shadow:0 0 22px rgba(56,232,255,.45);transition:transform .15s,filter .15s,box-shadow .15s}
+.btn:hover{transform:translateY(-2px);filter:brightness(1.12);box-shadow:0 0 32px rgba(56,232,255,.7)}
+.btn.ghost{background:rgba(255,255,255,.06);color:var(--tx);border:1px solid var(--line);box-shadow:none}
+.btn.ghost:hover{border-color:var(--cy);box-shadow:0 0 22px rgba(56,232,255,.3)}
+.btns{display:flex;gap:.7rem;flex-wrap:wrap;margin-top:.8rem}
+.msg{display:flex;align-items:center;gap:.6rem;min-height:1.7rem;margin-top:.5rem;font-weight:500;font-size:1.18rem}
+.msg.err{color:var(--ro)}.msg.ok{color:var(--gr)}.msg.warn{color:var(--am)}
+.live{display:flex;gap:.6rem;flex-wrap:wrap;margin-top:.5rem}
+
+.res-body{display:none;flex-direction:column;gap:.8rem;flex:1;min-height:0}
+body.ready .res-body{display:flex}
+.empty{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1rem;text-align:center;color:var(--mut)}
+.empty i.big{font-size:4.2rem;color:var(--vi);filter:drop-shadow(0 0 24px var(--vi))}
+body.ready .empty{display:none}
+.chips{display:flex;flex-wrap:wrap;gap:.6rem}
+.chip{padding:.42rem .85rem;border-radius:.7rem;background:rgba(255,255,255,.05);border:1px solid var(--line);font-size:1.18rem}
+.chip b{color:var(--cy);font-family:'JetBrains Mono';margin-left:.25rem;text-shadow:0 0 10px rgba(56,232,255,.6)}
+.calc{font-family:'JetBrains Mono',monospace;font-size:1.12rem;color:var(--mut);line-height:1.6}
+.calc b{color:var(--tx)}
+.strip{display:flex;flex-wrap:wrap;gap:.3rem;max-height:5rem;overflow-y:auto;padding:.6rem .8rem;border-radius:.8rem;
+  background:rgba(0,0,0,.35);border:1px solid var(--line);box-shadow:inset 0 0 24px rgba(56,232,255,.06)}
+.strip span{font-family:'JetBrains Mono';font-size:1.12rem;padding:.12rem .45rem;border-radius:.35rem;background:rgba(255,255,255,.08)}
+.strip span.hm{background:var(--am);color:#1b1400;font-weight:700;box-shadow:0 0 14px var(--am)}
+.strip span.hmo{outline:2px solid var(--ro);outline-offset:1px}
+.strip span.hm.hmo{background:var(--am)}
+.mcard{display:flex;flex-direction:column;gap:.5rem}
+.mcard .head{display:flex;align-items:center;gap:.7rem}
+.mcard .head i{font-size:2.1rem;color:var(--c);filter:drop-shadow(0 0 12px var(--c))}
+.mcard .head h3{margin:0;color:var(--c)}
+.mcard .blk{padding:.6rem .8rem;border-radius:.7rem;background:rgba(0,0,0,.3);border:1px solid rgba(255,255,255,.06)}
+.mcard .blk small{display:block;font-size:.9rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--mut);margin-bottom:.15rem}
+.legend{display:flex;gap:1.2rem;flex-wrap:wrap;font-size:1.18rem}
+.legend span{display:inline-flex;align-items:center;gap:.5rem}
+.legend s{display:inline-block;width:1.6rem;height:0;border-top:3px solid var(--c,#fff);text-decoration:none;box-shadow:0 0 10px var(--c,#fff)}
+.legend s.dash{border-top-style:dashed}
+.chartbox{background:rgba(0,0,0,.32);border:1px solid var(--line);border-radius:1rem;padding:.5rem;flex:1;min-height:0;
+  display:flex;box-shadow:inset 0 0 34px rgba(56,232,255,.08)}
+.chartbox svg{width:100%;height:100%}
+
+.net-wrap{display:flex;gap:1.2rem;flex:1;min-height:0}
+.net-wrap canvas{flex:1.7;min-width:0;background:rgba(0,0,0,.4);border:1px solid var(--line);border-radius:1rem;
+  width:100%;height:100%;box-shadow:inset 0 0 34px rgba(56,232,255,.12)}
+.steps{flex:1;display:flex;flex-direction:column;gap:.7rem;justify-content:center}
+.stp{display:flex;align-items:center;gap:.7rem;padding:.7rem .9rem;border-radius:.9rem;
+  background:rgba(255,255,255,.045);border:1px solid var(--line);color:var(--mut);transition:all .3s;font-size:1.22rem}
+.stp i{font-size:1.6rem}
+.stp.act{color:var(--tx);border-color:var(--cy);background:rgba(56,232,255,.12);box-shadow:0 0 22px rgba(56,232,255,.3)}
+.stp.act i{color:var(--cy);animation:spin 1s linear infinite;filter:drop-shadow(0 0 10px var(--cy))}
+.stp.done{color:var(--tx)}.stp.done i{color:var(--gr);filter:drop-shadow(0 0 10px var(--gr))}
+@keyframes spin{to{transform:rotate(360deg)}}
+.pbar{height:.7rem;border-radius:99px;background:rgba(255,255,255,.1);overflow:hidden;box-shadow:inset 0 0 12px rgba(0,0,0,.5)}
+.pbar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--cy),var(--vi),var(--ro));
+  border-radius:99px;box-shadow:0 0 18px rgba(56,232,255,.7)}
+.status{display:flex;justify-content:space-between;font-size:1.18rem;color:var(--mut);margin-top:.5rem}
+
+#bar{position:fixed;left:0;right:0;bottom:0;height:3.4rem;z-index:10;display:flex;align-items:center;justify-content:space-between;padding:0 1.6rem;
+  background:linear-gradient(transparent,rgba(5,8,20,.95) 45%);border-top:1px solid rgba(56,232,255,.12)}
+.bar-l{display:flex;gap:.6rem;align-items:center;color:var(--mut);font-size:1.02rem;font-weight:500}
+.bar-l i{color:var(--cy);filter:drop-shadow(0 0 8px var(--cy))}
+.bar-r{display:flex;align-items:center;gap:.5rem;color:var(--mut);font-size:1.08rem}
+.ib{background:rgba(255,255,255,.06);border:1px solid var(--line);color:var(--tx);width:2.3rem;height:2.3rem;border-radius:.6rem;
+  cursor:pointer;display:grid;place-items:center;font-size:1.05rem;transition:all .2s}
+.ib:hover{background:rgba(56,232,255,.22);box-shadow:0 0 18px rgba(56,232,255,.5);border-color:var(--cy)}
+.ib:disabled{opacity:.3;cursor:default;box-shadow:none}
+#counter{margin-right:.6rem;font-family:'JetBrains Mono';font-size:1.02rem}
+#prog{position:absolute;left:0;bottom:0;height:3px;width:100%;background:rgba(255,255,255,.08)}
+#prog i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--cy),var(--vi));transition:width .4s;
+  box-shadow:0 0 14px rgba(56,232,255,.8)}
+
+@media (max-width:900px){
+  html{font-size:15px}.grid2,.grid3,.row,.cover,.net-wrap{grid-template-columns:1fr;flex-direction:column}
+  .slide{padding:1.4rem 1.1rem 4.4rem}h1{font-size:2.6rem}h2{font-size:2rem}
+}
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <symbol id="img-balance" viewBox="0 0 220 110">
+    <line x1="14" y1="72" x2="206" y2="72" stroke="var(--mut)" stroke-width="4" stroke-linecap="round"/>
+    <polygon points="110,74 93,104 127,104" fill="currentColor"/>
+    <rect x="22" y="50" width="22" height="22" rx="3" fill="currentColor" opacity=".5"/>
+    <rect x="52" y="56" width="22" height="16" rx="3" fill="currentColor" opacity=".5"/>
+    <rect x="84" y="60" width="22" height="12" rx="3" fill="currentColor" opacity=".5"/>
+    <rect x="128" y="54" width="22" height="18" rx="3" fill="currentColor" opacity=".5"/>
+    <rect x="170" y="34" width="22" height="38" rx="3" fill="currentColor" opacity=".5"/>
+  </symbol>
+  <symbol id="img-median" viewBox="0 0 220 110">
+    <g font-family="JetBrains Mono,monospace" font-size="13" text-anchor="middle" font-weight="700">
+      <rect x="8" y="26" width="24" height="32" rx="5" fill="rgba(255,255,255,.1)" stroke="rgba(255,255,255,.25)"/><text x="20" y="47" fill="#eaf3ff">2</text>
+      <rect x="38" y="26" width="24" height="32" rx="5" fill="rgba(255,255,255,.1)" stroke="rgba(255,255,255,.25)"/><text x="50" y="47" fill="#eaf3ff">3</text>
+      <rect x="68" y="26" width="24" height="32" rx="5" fill="rgba(255,255,255,.1)" stroke="rgba(255,255,255,.25)"/><text x="80" y="47" fill="#eaf3ff">5</text>
+      <rect x="98" y="20" width="24" height="44" rx="5" fill="currentColor"/><text x="110" y="47" fill="#1b1400">7</text>
+      <rect x="128" y="26" width="24" height="32" rx="5" fill="rgba(255,255,255,.1)" stroke="rgba(255,255,255,.25)"/><text x="140" y="47" fill="#eaf3ff">8</text>
+      <rect x="158" y="26" width="24" height="32" rx="5" fill="rgba(255,255,255,.1)" stroke="rgba(255,255,255,.25)"/><text x="170" y="47" fill="#eaf3ff">9</text>
+      <rect x="188" y="26" width="24" height="32" rx="5" fill="rgba(255,255,255,.1)" stroke="rgba(255,255,255,.25)"/><text x="200" y="47" fill="#eaf3ff">12</text>
+    </g>
+    <path d="M8 78 H92 M128 78 H212" stroke="var(--mut)" stroke-width="2.5" stroke-linecap="round"/>
+    <g font-family="DM Sans,sans-serif" font-size="12" fill="var(--mut)" text-anchor="middle" font-weight="700"><text x="50" y="98">50 %</text><text x="170" y="98">50 %</text></g>
+  </symbol>
+  <symbol id="img-mode" viewBox="0 0 220 110">
+    <line x1="6" y1="100" x2="214" y2="100" stroke="var(--mut)" stroke-width="2.5" stroke-linecap="round"/>
+    <rect x="14" y="72" width="28" height="28" rx="4" fill="rgba(255,255,255,.18)"/>
+    <rect x="54" y="48" width="28" height="52" rx="4" fill="rgba(255,255,255,.18)"/>
+    <rect x="94" y="14" width="28" height="86" rx="4" fill="currentColor"/>
+    <rect x="134" y="60" width="28" height="40" rx="4" fill="rgba(255,255,255,.18)"/>
+    <rect x="174" y="80" width="28" height="20" rx="4" fill="rgba(255,255,255,.18)"/>
+  </symbol>
+</defs></svg>
+
+<div id="deck">
+
+<!-- 1. PORTADA -->
+<section class="slide cover active" data-title="Portada">
+  <div class="cover-left">
+    <span class="tag"><i class="bi bi-bar-chart-line-fill"></i> Estadística descriptiva · Calidad total</span>
+    <h1>Distribución de <em>frecuencias</em> y medidas de <em>tendencia central</em></h1>
+    <p class="lead">Cómo organizar los datos en tablas y resumirlos con un solo valor que los represente.</p>
+    <div class="slogan"><i class="bi bi-quote"></i><span>"Lo que no se puede medir, <b>no se puede mejorar</b>"</span></div>
+    <div class="row" style="flex-wrap:wrap;gap:.7rem">
+      <span class="pill c-mean"><i class="bi bi-table"></i> Tablas de frecuencias</span>
+      <span class="pill c-med"><i class="bi bi-calculator-fill"></i> Media · Mediana · Moda</span>
+      <span class="pill c-mode"><i class="bi bi-cpu-fill"></i> Ejemplo interactivo</span>
+    </div>
+    <div class="hint"><i class="bi bi-keyboard"></i> Navega con las flechas del teclado · F = pantalla completa</div>
+  </div>
+  <div class="cover-right">
+    <svg viewBox="0 0 520 400" role="img" aria-label="Histograma con media, mediana y moda">
+      <defs><linearGradient id="gb" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#38e8ff"/><stop offset="1" stop-color="#b388ff"/></linearGradient>
+      <filter id="ng"><feGaussianBlur stdDeviation="6" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
+      <rect x="10" y="10" width="500" height="380" rx="26" fill="rgba(255,255,255,.04)" stroke="rgba(56,232,255,.35)"/>
+      <g stroke="rgba(56,232,255,.12)"><line x1="50" y1="110" x2="480" y2="110"/><line x1="50" y1="170" x2="480" y2="170"/><line x1="50" y1="230" x2="480" y2="230"/><line x1="50" y1="290" x2="480" y2="290"/></g>
+      <g fill="url(#gb)" opacity=".92" filter="url(#ng)">
+        <rect x="62" y="262" width="44" height="58" rx="4"/><rect x="110" y="214" width="44" height="106" rx="4"/>
+        <rect x="158" y="150" width="44" height="170" rx="4"/><rect x="206" y="84" width="44" height="236" rx="4"/>
+        <rect x="254" y="118" width="44" height="202" rx="4"/><rect x="302" y="176" width="44" height="144" rx="4"/>
+        <rect x="350" y="234" width="44" height="86" rx="4"/><rect x="398" y="282" width="44" height="38" rx="4"/>
+      </g>
+      <line x1="50" y1="320" x2="480" y2="320" stroke="rgba(255,255,255,.5)" stroke-width="2"/>
+      <path d="M84 262 L132 214 L180 150 L228 84 L276 118 L324 176 L372 234 L420 282" fill="none" stroke="#fff" stroke-width="3" stroke-linejoin="round" opacity=".85"/>
+      <line x1="262" y1="60" x2="262" y2="320" stroke="#38e8ff" stroke-width="3" stroke-dasharray="6 6"/>
+      <line x1="240" y1="60" x2="240" y2="320" stroke="#ffd23f" stroke-width="3" stroke-dasharray="6 6"/>
+      <line x1="228" y1="60" x2="228" y2="320" stroke="#ff5c8a" stroke-width="3" stroke-dasharray="6 6"/>
+      <g font-family="Sora,sans-serif" font-size="14" font-weight="700">
+        <text x="270" y="54" fill="#38e8ff">Media</text>
+        <text x="220" y="54" fill="#ff5c8a" text-anchor="end">Moda</text>
+        <text x="240" y="36" fill="#ffd23f" text-anchor="middle">Mediana</text>
+      </g>
+    </svg>
+  </div>
+</section>
+
+<!-- 2. ORGANIZACIÓN Y CLASIFICACIÓN -->
+<section class="slide" data-title="Organización y clasificación de datos">
+  <header class="sh"><span class="tag"><i class="bi bi-table"></i> Distribución de frecuencias</span><h2>Organización y clasificación de datos</h2></header>
+  <div class="row" style="flex-wrap:wrap;gap:.7rem">
+    <span class="pill c-mean"><i class="bi bi-people-fill"></i><span><b>Población:</b> todos los elementos en estudio</span></span>
+    <span class="pill c-med"><i class="bi bi-person-check-fill"></i><span><b>Muestra:</b> parte representativa</span></span>
+    <span class="pill c-mode"><i class="bi bi-sliders"></i><span><b>Variable:</b> característica que se observa</span></span>
+  </div>
+  <div class="grid2 grow">
+    <div class="card col">
+      <h3><i class="bi bi-diagram-3-fill" style="color:var(--cy)"></i> Del dato bruto a la tabla</h3>
+      <ul class="list" style="gap:.9rem">
+        <li><span class="badge-n">1</span><span><b>Recolectar.</b> Datos brutos: tal como se obtienen, sin orden.</span></li>
+        <li><span class="badge-n">2</span><span><b>Ordenar.</b> Arreglo ordenado de menor a mayor.</span></li>
+        <li><span class="badge-n">3</span><span><b>Clasificar.</b> Agrupar por valor o por intervalos.</span></li>
+        <li><span class="badge-n">4</span><span><b>Presentar.</b> Tabla de frecuencias y gráfico.</span></li>
+      </ul>
+    </div>
+    <div class="card col">
+      <h3><i class="bi bi-boxes" style="color:var(--vi)"></i> Clasificación de la variable</h3>
+      <div class="grid2" style="gap:.9rem">
+        <div class="c-med" style="border-left:4px solid var(--c);padding-left:.8rem">
+          <p><b style="color:var(--c)">Cualitativa</b><br><span class="mut">Cualidades o atributos</span></p>
+          <ul class="list" style="margin-top:.5rem;gap:.35rem">
+            <li><i class="bi bi-dot"></i><span><b>Nominal:</b> carrera, color de ojos</span></li>
+            <li><i class="bi bi-dot"></i><span><b>Ordinal:</b> nivel de satisfacción</span></li>
+          </ul>
+        </div>
+        <div class="c-mean" style="border-left:4px solid var(--c);padding-left:.8rem">
+          <p><b style="color:var(--c)">Cuantitativa</b><br><span class="mut">Cantidades numéricas</span></p>
+          <ul class="list" style="margin-top:.5rem;gap:.35rem">
+            <li><i class="bi bi-dot"></i><span><b>Discreta:</b> n.º de hermanos (se cuenta)</span></li>
+            <li><i class="bi bi-dot"></i><span><b>Continua:</b> estatura, peso (se mide)</span></li>
+          </ul>
+        </div>
+      </div>
+      <div class="note cy" style="margin-top:auto"><i class="bi bi-lightbulb-fill"></i><span>Pocos valores distintos → organizar <b>por valor</b>. Muchos valores → <b>por intervalos</b>.</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- 3. TABLAS DE FRECUENCIAS -->
+<section class="slide" data-title="Construcción de tablas de frecuencias">
+  <header class="sh"><span class="tag"><i class="bi bi-table"></i> Distribución de frecuencias</span><h2>Construcción de tablas de frecuencias</h2></header>
+  <div class="grid2 grow" style="grid-template-columns:1.15fr .85fr">
+    <div class="card col">
+      <h3><i class="bi bi-clipboard-data-fill" style="color:var(--cy)"></i> Ejemplo: n.º de hermanos de 20 estudiantes</h3>
+      <table class="tbl">
+        <thead><tr><th>x<sub>i</sub></th><th>f<sub>i</sub></th><th>F<sub>i</sub></th><th>h<sub>i</sub></th><th>H<sub>i</sub></th><th>h<sub>i</sub> %</th></tr></thead>
+        <tbody>
+          <tr><td>0</td><td>3</td><td>3</td><td>0,15</td><td>0,15</td><td>15 %</td></tr>
+          <tr><td>1</td><td>6</td><td>9</td><td>0,30</td><td>0,45</td><td>30 %</td></tr>
+          <tr class="hl"><td>2</td><td>7</td><td>16</td><td>0,35</td><td>0,80</td><td>35 %</td></tr>
+          <tr><td>3</td><td>3</td><td>19</td><td>0,15</td><td>0,95</td><td>15 %</td></tr>
+          <tr><td>4</td><td>1</td><td>20</td><td>0,05</td><td>1,00</td><td>5 %</td></tr>
+        </tbody>
+        <tfoot><tr><td>Total</td><td>20</td><td>—</td><td>1,00</td><td>—</td><td>100 %</td></tr></tfoot>
+      </table>
+      <div class="note cy"><i class="bi bi-eye-fill"></i><span><b>Lectura:</b> 7 estudiantes (35 %) tienen 2 hermanos; 16 tienen 2 o menos.</span></div>
+    </div>
+    <div class="card col">
+      <h3><i class="bi bi-book-fill" style="color:var(--am)"></i> ¿Qué significa cada columna?</h3>
+      <ul class="list" style="gap:.6rem">
+        <li><i class="bi bi-1-circle-fill"></i><span><b>x<sub>i</sub></b> — valor de la variable</span></li>
+        <li><i class="bi bi-2-circle-fill"></i><span><b>f<sub>i</sub></b> — absoluta: cuántas veces se repite</span></li>
+        <li><i class="bi bi-3-circle-fill"></i><span><b>F<sub>i</sub></b> — absoluta acumulada</span></li>
+        <li><i class="bi bi-4-circle-fill"></i><span><b>h<sub>i</sub> = f<sub>i</sub>/n</b> — relativa (proporción)</span></li>
+        <li><i class="bi bi-5-circle-fill"></i><span><b>H<sub>i</sub></b> — relativa acumulada</span></li>
+        <li><i class="bi bi-6-circle-fill"></i><span><b>h<sub>i</sub> % = h<sub>i</sub>·100</b> — porcentaje</span></li>
+      </ul>
+      <div class="formula c-med" style="margin-top:auto"><small>Comprobaciones</small>Σ f<sub>i</sub> = n &nbsp;·&nbsp; Σ h<sub>i</sub> = 1<br>Última F<sub>i</sub> = n</div>
+    </div>
+  </div>
+</section>
+
+<!-- 4. REGLA (como estaba antes) -->
+<section class="slide" data-title="Regla para elaborar distribuciones de frecuencia">
+  <header class="sh"><span class="tag"><i class="bi bi-table"></i> Distribución de frecuencias</span><h2>Regla para elaborar distribuciones de frecuencia</h2></header>
+  <p class="mut" style="margin-top:-.4rem;font-size:1.2rem">Para datos agrupados en intervalos (muchos valores distintos o variable continua).</p>
+  <div class="grid3 grow" style="grid-template-rows:1fr 1fr">
+    <article class="card col"><div class="row" style="align-items:center;gap:.7rem"><span class="badge-n">1</span><h3 style="margin:0">Rango</h3></div>
+      <div class="formula">R = X<sub>máx</sub> − X<sub>mín</sub></div><p class="mut">Distancia entre el dato mayor y el menor.</p></article>
+    <article class="card col"><div class="row" style="align-items:center;gap:.7rem"><span class="badge-n">2</span><h3 style="margin:0">N.º de intervalos</h3></div>
+      <div class="formula c-vi">k = 1 + 3,322 · log n</div><p class="mut">Sturges. Se redondea al entero más cercano.</p></article>
+    <article class="card col"><div class="row" style="align-items:center;gap:.7rem"><span class="badge-n">3</span><h3 style="margin:0">Amplitud</h3></div>
+      <div class="formula c-med">A = R / k</div><p class="mut">Se redondea hacia arriba: k · A &gt; R.</p></article>
+    <article class="card col"><div class="row" style="align-items:center;gap:.7rem"><span class="badge-n">4</span><h3 style="margin:0">Límites de clase</h3></div>
+      <div class="formula c-gr">Ls = Li + A</div><p class="mut">El 1.º inicia en X<sub>mín</sub>. Intervalos [Li ; Ls).</p></article>
+    <article class="card col"><div class="row" style="align-items:center;gap:.7rem"><span class="badge-n">5</span><h3 style="margin:0">Marca de clase</h3></div>
+      <div class="formula c-mode">x<sub>i</sub> = (Li + Ls)/2</div><p class="mut">Punto medio: representa al intervalo.</p></article>
+    <article class="card col"><div class="row" style="align-items:center;gap:.7rem"><span class="badge-n">6</span><h3 style="margin:0">Conteo</h3></div>
+      <div class="formula">f<sub>i</sub> → F<sub>i</sub> → h<sub>i</sub> → H<sub>i</sub></div><p class="mut">Contar los datos de cada intervalo.</p></article>
+  </div>
+  <div class="note"><i class="bi bi-exclamation-triangle-fill"></i><span>Los intervalos deben tener <b>igual amplitud</b>, <b>no solaparse</b> y <b>cubrir todos los datos</b>.</span></div>
+</section>
+
+<!-- 5. INTRO MEDIDAS -->
+<section class="slide" data-title="Medidas de tendencia central">
+  <header class="sh"><span class="tag am"><i class="bi bi-bullseye"></i> Medidas de tendencia central</span><h2>Medir para mejorar</h2></header>
+  <p class="lead" style="max-width:62rem">Si no resumimos los datos en un valor representativo, no podemos comparar, decidir ni mejorar. Las tres medidas principales son:</p>
+  <div class="grid3 grow">
+    <article class="card c-mean topbar-c col"><svg viewBox="0 0 220 110" class="illus"><use href="#img-balance"/></svg>
+      <h3 style="color:var(--c)"><i class="bi bi-calculator-fill"></i> Media aritmética</h3><p>El promedio. Es el <b>punto de equilibrio</b> de los datos.</p></article>
+    <article class="card c-med topbar-c col"><svg viewBox="0 0 220 110" class="illus"><use href="#img-median"/></svg>
+      <h3 style="color:var(--c)"><i class="bi bi-distribute-horizontal"></i> Mediana</h3><p>El <b>valor central</b> de los datos ordenados.</p></article>
+    <article class="card c-mode topbar-c col"><svg viewBox="0 0 220 110" class="illus"><use href="#img-mode"/></svg>
+      <h3 style="color:var(--c)"><i class="bi bi-trophy-fill"></i> Moda</h3><p>El valor que <b>más se repite</b>.</p></article>
+  </div>
+</section>
+
+<!-- 6. MEDIA -->
+<section class="slide" data-title="La media aritmética">
+  <header class="sh"><span class="tag"><i class="bi bi-calculator-fill"></i> Medidas de tendencia central</span><h2>La media aritmética</h2></header>
+  <div class="grid2 grow" style="grid-template-columns:1.2fr .8fr">
+    <div class="col">
+      <div class="formula c-mean"><small>Datos no agrupados</small><span class="ov">x</span> = Σ x<sub>i</sub> / n
+        <div class="sym"><b>Σ x<sub>i</sub></b>: suma de todos los datos · <b>n</b>: número total de datos.</div>
+      </div>
+      <div class="formula c-mean"><small>Tabla por valor o por intervalos</small><span class="ov">x</span> = Σ (x<sub>i</sub> · f<sub>i</sub>) / n
+        <div class="sym"><b>x<sub>i</sub></b>: valor o marca de clase · <b>f<sub>i</sub></b>: frecuencia absoluta.</div>
+      </div>
+      <ul class="list c-mean">
+        <li><i class="bi bi-check-circle-fill"></i><span>Usa <b>todos</b> los datos.</span></li>
+        <li><i class="bi bi-exclamation-circle-fill" style="color:var(--ro)"></i><span>Es <b>sensible a valores extremos</b>.</span></li>
+      </ul>
+    </div>
+    <div class="col">
+      <div class="card c-mean topbar-c"><svg viewBox="0 0 220 110" class="illus"><use href="#img-balance"/></svg>
+        <p class="mut" style="text-align:center">Punto de equilibrio</p></div>
+      <div class="card c-mean"><h3 style="color:var(--c)"><i class="bi bi-pencil-square"></i> Ejemplo</h3>
+        <p>Datos: 4, 6, 8, 10, 12</p>
+        <p class="calc"><b><span class="ov">x</span> = (4+6+8+10+12)/5 = 40/5 = 8</b></p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 7. MEDIANA -->
+<section class="slide" data-title="La mediana">
+  <header class="sh"><span class="tag am"><i class="bi bi-distribute-horizontal"></i> Medidas de tendencia central</span><h2>La mediana</h2></header>
+  <p class="lead" style="max-width:62rem">Divide los datos ordenados en dos partes iguales: 50 % por debajo y 50 % por encima.</p>
+  <div class="grid2 grow" style="grid-template-columns:1.2fr .8fr">
+    <div class="col">
+      <div class="formula c-med"><small>n impar</small>Me = dato en la posición (n+1)/2
+        <div class="sym"><b>n</b>: número total de datos · <b>Me</b>: mediana.</div>
+      </div>
+      <div class="formula c-med"><small>n par</small>Me = (dato en n/2 + dato en n/2+1)/2
+        <div class="sym">Promedio de los <b>dos datos centrales</b>.</div>
+      </div>
+      <div class="formula c-med"><small>Datos agrupados</small>Me = Li + [(n/2 − F<sub>j−1</sub>)/f<sub>j</sub>] · A
+        <div class="sym"><b>Li</b>: límite inferior de la clase mediana · <b>F<sub>j−1</sub></b>: acumulada anterior · <b>f<sub>j</sub></b>: frecuencia de la clase · <b>A</b>: amplitud.</div>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card c-med topbar-c"><svg viewBox="0 0 220 110" class="illus"><use href="#img-median"/></svg></div>
+      <div class="card c-med"><h3 style="color:var(--c)"><i class="bi bi-pencil-square"></i> Ejemplos</h3>
+        <p class="calc">3, 5, <b>7</b>, 9, 11 → <b>Me = 7</b></p>
+        <p class="calc">2, <b>4, 6</b>, 8 → <b>Me = (4+6)/2 = 5</b></p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 8. MODA -->
+<section class="slide" data-title="La moda">
+  <header class="sh"><span class="tag" style="background:rgba(255,92,138,.12);border-color:rgba(255,92,138,.5);color:var(--ro)"><i class="bi bi-trophy-fill"></i> Medidas de tendencia central</span><h2>La moda</h2></header>
+  <p class="lead" style="max-width:62rem">Es el valor con la mayor frecuencia, es decir, el que más se repite.</p>
+  <div class="grid2 grow" style="grid-template-columns:1.2fr .8fr">
+    <div class="col">
+      <div class="grid2" style="gap:.7rem">
+        <div class="pill c-mode"><i class="bi bi-dash-circle"></i> Amodal: ninguno se repite</div>
+        <div class="pill c-mode"><i class="bi bi-1-circle"></i> Unimodal: una moda</div>
+        <div class="pill c-mode"><i class="bi bi-2-circle"></i> Bimodal: dos modas</div>
+        <div class="pill c-mode"><i class="bi bi-collection"></i> Multimodal: más de dos</div>
+      </div>
+      <div class="formula c-mode"><small>Datos agrupados</small>Mo = Li + [d<sub>1</sub>/(d<sub>1</sub>+d<sub>2</sub>)] · A
+        <div class="sym"><b>Li</b>: límite inferior de la clase modal · <b>d<sub>1</sub> = f<sub>j</sub> − f<sub>j−1</sub></b> · <b>d<sub>2</sub> = f<sub>j</sub> − f<sub>j+1</sub></b> · <b>A</b>: amplitud.</div>
+      </div>
+      <div class="note cy"><i class="bi bi-lightbulb-fill"></i><span>Es la <b>única</b> medida usable con datos cualitativos (ej.: la carrera más elegida).</span></div>
+    </div>
+    <div class="col">
+      <div class="card c-mode topbar-c"><svg viewBox="0 0 220 110" class="illus"><use href="#img-mode"/></svg></div>
+      <div class="card c-mode"><h3 style="color:var(--c)"><i class="bi bi-pencil-square"></i> Ejemplo</h3>
+        <p class="calc">2, 3, 3, 4, <b>5, 5, 5</b>, 7</p>
+        <p class="calc"><b>Mo = 5</b> (se repite 3 veces)</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 9. COMPARACIÓN -->
+<section class="slide" data-title="¿Cuál usar?">
+  <header class="sh"><span class="tag vi"><i class="bi bi-intersect"></i> Comparación</span><h2>¿Cuál medida conviene usar?</h2></header>
+  <table class="tbl cmp">
+    <thead><tr><th>Medida</th><th>Qué indica</th><th>Conviene cuando…</th><th>Limitación</th></tr></thead>
+    <tbody>
+      <tr><td style="color:var(--cy);font-weight:700"><i class="bi bi-calculator-fill"></i> Media</td><td>Promedio de todos los datos</td><td>Datos numéricos sin valores extremos</td><td>Se distorsiona con extremos</td></tr>
+      <tr><td style="color:var(--am);font-weight:700"><i class="bi bi-distribute-horizontal"></i> Mediana</td><td>Valor central (50 % a cada lado)</td><td>Hay extremos o distribución asimétrica</td><td>No usa todos los valores</td></tr>
+      <tr><td style="color:var(--ro);font-weight:700"><i class="bi bi-trophy-fill"></i> Moda</td><td>Valor más frecuente</td><td>Datos cualitativos o "lo más común"</td><td>Puede no existir o haber varias</td></tr>
+    </tbody>
+  </table>
+  <div class="card grow col" style="justify-content:center">
+    <h3><i class="bi bi-cash-coin" style="color:var(--am)"></i> Cuando un valor extremo cambia todo</h3>
+    <p>Sueldos: S/ 1 000 · S/ 1 100 · S/ 1 200 · S/ 1 300 · <b style="color:var(--ro)">S/ 9 000</b></p>
+    <div class="row" style="margin-top:.5rem;gap:2rem;flex-wrap:wrap">
+      <div class="c-mean"><span class="mut">Media</span><div class="num">2 720</div></div>
+      <div class="c-med"><span class="mut">Mediana</span><div class="num">1 200</div></div>
+      <p class="mut" style="align-self:center;max-width:28rem">La media queda "arrastrada" por el sueldo extremo; la mediana representa mejor al grupo.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 10. EJEMPLO: INGRESO -->
+<section class="slide" id="s-input" data-title="Ejemplo: ingreso de datos">
+  <header class="sh"><span class="tag" style="background:rgba(255,92,138,.12);border-color:rgba(255,92,138,.5);color:var(--ro)"><i class="bi bi-cpu-fill"></i> Ejemplo práctico</span><h2>Ingresemos nuestros propios datos</h2></header>
+  <div class="grid2 grow" style="grid-template-columns:1.25fr .75fr">
+    <div class="card col">
+      <div>
+        <label class="fl" for="in-title"><i class="bi bi-fonts"></i> Título del conjunto de datos</label>
+        <input type="text" id="in-title" maxlength="70" placeholder="Ej.: Notas de un examen de Estadística" autocomplete="off">
+      </div>
+      <div>
+        <label class="fl" for="in-data"><i class="bi bi-123"></i> Datos (solo enteros, mínimo 10)</label>
+        <textarea id="in-data" placeholder="Ej.: 12 15 11 18 14 13 15 9 16 12 14 15 10 17 13"></textarea>
+        <div class="live" id="live"></div>
+      </div>
+      <div class="msg" id="msg"></div>
+      <div class="btns" style="margin-top:auto">
+        <button class="btn" id="b-go"><i class="bi bi-cpu-fill"></i> Procesar con la red neuronal</button>
+        <button class="btn ghost" id="b-rand"><i class="bi bi-shuffle"></i> Datos de ejemplo</button>
+        <button class="btn ghost" id="b-clear"><i class="bi bi-eraser-fill"></i> Limpiar</button>
+      </div>
+    </div>
+    <div class="card col">
+      <h3><i class="bi bi-info-circle-fill" style="color:var(--cy)"></i> Reglas de ingreso</h3>
+      <ul class="list">
+        <li><i class="bi bi-check-circle-fill"></i><span>Solo <b>números enteros</b> (sin decimales ni letras).</span></li>
+        <li><i class="bi bi-check-circle-fill"></i><span>Escribe <b>al menos 10 datos</b>.</span></li>
+        <li><i class="bi bi-check-circle-fill"></i><span>Sepáralos con <b>espacios, comas</b> o <b>saltos de línea</b>.</span></li>
+        <li><i class="bi bi-check-circle-fill"></i><span>Máximo 500 datos.</span></li>
+      </ul>
+      <div class="note cy" style="margin-top:auto"><i class="bi bi-lightbulb-fill"></i><span>La red calculará la <b>tabla de frecuencias</b>, la <b>media</b>, la <b>mediana</b>, la <b>moda</b> y el <b>gráfico</b>.</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- 11. PROCESANDO -->
+<section class="slide" id="s-proc" data-skip data-title="Procesando">
+  <header class="sh"><span class="tag" style="background:rgba(255,92,138,.12);border-color:rgba(255,92,138,.5);color:var(--ro)"><i class="bi bi-cpu-fill"></i> Red neuronal</span><h2>Procesando los datos…</h2>
+    <p class="ds-sub"><i class="bi bi-card-heading"></i> <b id="proc-title"></b></p></header>
+  <div class="net-wrap grow">
+    <canvas id="net"></canvas>
+    <div class="steps">
+      <div class="stp" data-i="0"><i class="bi bi-circle"></i><span>Validar y leer los datos enteros</span></div>
+      <div class="stp" data-i="1"><i class="bi bi-circle"></i><span>Ordenar de menor a mayor</span></div>
+      <div class="stp" data-i="2"><i class="bi bi-circle"></i><span>Aplicar la regla de Sturges</span></div>
+      <div class="stp" data-i="3"><i class="bi bi-circle"></i><span>Construir la tabla de frecuencias</span></div>
+      <div class="stp" data-i="4"><i class="bi bi-circle"></i><span>Calcular media, mediana y moda</span></div>
+      <div><div class="pbar"><i id="pfill"></i></div><div class="status"><span id="pstatus">Iniciando…</span><b id="ppct">0 %</b></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- 12. TABLA DEL EJEMPLO -->
+<section class="slide" id="s-table" data-title="Ejemplo: tabla de frecuencias">
+  <div class="empty"><i class="bi bi-inbox big"></i><p>Aún no hay datos procesados.</p><button class="btn" data-go="s-input"><i class="bi bi-pencil-square"></i> Ir a ingresar datos</button></div>
+  <div class="res-body">
+    <header class="sh"><span class="tag"><i class="bi bi-table"></i> Ejemplo práctico</span><h2>Tabla de frecuencias</h2>
+      <p class="ds-sub"><i class="bi bi-card-heading"></i> <b class="ds-title"></b></p></header>
+    <div class="chips" id="t-chips"></div>
+    <div class="calc" id="t-steps"></div>
+    <div id="t-table" style="overflow:auto"></div>
+  </div>
+</section>
+
+<!-- 13. MEDIDAS DEL EJEMPLO -->
+<section class="slide" id="s-meas" data-title="Ejemplo: medidas de tendencia central">
+  <div class="empty"><i class="bi bi-inbox big"></i><p>Aún no hay datos procesados.</p><button class="btn" data-go="s-input"><i class="bi bi-pencil-square"></i> Ir a ingresar datos</button></div>
+  <div class="res-body">
+    <header class="sh"><span class="tag am"><i class="bi bi-bullseye"></i> Ejemplo práctico</span><h2>Medidas de tendencia central</h2>
+      <p class="ds-sub"><i class="bi bi-card-heading"></i> <b class="ds-title"></b></p></header>
+    <div><span class="mut" style="font-size:1.08rem"><i class="bi bi-sort-numeric-down"></i> Datos ordenados · <span style="color:var(--am)">amarillo = posición(es) de la mediana</span> · <span style="color:var(--ro)">borde rojo = moda</span></span>
+      <div class="strip" id="m-strip" style="margin-top:.35rem"></div></div>
+    <div class="grid3 grow" id="m-cards" style="align-items:stretch"></div>
+  </div>
+</section>
+
+<!-- 14. GRÁFICO DEL EJEMPLO -->
+<section class="slide" id="s-chart" data-title="Ejemplo: gráfico">
+  <div class="empty"><i class="bi bi-inbox big"></i><p>Aún no hay datos procesados.</p><button class="btn" data-go="s-input"><i class="bi bi-pencil-square"></i> Ir a ingresar datos</button></div>
+  <div class="res-body">
+    <header class="sh"><span class="tag vi"><i class="bi bi-bar-chart-line-fill"></i> Ejemplo práctico</span><h2>Histograma y polígono de frecuencias</h2>
+      <p class="ds-sub"><i class="bi bi-card-heading"></i> <b class="ds-title"></b></p></header>
+    <div class="chartbox" id="c-box"></div>
+    <div class="legend" id="c-legend">
+      <span class="c-mean"><s></s> Media</span><span class="c-med"><s></s> Mediana</span><span class="c-mode"><s class="dash"></s> Moda (agrupada)</span>
+    </div>
+    <div class="note cy"><i class="bi bi-chat-left-text-fill"></i><span id="c-interp"></span></div>
+  </div>
+</section>
+
+<!-- 15. CONCLUSIÓN DEL EJEMPLO -->
+<section class="slide" id="s-concl" data-title="Conclusión del ejemplo">
+  <div class="empty"><i class="bi bi-inbox big"></i><p>Aún no hay datos procesados.</p><button class="btn" data-go="s-input"><i class="bi bi-pencil-square"></i> Ir a ingresar datos</button></div>
+  <div class="res-body">
+    <header class="sh"><span class="tag"><i class="bi bi-flag-fill"></i> Conclusión</span><h2>Con esto podemos concluir que…</h2>
+      <p class="ds-sub"><i class="bi bi-card-heading"></i> <b class="ds-title"></b></p></header>
+    <div class="grid3 grow" id="cl-cards" style="align-items:stretch"></div>
+    <div class="note cy"><i class="bi bi-chat-quote-fill"></i><span id="cl-text"></span></div>
+  </div>
+</section>
+
+<!-- 16. CIERRE -->
+<section class="slide" data-title="Ideas clave">
+  <header class="sh"><span class="tag"><i class="bi bi-flag-fill"></i> Ideas clave</span><h2>Medir es el primer paso para mejorar</h2></header>
+  <div class="grid3 grow">
+    <article class="card c-mean topbar-c col"><i class="bi bi-table ic"></i><h3>Organizar</h3><p>La distribución de frecuencias ordena y resume los datos en una tabla legible de un vistazo.</p></article>
+    <article class="card c-med topbar-c col"><i class="bi bi-rulers ic"></i><h3>Agrupar</h3><p>Con muchos valores distintos se usa Sturges: rango, número de intervalos y amplitud.</p></article>
+    <article class="card c-mode topbar-c col"><i class="bi bi-bullseye ic"></i><h3>Resumir</h3><p>Media, mediana y moda describen el centro; la elección depende del tipo de datos y de los extremos.</p></article>
+  </div>
+  <div class="slogan" style="align-self:center"><i class="bi bi-quote"></i><span>"Lo que no se puede medir, <b>no se puede mejorar</b>" · Calidad total</span></div>
+  <div class="row" style="justify-content:center;align-items:center;gap:1rem"><i class="bi bi-chat-dots-fill" style="font-size:2.8rem;color:var(--cy);filter:drop-shadow(0 0 18px var(--cy))"></i><h2>¿Preguntas?</h2></div>
+</section>
+
+</div>
+
+<footer id="bar">
+  <div class="bar-l"><i class="bi bi-bar-chart-line-fill"></i><span id="bar-title">Portada</span></div>
+  <div class="bar-r">
+    <span id="counter">1 / 15</span>
+    <button class="ib" id="b-prev" title="Anterior"><i class="bi bi-chevron-left"></i></button>
+    <button class="ib" id="b-next" title="Siguiente"><i class="bi bi-chevron-right"></i></button>
+    <button class="ib" id="b-full" title="Pantalla completa (F)"><i class="bi bi-fullscreen"></i></button>
+  </div>
+  <div id="prog"><i></i></div>
+</footer>
+
+<script>
+(function(){
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+/* ========== NAVEGACIÓN ========== */
+const slides=$$('.slide'); let cur=0, busy=false;
+const navIdx=()=>slides.map((s,i)=>i).filter(i=>!slides[i].hasAttribute('data-skip'));
+function go(i){
+  i=Math.max(0,Math.min(slides.length-1,i));
+  slides.forEach((s,k)=>{s.classList.toggle('active',k===i);s.classList.toggle('past',k<i)});
+  cur=i; slides[i].scrollTop=0;
+  const nl=navIdx(), p=nl.indexOf(i);
+  $('#counter').textContent=(p<0?'…':(p+1))+' / '+nl.length;
+  $('#bar-title').textContent=slides[i].dataset.title||'';
+  $('#prog i').style.width=((Math.max(p,0)+1)/nl.length*100)+'%';
+  $('#b-prev').disabled=(i===0); $('#b-next').disabled=(i===slides.length-1);
+}
+function step(d){
+  if(busy) return;
+  let i=cur+d; while(i>=0&&i<slides.length&&slides[i].hasAttribute('data-skip')) i+=d;
+  if(i>=0&&i<slides.length) go(i);
+}
+$('#b-prev').onclick=()=>step(-1); $('#b-next').onclick=()=>step(1);
+$('#b-full').onclick=toggleFull;
+function toggleFull(){ if(!document.fullscreenElement) document.documentElement.requestFullscreen&&document.documentElement.requestFullscreen(); else document.exitFullscreen(); }
+document.addEventListener('keydown',e=>{
+  const t=e.target.tagName; if(t==='INPUT'||t==='TEXTAREA') return;
+  if(['ArrowRight','PageDown',' ','Enter'].includes(e.key)){e.preventDefault();step(1)}
+  else if(['ArrowLeft','PageUp','Backspace'].includes(e.key)){e.preventDefault();step(-1)}
+  else if(e.key==='Home'){go(0)} else if(e.key==='End'){go(slides.length-1)}
+  else if(e.key==='f'||e.key==='F'){toggleFull()}
+});
+let tx=null;
+document.addEventListener('touchstart',e=>{tx=e.touches[0].clientX},{passive:true});
+document.addEventListener('touchend',e=>{ if(tx===null)return; const d=e.changedTouches[0].clientX-tx; if(Math.abs(d)>70) step(d<0?1:-1); tx=null; });
+$$('[data-go]').forEach(b=>b.addEventListener('click',()=>go(slides.indexOf(document.getElementById(b.dataset.go)))));
+
+/* ========== FORMATO ========== */
+function fmt(x,d=2){ if(Number.isInteger(x)) return String(x).replace('-','−'); let t=x.toFixed(d); t=t.replace(/\.?0+$/,''); return t.replace('.',',').replace('-','−'); }
+const fmtH=x=>x.toFixed(3).replace('.',',');
+const fmtP=x=>(x*100).toFixed(1).replace('.',',')+' %';
+
+/* ========== INGRESO DE DATOS ========== */
+const ta=$('#in-data'), ti=$('#in-title'), msg=$('#msg'), live=$('#live');
+function setMsg(t,c,icon){ msg.className='msg '+(c||''); msg.innerHTML=t?`<i class="bi bi-${icon||'info-circle-fill'}"></i><span>${t}</span>`:''; }
+function parse(txt){
+  const toks=txt.split(/[\s,;]+/).filter(Boolean), vals=[], invalid=[];
+  toks.forEach(t=>{ if(/^-?\d+$/.test(t)) vals.push(parseInt(t,10)); else invalid.push(t); });
+  return {vals,invalid};
+}
+function updateLive(){
+  const {vals,invalid}=parse(ta.value); const n=vals.length;
+  let h=`<span class="chip"><i class="bi bi-hash" style="color:var(--cy)"></i> Datos válidos:<b>${n}</b></span>`;
+  if(n){ h+=`<span class="chip">Mín:<b>${Math.min(...vals)}</b></span><span class="chip">Máx:<b>${Math.max(...vals)}</b></span>`; }
+  if(n<10) h+=`<span class="chip" style="color:var(--am)"><i class="bi bi-exclamation-triangle-fill"></i> Faltan ${10-n} para el mínimo</span>`;
+  else h+=`<span class="chip" style="color:var(--gr)"><i class="bi bi-check-circle-fill"></i> Mínimo alcanzado</span>`;
+  if(invalid.length) h+=`<span class="chip" style="color:var(--ro)"><i class="bi bi-x-circle-fill"></i> Revisa: ${esc(invalid[0])}</span>`;
+  live.innerHTML=h;
+}
+ta.addEventListener('keydown',e=>{
+  if(e.ctrlKey||e.metaKey||e.altKey||e.key.length!==1) return;
+  if(!/[0-9\-\s,;]/.test(e.key)){ e.preventDefault(); setMsg('Solo se permiten números enteros (sin decimales ni letras).','warn','exclamation-triangle-fill'); }
+});
+ta.addEventListener('input',()=>{
+  let v=ta.value;
+  if(/\./.test(v)||/[^0-9\-\s,;]/.test(v)){
+    v=v.replace(/\.\d*/g,'').replace(/[^0-9\-\s,;]/g,''); ta.value=v;
+    setMsg('Solo se permiten números enteros: se quitó lo que no era entero.','warn','exclamation-triangle-fill');
+  } else setMsg('');
+  updateLive();
+});
+ti.addEventListener('keydown',e=>{ if(e.key==='Enter'){e.preventDefault();ta.focus();} });
+$('#b-clear').onclick=()=>{ti.value='';ta.value='';setMsg('');updateLive();ti.focus();};
+$('#b-rand').onclick=()=>{
+  const n=30, out=[];
+  for(let i=0;i<n;i++){ let v=Math.round(13+(Math.random()+Math.random()+Math.random()-1.5)*6); out.push(Math.max(0,Math.min(20,v))); }
+  ti.value='Notas de un examen de Estadística (0 a 20)'; ta.value=out.join(' ');
+  setMsg('Datos de ejemplo cargados. Presiona "Procesar".','ok','check-circle-fill'); updateLive();
+};
+$('#b-go').onclick=()=>{
+  const title=ti.value.trim(); const {vals,invalid}=parse(ta.value);
+  if(!title) return setMsg('Escribe el título del conjunto de datos.','err','exclamation-triangle-fill');
+  if(invalid.length) return setMsg('Hay valores que no son enteros: "'+esc(invalid[0])+'".','err','x-circle-fill');
+  if(vals.length<10) return setMsg('Ingresa al menos 10 datos (tienes '+vals.length+').','err','exclamation-triangle-fill');
+  if(vals.length>500) return setMsg('El máximo es 500 datos.','err','exclamation-triangle-fill');
+  if(vals.some(v=>Math.abs(v)>1000000)) return setMsg('Usa valores entre −1 000 000 y 1 000 000.','err','exclamation-triangle-fill');
+  setMsg(''); startProcessing(vals,title);
+};
+updateLive();
+
+/* ========== CÁLCULO ========== */
+function analyze(data){
+  const n=data.length, s=[...data].sort((a,b)=>a-b);
+  const min=s[0], max=s[n-1], R=max-min, sum=s.reduce((a,b)=>a+b,0), mean=sum/n;
+  const median=n%2? s[(n-1)/2] : (s[n/2-1]+s[n/2])/2;
+  const fm=new Map(); s.forEach(v=>fm.set(v,(fm.get(v)||0)+1));
+  const maxf=Math.max(...fm.values());
+  const modes=maxf>1?[...fm].filter(([v,f])=>f===maxf).map(([v])=>v):[];
+  const kRaw=R===0?1:1+3.322*Math.log10(n);
+  const k=R===0?1:Math.max(2,Math.round(kRaw));
+  let A=R===0?1:Math.ceil(R/k); if(A*k<=R) A++;
+  const rows=[]; let F=0;
+  for(let j=0;j<k;j++){
+    const Li=min+j*A, Ls=Li+A, f=s.filter(v=>v>=Li&&v<Ls).length; F+=f;
+    rows.push({Li,Ls,xi:(Li+Ls)/2,f,F,h:f/n,H:F/n});
+  }
+  const sumXf=rows.reduce((a,r)=>a+r.xi*r.f,0), meanG=sumXf/n;
+  let jm=rows.findIndex(r=>r.F>=n/2); const rm=rows[jm], Fprev=jm>0?rows[jm-1].F:0;
+  const medG=rm.Li+((n/2-Fprev)/rm.f)*A;
+  const maxcf=Math.max(...rows.map(r=>r.f)); const jo=rows.findIndex(r=>r.f===maxcf), ro=rows[jo];
+  const d1=ro.f-(jo>0?rows[jo-1].f:0), d2=ro.f-(jo<k-1?rows[jo+1].f:0);
+  const modeG=(d1+d2)>0? ro.Li+(d1/(d1+d2))*A : ro.xi;
+  return {n,s,min,max,R,sum,mean,median,modes,maxf,kRaw,k,A,rows,sumXf,meanG,jm,rm,Fprev,medG,jo,ro,d1,d2,modeG};
+}
+const iv=r=>`[${fmt(r.Li)} ; ${fmt(r.Ls)})`;
+
+/* ========== RENDER ========== */
+function renderAll(a,title){
+  $$('.ds-title').forEach(e=>e.textContent=title);
+  $('#t-chips').innerHTML=[['n',a.n],['X mín',a.min],['X máx',a.max],['R',a.R],['k',a.k],['A',a.A]].map(([l,v])=>`<span class="chip">${l} =<b>${fmt(v)}</b></span>`).join('');
+  $('#t-steps').innerHTML=
+    `R = ${fmt(a.max)} − ${fmt(a.min)} = <b>${fmt(a.R)}</b> &nbsp;·&nbsp; k = 1 + 3,322 · log(${a.n}) = ${fmt(a.kRaw)} ≈ <b>${a.k}</b> &nbsp;·&nbsp; A = ${fmt(a.R)} / ${a.k} = ${fmt(a.R/a.k)} → <b>${a.A}</b>`;
+  let t=`<table class="tbl"><thead><tr><th>Intervalo [Li ; Ls)</th><th>x<sub>i</sub></th><th>f<sub>i</sub></th><th>F<sub>i</sub></th><th>h<sub>i</sub></th><th>H<sub>i</sub></th><th>h<sub>i</sub> %</th></tr></thead><tbody>`;
+  a.rows.forEach((r,i)=>{ t+=`<tr${i===a.jo?' class="hl"':''}><td>${iv(r)}</td><td>${fmt(r.xi)}</td><td>${r.f}</td><td>${r.F}</td><td>${fmtH(r.h)}</td><td>${fmtH(r.H)}</td><td>${fmtP(r.h)}</td></tr>`; });
+  t+=`</tbody><tfoot><tr><td>Total</td><td>—</td><td>${a.n}</td><td>—</td><td>1,000</td><td>—</td><td>100,0 %</td></tr></tfoot></table>`;
+  $('#t-table').innerHTML=t;
+
+  const mid=a.n%2?[(a.n-1)/2]:[a.n/2-1,a.n/2];
+  $('#m-strip').innerHTML=a.s.map((v,i)=>`<span class="${mid.includes(i)?'hm':''} ${a.modes.includes(v)?'hmo':''}">${v}</span>`).join('');
+  const medRaw=a.n%2
+    ?`n = ${a.n} (impar) → posición (n+1)/2 = ${(a.n+1)/2}<br>Me = <b>${fmt(a.median)}</b>`
+    :`n = ${a.n} (par) → posiciones ${a.n/2} y ${a.n/2+1}<br>Me = (${fmt(a.s[a.n/2-1])} + ${fmt(a.s[a.n/2])}) / 2 = <b>${fmt(a.median)}</b>`;
+  const modeRaw=a.modes.length===0
+    ?`Amodal: ningún valor se repite`
+    :`Mo = <b>${a.modes.slice(0,6).join(' y ')}${a.modes.length>6?'…':''}</b> (f = ${a.maxf})<br>${a.modes.length===1?'Unimodal':a.modes.length===2?'Bimodal':'Multimodal'}`;
+  const card=(cls,icon,name,raw,grp)=>`
+   <article class="card mcard ${cls} topbar-c"><div class="head"><i class="bi bi-${icon}"></i><h3>${name}</h3></div>
+    <div class="blk"><small>Datos sin agrupar</small><div class="calc">${raw}</div></div>
+    <div class="blk"><small>Datos agrupados (tabla)</small><div class="calc">${grp}</div></div></article>`;
+  $('#m-cards').innerHTML=
+    card('c-mean','calculator-fill','Media aritmética',
+      `Σ x<sub>i</sub> = ${fmt(a.sum)} ; n = ${a.n}<br><span class="ov">x</span> = ${fmt(a.sum)} / ${a.n} = <b style="color:var(--cy);font-size:1.3em">${fmt(a.mean)}</b>`,
+      `Σ x<sub>i</sub>·f<sub>i</sub> = ${fmt(a.sumXf)}<br><span class="ov">x</span> = ${fmt(a.sumXf)} / ${a.n} = <b style="color:var(--cy);font-size:1.3em">${fmt(a.meanG)}</b>`)+
+    card('c-med','distribute-horizontal','Mediana',
+      medRaw.replace(/<b>(.*?)<\/b>/g,'<b style="color:var(--am);font-size:1.3em">$1</b>'),
+      `Clase mediana ${iv(a.rm)} (F = ${a.rm.F} ≥ n/2 = ${fmt(a.n/2)})<br>Me = ${fmt(a.rm.Li)} + (${fmt(a.n/2)} − ${a.Fprev}) / ${a.rm.f} · ${a.A} = <b style="color:var(--am);font-size:1.3em">${fmt(a.medG)}</b>`)+
+    card('c-mode','trophy-fill','Moda',
+      modeRaw.replace(/<b>(.*?)<\/b>/g,'<b style="color:var(--ro);font-size:1.3em">$1</b>'),
+      `Clase modal ${iv(a.ro)} (f = ${a.ro.f})<br>d<sub>1</sub> = ${a.d1} ; d<sub>2</sub> = ${a.d2}<br>Mo = ${fmt(a.ro.Li)} + ${a.d1}/(${a.d1}+${a.d2}) · ${a.A} = <b style="color:var(--ro);font-size:1.3em">${fmt(a.modeG)}</b>`);
+
+  $('#c-box').innerHTML=chartSVG(a);
+  const diff=a.mean-a.median, thr=0.1*a.A; let txt;
+  if(Math.abs(diff)<=thr) txt='La media y la mediana son muy parecidas: la distribución es aproximadamente simétrica y la media es una buena representante del grupo.';
+  else if(diff>0) txt='La media es mayor que la mediana: hay valores altos que la "jalan" hacia la derecha (sesgo positivo). Conviene apoyarse en la mediana.';
+  else txt='La media es menor que la mediana: hay valores bajos que la "jalan" hacia la izquierda (sesgo negativo). Conviene apoyarse en la mediana.';
+  $('#c-interp').innerHTML=`<b>Lectura:</b> con ${a.n} datos en ${a.k} intervalos de amplitud ${a.A}, el intervalo más frecuente es ${iv(a.ro)} (f = ${a.ro.f}). Media = ${fmt(a.mean)}, mediana = ${fmt(a.median)}. ${txt}`;
+
+  renderConclusion(a,title);
+}
+function renderConclusion(a,title){
+  const diff=a.mean-a.median, thr=0.1*a.A;
+  let sesgo, recomend;
+  if(Math.abs(diff)<=thr){ sesgo='Aproximadamente simétrica'; recomend='La media es representativa porque no hay valores extremos que la distorsionen.'; }
+  else if(diff>0){ sesgo='Sesgo positivo (cola hacia la derecha)'; recomend='La mediana representa mejor al grupo porque la media se ve inflada por valores altos.'; }
+  else { sesgo='Sesgo negativo (cola hacia la izquierda)'; recomend='La mediana representa mejor al grupo porque la media se ve reducida por valores bajos.'; }
+  const modaTxt=a.modes.length===0?'No hay moda (amodal).':(a.modes.length===1?`La moda es ${fmt(a.modes[0])} (unimodal).`:`Hay ${a.modes.length} modas: ${a.modes.slice(0,4).join(', ')}${a.modes.length>4?'…':''}.`);
+  const card=(cls,icon,name,big,sub)=>`
+    <article class="card mcard ${cls} topbar-c"><div class="head"><i class="bi bi-${icon}"></i><h3>${name}</h3></div>
+      <div class="big">${big}</div><p class="mut" style="font-size:1.12rem">${sub}</p></article>`;
+  $('#cl-cards').innerHTML=
+    card('c-mean','calculator-fill','Media',fmt(a.mean),'Promedio de los '+a.n+' datos. Es el punto de equilibrio, sensible a valores extremos.')+
+    card('c-med','distribute-horizontal','Mediana',fmt(a.median),'Valor central: el 50 % de los datos queda por debajo y el 50 % por encima.')+
+    card('c-mode','trophy-fill','Moda',a.modes.length===0?'—':a.modes.slice(0,3).map(fmt).join(' · '),modaTxt);
+  $('#cl-text').innerHTML=`Con ${a.n} datos organizados en ${a.k} intervalos de amplitud ${a.A}, el intervalo más frecuente es ${iv(a.ro)}. La distribución es <b>${sesgo.toLowerCase()}</b>. ${recomend} En conjunto, la tabla de frecuencias y las tres medidas resumen el comportamiento de <b>"${esc(title)}"</b> y permiten describirlo con pocos valores.`;
+}
+
+function chartSVG(a){
+  const W=860,H=440,m={l:58,r:26,t:70,b:58}, iw=W-m.l-m.r, ih=H-m.t-m.b;
+  const rows=a.rows,k=rows.length,A=a.A, x0=rows[0].Li-A, x1=rows[k-1].Ls+A;
+  const X=v=>m.l+(v-x0)/(x1-x0)*iw;
+  const maxf=Math.max(...rows.map(r=>r.f));
+  const pw=Math.pow(10,Math.floor(Math.log10(Math.max(maxf/5,1)))); let stepY=pw;
+  for(const c of [1,2,5,10]){ if(c*pw>=maxf/5){stepY=c*pw;break;} }
+  const ymax=Math.ceil(maxf/stepY)*stepY, Y=v=>m.t+ih-(v/ymax)*ih;
+  let s=`<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Histograma"><defs><linearGradient id="hb" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#38e8ff"/><stop offset="1" stop-color="#b388ff"/></linearGradient></defs>`;
+  for(let v=0;v<=ymax;v+=stepY){
+    s+=`<line x1="${m.l}" x2="${W-m.r}" y1="${Y(v)}" y2="${Y(v)}" stroke="rgba(56,232,255,.12)"/><text x="${m.l-10}" y="${Y(v)+5}" text-anchor="end" fill="#9fb2d8" font-size="14" font-family="JetBrains Mono,monospace">${v}</text>`;
+  }
+  rows.forEach(r=>{
+    const bx=X(r.Li)+1,bw=X(r.Ls)-X(r.Li)-2,by=Y(r.f);
+    s+=`<rect x="${bx}" y="${by}" width="${bw}" height="${Y(0)-by}" rx="3" fill="url(#hb)" opacity=".9"/>`;
+    if(r.f>0) s+=`<text x="${bx+bw/2}" y="${by-7}" text-anchor="middle" fill="#eaf3ff" font-size="15" font-weight="700" font-family="Sora,sans-serif">${r.f}</text>`;
+  });
+  const pts=[[rows[0].xi-A,0],...rows.map(r=>[r.xi,r.f]),[rows[k-1].xi+A,0]].map(p=>`${X(p[0])},${Y(p[1])}`).join(' ');
+  s+=`<polyline points="${pts}" fill="none" stroke="#fff" stroke-width="2.5" stroke-linejoin="round" opacity=".85"/>`;
+  rows.forEach(r=>{ s+=`<circle cx="${X(r.xi)}" cy="${Y(r.f)}" r="4" fill="#fff"/>`; });
+  s+=`<line x1="${m.l}" x2="${W-m.r}" y1="${Y(0)}" y2="${Y(0)}" stroke="rgba(255,255,255,.55)" stroke-width="2"/>`;
+  rows.forEach(r=>{ s+=`<text x="${X(r.Li)}" y="${Y(0)+22}" text-anchor="middle" fill="#9fb2d8" font-size="14" font-family="JetBrains Mono,monospace">${fmt(r.Li)}</text>`; });
+  s+=`<text x="${X(rows[k-1].Ls)}" y="${Y(0)+22}" text-anchor="middle" fill="#9fb2d8" font-size="14" font-family="JetBrains Mono,monospace">${fmt(rows[k-1].Ls)}</text>`;
+  s+=`<text x="${m.l+iw/2}" y="${H-12}" text-anchor="middle" fill="#9fb2d8" font-size="14">Intervalos de clase</text>`;
+  s+=`<text x="16" y="${m.t+ih/2}" transform="rotate(-90 16 ${m.t+ih/2})" text-anchor="middle" fill="#9fb2d8" font-size="14">Frecuencia (f)</text>`;
+  const lines=[[a.mean,'Media','#38e8ff',false,16],[a.median,'Mediana','#ffd23f',false,36],[a.modeG,'Moda','#ff5c8a',true,56]];
+  lines.forEach(([v,name,col,dash,ly])=>{
+    const x=Math.max(m.l,Math.min(W-m.r,X(v)));
+    const anc=x<m.l+70?'start':(x>W-m.r-70?'end':'middle');
+    s+=`<line x1="${x}" x2="${x}" y1="${ly+6}" y2="${Y(0)}" stroke="${col}" stroke-width="3" ${dash?'stroke-dasharray="7 6"':''}/>`;
+    s+=`<text x="${x}" y="${ly}" text-anchor="${anc}" fill="${col}" font-size="15" font-weight="700" font-family="Sora,sans-serif">${name} = ${fmt(v)}</text>`;
+  });
+  return s+'</svg>';
+}
+
+/* ========== RED NEURONAL ========== */
+const layers=[6,9,10,9,6,3], outCols=['#38e8ff','#ffd23f','#ff5c8a'], outLabels=['x̄','Me','Mo'];
+function runNet(canvas,dur,onProg,onDone){
+  const ctx=canvas.getContext('2d'), dpr=Math.min(window.devicePixelRatio||1,2);
+  const w=canvas.clientWidth,h=canvas.clientHeight; canvas.width=w*dpr; canvas.height=h*dpr; ctx.setTransform(dpr,0,0,dpr,0,0);
+  const padX=Math.max(40,w*.07), padY=Math.max(30,h*.1), maxN=Math.max(...layers), gap=(h-2*padY)/(maxN-1), L=layers.length;
+  const pos=layers.map((n,l)=>Array.from({length:n},(_,i)=>({x:padX+l*(w-2*padX)/(L-1),y:h/2+(i-(n-1)/2)*gap})));
+  const R=Math.max(6,Math.min(12,h/42)), pulses=[]; const t0=performance.now(); let finished=false;
+  function frame(now){
+    const p=Math.min(1,(now-t0)/dur), wave=p*(L+.8)-.4; ctx.clearRect(0,0,w,h);
+    const act=l=>Math.min(1,Math.exp(-Math.pow(l-wave,2)*1.2)+(l<wave?.35:0)+.08);
+    for(let l=0;l<L-1;l++){
+      const b=(act(l)+act(l+1))/2;
+      ctx.lineWidth=1; ctx.strokeStyle=`rgba(${100+b*0},${150+b*50},255,${.05+.3*b})`;
+      pos[l].forEach(a=>pos[l+1].forEach(c=>{ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(c.x,c.y);ctx.stroke();}));
+    }
+    if(p<1){ const lw=Math.max(0,Math.min(L-2,Math.floor(wave))); for(let q=0;q<3;q++) if(Math.random()<.6) pulses.push({l:lw,i:Math.floor(Math.random()*layers[lw]),j:Math.floor(Math.random()*layers[lw+1]),t:0,sp:.02+Math.random()*.02}); }
+    for(let q=pulses.length-1;q>=0;q--){
+      const u=pulses[q]; u.t+=u.sp; if(u.t>=1){pulses.splice(q,1);continue;}
+      const a=pos[u.l][u.i], c=pos[u.l+1][u.j], x=a.x+(c.x-a.x)*u.t, y=a.y+(c.y-a.y)*u.t;
+      const g=ctx.createRadialGradient(x,y,0,x,y,10); g.addColorStop(0,'rgba(255,255,255,.95)'); g.addColorStop(1,'rgba(56,232,255,0)');
+      ctx.fillStyle=g; ctx.beginPath(); ctx.arc(x,y,10,0,6.3); ctx.fill();
+    }
+    pos.forEach((col,l)=>col.forEach((nd,i)=>{
+      const b=Math.min(1,act(l)+.1*Math.sin(now/180+i*1.7+l)), isOut=l===L-1, base=isOut?outCols[i]:'#38e8ff';
+      const g=ctx.createRadialGradient(nd.x,nd.y,0,nd.x,nd.y,R*3); g.addColorStop(0,base+Math.round(60+b*140).toString(16).padStart(2,'0')); g.addColorStop(1,base+'00');
+      ctx.fillStyle=g; ctx.beginPath(); ctx.arc(nd.x,nd.y,R*3,0,6.3); ctx.fill();
+      ctx.beginPath(); ctx.arc(nd.x,nd.y,R,0,6.3); ctx.fillStyle=`rgba(5,8,20,.95)`; ctx.fill();
+      ctx.lineWidth=2.5; ctx.strokeStyle=base; ctx.globalAlpha=.35+.65*b; ctx.stroke(); ctx.globalAlpha=1;
+      if(isOut){ ctx.fillStyle=base; ctx.font='700 '+Math.round(R*1.7)+'px Sora,sans-serif'; ctx.textBaseline='middle'; ctx.fillText(outLabels[i],nd.x+R*2,nd.y); }
+    }));
+    ctx.fillStyle='#9fb2d8'; ctx.font='600 '+Math.round(R*1.25)+'px DM Sans,sans-serif'; ctx.textAlign='center'; ctx.textBaseline='alphabetic';
+    ctx.fillText('Entrada',pos[0][0].x,h-8); ctx.fillText('Capas ocultas',(pos[2][0].x+pos[3][0].x)/2,h-8); ctx.fillText('Salida',pos[L-1][0].x,h-8); ctx.textAlign='start';
+    onProg(p);
+    if(p<1) requestAnimationFrame(frame); else if(!finished){finished=true;setTimeout(onDone,500);}
+  }
+  requestAnimationFrame(frame);
+}
+const msgs=['Leyendo y validando los datos enteros…','Ordenando los datos de menor a mayor…','Aplicando la regla de Sturges…','Construyendo la tabla de frecuencias…','Calculando media, mediana y moda…','Resultados listos.'];
+function startProcessing(vals,title){
+  busy=true; const a=analyze(vals);
+  $('#proc-title').textContent=title;
+  $$('.stp').forEach(s=>{s.className='stp';s.querySelector('i').className='bi bi-circle'});
+  $('#pfill').style.width='0'; $('#ppct').textContent='0 %'; $('#pstatus').textContent=msgs[0];
+  go(slides.findIndex(s=>s.id==='s-proc'));
+  setTimeout(()=>runNet($('#net'),4600,p=>{
+    const idx=Math.min(5,Math.floor(p*5+(p>=1?.01:0)));
+    $('#pfill').style.width=(p*100)+'%'; $('#ppct').textContent=Math.round(p*100)+' %'; $('#pstatus').textContent=msgs[p>=1?5:idx];
+    $$('.stp').forEach(s=>{const i=+s.dataset.i, st=p>=1||i<idx?'done':(i===idx?'act':''); const cl='stp '+st; if(s.className!==cl){s.className=cl; s.querySelector('i').className='bi bi-'+(st==='done'?'check-circle-fill':st==='act'?'arrow-repeat':'circle');}});
+  },()=>{
+    renderAll(a,title); document.body.classList.add('ready'); busy=false;
+    go(slides.findIndex(s=>s.id==='s-table'));
+  }),350);
+}
+go(0);
+})();
+</script>
+</body>
+</html>
