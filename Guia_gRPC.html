@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>gRPC: Guía Completa y Arquitectura de Microservicios</title>
+    <style>
+        :root {
+            --primary-color: #00796b;
+            --secondary-color: #e0f2f1;
+            --text-color: #333;
+            --bg-color: #fafafa;
+            --border-color: #b2dfdb;
+            --accent-color: #004d40;
+            --glossary-bg: #fff3e0;
+            --glossary-border: #ffb74d;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.8;
+            color: var(--text-color);
+            background-color: var(--bg-color);
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background-color: var(--primary-color);
+            color: white;
+            text-align: center;
+            padding: 2.5rem 1rem;
+            border-bottom: 5px solid var(--accent-color);
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 2.5rem;
+        }
+
+        header p {
+            font-size: 1.2rem;
+            margin-top: 10px;
+            opacity: 0.9;
+        }
+
+        .container {
+            max-width: 950px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .professor-intro {
+            background-color: white;
+            padding: 20px;
+            border-left: 5px solid var(--primary-color);
+            border-radius: 4px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            margin-bottom: 30px;
+            font-style: italic;
+            color: #555;
+        }
+
+        .section-card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 25px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+        }
+
+        .section-title {
+            background-color: var(--secondary-color);
+            color: var(--primary-color);
+            padding: 15px 20px;
+            margin: 0;
+            font-size: 1.4rem;
+            border-bottom: 2px solid var(--border-color);
+            display: flex;
+            align-items: center;
+        }
+
+        .section-content {
+            padding: 20px;
+        }
+
+        .section-content p {
+            margin-top: 0;
+        }
+
+        ul, ol {
+            padding-left: 20px;
+        }
+
+        li {
+            margin-bottom: 12px;
+        }
+
+        .steps-list {
+            list-style-type: none;
+            padding: 0;
+            counter-reset: custom-counter;
+        }
+
+        .steps-list li {
+            position: relative;
+            padding-left: 40px;
+            margin-bottom: 15px;
+        }
+
+        .steps-list li::before {
+            counter-increment: custom-counter;
+            content: counter(custom-counter);
+            position: absolute;
+            left: 0;
+            top: 0;
+            background-color: var(--primary-color);
+            color: white;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        strong {
+            color: var(--accent-color);
+        }
+
+        /* Estilo para resaltar términos clave y su definición */
+        .term {
+            font-weight: bold;
+            color: #b71c1c;
+        }
+
+        .definition {
+            font-style: italic;
+            color: #444;
+            background-color: #f5f5f5;
+            padding: 4px 8px;
+            border-radius: 4px;
+            border-left: 3px solid var(--primary-color);
+            display: block;
+            margin-top: 5px;
+            margin-bottom: 10px;
+            font-size: 0.95em;
+        }
+
+        .highlight-box {
+            background-color: #f1f8e9;
+            border-left: 4px solid #8bc34a;
+            padding: 15px;
+            margin-top: 20px;
+            border-radius: 4px;
+        }
+
+        .architecture-diagram {
+            background-color: #f5f5f5;
+            border: 1px dashed #ccc;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            text-align: center;
+            font-family: monospace;
+            font-size: 0.9rem;
+            overflow-x: auto;
+        }
+
+        .diagram-box {
+            display: inline-block;
+            background: #fff;
+            border: 2px solid var(--primary-color);
+            padding: 10px 15px;
+            border-radius: 6px;
+            margin: 5px;
+            font-weight: bold;
+            color: var(--accent-color);
+        }
+
+        .diagram-arrow {
+            color: #666;
+            font-weight: bold;
+            margin: 0 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Guía Completa de gRPC</h1>
+        <p>Origen, Fundamentos y Comunicación en Microservicios</p>
+    </header>
+
+    <div class="container">
+        
+        <div class="professor-intro">
+            "Hola a todos. En esta clase vamos a desglosar qué es gRPC. No solo veremos la teoría, sino que entenderemos de dónde viene esta tecnología, qué significan esos términos técnicos que tanto asustan y, lo más importante, cómo resuelve el problema real de la comunicación y el manejo de datos cuando tenemos múltiples microservicios con sus propias bases de datos."
+        </div>
+
+        <!-- Sección 1: Origen -->
+        <div class="section-card">
+            <h2 class="section-title">1. ¿De dónde proviene gRPC? (Su Origen)</h2>
+            <div class="section-content">
+                <p>Para entender gRPC, primero debemos mirar atrás. Google lleva más de 15 años construyendo sistemas distribuidos masivos. Internamente, desarrollaron un framework llamado <strong>Stubby</strong> para conectar sus microservicios, el cual manejaba decenas de miles de millones de peticiones por segundo.</p>
+                <p>Sin embargo, Stubby no era de código abierto. Fue en <strong>febrero de 2015</strong> cuando Google anunció y liberó gRPC al público como un proyecto de código abierto. El nombre "gRPC" es un acrónimo recursivo que significa <strong>"gRPC Remote Procedure Call"</strong>, aunque originalmente la "g" hacía referencia a Google.</p>
+                <p>Hoy en día, gRPC es un proyecto mantenido por la <strong>Cloud Native Computing Foundation (CNCF)</strong>, la misma organización que mantiene Kubernetes, lo que garantiza su neutralidad y evolución constante en la industria del software moderno.</p>
+            </div>
+        </div>
+
+        <!-- Sección 2: Qué es -->
+        <div class="section-card">
+            <h2 class="section-title">2. ¿Qué es gRPC?</h2>
+            <div class="section-content">
+                <p>gRPC es un framework de comunicación de alto rendimiento. Su función principal es permitir que un programa ejecute funciones que están en otro servidor distinto, como si esas funciones estuvieran escritas en su propio código local. A esto se le llama <strong>Llamada a Procedimiento Remoto (RPC)</strong>.</p>
+                <p>La clave de su éxito es que oculta toda la complejidad de la red. Para el desarrollador, es como llamar a una función normal, pero gRPC se encarga de empaquetar los datos, enviarlos por la red, recibir la respuesta y descomprimirla de forma eficiente.</p>
+            </div>
+        </div>
+
+        <!-- Sección 3: Protocol Buffers -->
+        <div class="section-card">
+            <h2 class="section-title">3. Protocol Buffers (El lenguaje de gRPC)</h2>
+            <div class="section-content">
+                <p>Para que dos programas se entiendan, necesitan un idioma común. gRPC utiliza <strong>Protocol Buffers</strong> (o Protobuf). En lugar de enviar texto plano (como haría una API REST con JSON), Protobuf convierte la información en un formato <strong>binario compacto</strong>. 
+                    <span class="definition"><strong>Formato binario:</strong> Significa que los datos viajan como ceros y unos (el lenguaje nativo de las computadoras). Es mucho más rápido de procesar y ocupa menos espacio que el texto legible por humanos.</span>
+                </p>
+                <p>Tú defines la estructura de tus datos en un archivo con extensión <code>.proto</code>. Luego, un compilador genera automáticamente el código en el lenguaje que estés usando (Java, Python, Go, etc.). Esto no solo hace que los mensajes sean mucho más ligeros y rápidos de transmitir, sino que también garantiza que los datos tengan la estructura correcta, evitando errores.</p>
+            </div>
+        </div>
+
+        <!-- Sección 4: Cómo funciona -->
+        <div class="section-card">
+            <h2 class="section-title">4. ¿Cómo funciona? (El flujo de trabajo)</h2>
+            <div class="section-content">
+                <p>El proceso para poner a funcionar gRPC sigue un flujo lógico de cuatro pasos:</p>
+                <ul class="steps-list">
+                    <li><strong>Definición:</strong> Escribes un archivo <code>.proto</code> donde describes los servicios (las funciones) y los mensajes (los datos de entrada y salida).</li>
+                    <li><strong>Generación:</strong> Usas la herramienta de gRPC para compilar ese archivo. Esto genera automáticamente el código base tanto para el cliente como para el servidor en tu lenguaje de programación favorito.</li>
+                    <li><strong>Comunicación:</strong> El cliente llama a una función del servidor. Los datos viajan empaquetados en formato binario (Protobuf).</li>
+                    <li><strong>Transporte:</strong> Todo esto viaja sobre <strong>HTTP/2</strong>. <span class="definition"><strong>¿Qué es HTTP/2?</strong> Es la segunda versión principal del protocolo de red que usa internet. La palabra "HTTP" significa Protocolo de Transferencia de Hipertexto (el idioma base de la web). El "/2" indica que es la versión 2, lanzada en 2015. A diferencia de la versión anterior (HTTP/1.1), que solo podía enviar un mensaje a la vez por conexión, HTTP/2 permite enviar <strong>múltiples mensajes al mismo tiempo por una sola conexión</strong> (esto se llama multiplexación). Además, comprime los encabezados de los mensajes, lo que reduce el peso de la transmisión. Es como pasar de una carretera de un solo carril a una autopista de varios carriles.</span></li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Sección 5: Para qué se utiliza -->
+        <div class="section-card">
+            <h2 class="section-title">5. ¿Para qué se utiliza?</h2>
+            <div class="section-content">
+                <p>gRPC no es la solución para todo, pero es el estándar en entornos donde la eficiencia es crítica:</p>
+                <ul>
+                    <li><strong>Microservicios:</strong> Es su caso de uso estrella. <span class="definition"><strong>Microservicio:</strong> Es una pequeña aplicación independiente que se encarga de una única función de negocio (por ejemplo, solo gestionar pagos, o solo gestionar usuarios).</span> Cuando tienes docenas de estos servicios comunicándose entre sí, gRPC reduce la latencia y el consumo de red.</li>
+                    <li><strong>Comunicación en tiempo real:</strong> Gracias al <em>streaming</em>. <span class="definition"><strong>Streaming:</strong> Es la capacidad de enviar un flujo continuo de datos sin tener que esperar a que termine la petición anterior. Es como ver un video en vivo en lugar de descargar el archivo completo.</span> gRPC permite este flujo en ambas direcciones (bidireccional), ideal para chats o actualizaciones en vivo.</li>
+                    <li><strong>Sistemas políglotas:</strong> <span class="definition"><strong>Sistema políglota:</strong> Es aquel donde diferentes partes del software están escritas en distintos lenguajes de programación.</span> gRPC permite que un servicio en Go se comunique con uno en Python sin problemas, ya que el contrato (el archivo .proto) es independiente del lenguaje.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Sección 6: Arquitectura y Comunicación con BD -->
+        <div class="section-card">
+            <h2 class="section-title">6. Arquitectura: Comunicación y Datos en Microservicios</h2>
+            <div class="section-content">
+                <p>Esta es la parte más importante de la clase. En una arquitectura de microservicios, el principio fundamental es la <strong>descentralización de los datos</strong>. Cada microservicio es dueño exclusivo de su propia base de datos y <strong>nadie más puede acceder a ella directamente</strong>.</p>
+                <p>Entonces, ¿cómo hace un microservicio para obtener datos que le pertenecen a otro? Aquí es donde gRPC brilla como el mecanismo de comunicación síncrona. <span class="definition"><strong>Comunicación síncrona:</strong> Significa que el cliente envía una petición y se queda esperando (bloqueado) hasta recibir la respuesta del servidor.</span></p>
+
+                <div class="architecture-diagram">
+                    <div class="diagram-box">Frontend / Cliente</div>
+                    <div class="diagram-arrow">➡️</div>
+                    <div class="diagram-box">API Gateway</div>
+                    <br><br>
+                    <div class="diagram-arrow">⬇️ (gRPC)</div>
+                    <div class="diagram-arrow">⬇️ (gRPC)</div>
+                    <div class="diagram-arrow">⬇️ (gRPC)</div>
+                    <br>
+                    <div class="diagram-box">Microservicio A<br><small>(BD Propia A)</small></div>
+                    <div class="diagram-box">Microservicio B<br><small>(BD Propia B)</small></div>
+                    <div class="diagram-box">Microservicio C<br><small>(BD Propia C)</small></div>
+                </div>
+
+                <p><strong>El flujo de comunicación típico es el siguiente:</strong></p>
+                <p>Imagina que el <strong>Microservicio de Pedidos</strong> necesita mostrar el nombre del cliente que hizo la compra. El nombre del cliente vive en el <strong>Microservicio de Clientes</strong>.</p>
+                <ol>
+                    <li>El Microservicio de Pedidos <strong>no</strong> se conecta a la base de datos de Clientes. Eso está prohibido porque rompe el aislamiento.</li>
+                    <li>En su lugar, el Microservicio de Pedidos actúa como un <strong>Cliente gRPC</strong>. Realiza una llamada remota al <strong>Servidor gRPC</strong> del Microservicio de Clientes, diciendo: "Oye, dame el nombre del cliente con ID 123".</li>
+                    <li>El Microservicio de Clientes recibe la petición, consulta <strong>su propia base de datos</strong>, obtiene el nombre, y lo devuelve empaquetado en un mensaje Protobuf.</li>
+                    <li>El Microservicio de Pedidos recibe la respuesta y la utiliza para completar su lógica de negocio (por ejemplo, para armar la factura).</li>
+                </ol>
+                <p><strong>¿Qué pasa con los datos compartidos?</strong> Cuando necesitas combinar datos de varios servicios (como un "JOIN" en SQL), la práctica común es que un <strong>API Gateway</strong> o un servicio "Agregador" haga varias llamadas gRPC en paralelo (fan-out) a los distintos microservicios y una los resultados en memoria antes de enviarlos al usuario final. <span class="definition"><strong>API Gateway:</strong> Es un componente intermedio que recibe todas las peticiones del exterior y las redirige al microservicio correspondiente, además de encargarse de la seguridad y el balanceo de carga.</span></p>
+                
+                <div class="highlight-box">
+                    <strong>Regla de oro del profesor:</strong> En microservicios con gRPC, la base de datos es un secreto bien guardado. La única forma de obtener datos de otro servicio es a través de su API (definida en el archivo .proto). Esto garantiza que los servicios estén débilmente acoplados y puedan evolucionar de forma independiente sin romper el sistema.
+                </div>
+            </div>
+        </div>
+
+        <!-- Sección 7: Ventajas -->
+        <div class="section-card">
+            <h2 class="section-title">7. Ventajas Clave (Resumen Final)</h2>
+            <div class="section-content">
+                <ul>
+                    <li><strong>Rendimiento superior:</strong> Gracias al binario y a HTTP/2, es mucho más rápido que REST/JSON. 
+                        <span class="definition"><strong>REST/JSON:</strong> Es el estilo tradicional de APIs web donde los datos viajan como texto legible (JSON). Es más lento de procesar y ocupa más espacio en la red en comparación con el binario.</span>
+                    </li>
+                    <li><strong>Contratos fuertes:</strong> El archivo .proto es la ley. Si el cliente y el servidor no cumplen el contrato, el código ni siquiera compila, lo que evita errores en producción.</li>
+                    <li><strong>Streaming nativo:</strong> Permite flujos de datos continuos en ambas direcciones, algo muy complejo de hacer con REST.</li>
+                    <li><strong>Generación de código:</strong> Ahorras horas de trabajo escribiendo clientes y servidores a mano, ya que la herramienta los crea automáticamente.</li>
+                </ul>
+                <p>En resumen: gRPC es la herramienta de comunicación interna preferida en arquitecturas modernas de microservicios porque prioriza la velocidad, la eficiencia y el desacoplamiento de los datos.</p>
+            </div>
+        </div>
+
+    </div>
+
+</body>
+</html>
