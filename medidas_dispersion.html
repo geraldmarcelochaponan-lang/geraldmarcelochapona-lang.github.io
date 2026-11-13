@@ -1,0 +1,1958 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Medidas de dispersión y herramientas para la calidad</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=JetBrains+Mono:wght@500;700&family=Sora:wght@600;700;800&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <style>
+    :root {
+      --bg: #eaf6ff;
+      --bg-2: #d4ebff;
+      --panel: #ffffff;
+      --panel-soft: #f4faff;
+      --line: #b8d9f5;
+      --line-strong: #aed2f2;
+      --tx: #0a2540;
+      --mut: #2c5a85;
+      --mut-2: #5a86ad;
+      --cy: #0a7dd6;
+      --cy-soft: #4da3e0;
+      --cy-bg: rgba(10, 125, 214, .10);
+      --cy-line: rgba(10, 125, 214, .35);
+      --am: #e08b00;
+      --am-soft: #ffc44d;
+      --am-bg: rgba(224, 139, 0, .10);
+      --am-line: rgba(224, 139, 0, .35);
+      --ro: #d32f4a;
+      --ro-soft: #ff6b81;
+      --ro-bg: rgba(211, 47, 74, .10);
+      --ro-line: rgba(211, 47, 74, .35);
+      --gr: #00897b;
+      --gr-soft: #26d0a8;
+      --gr-bg: rgba(0, 137, 123, .10);
+      --shadow-card: 0 15px 45px rgba(10, 80, 140, .12);
+      --shadow-soft: 0 6px 20px rgba(10, 80, 140, .10);
+      --shadow-accent: 0 8px 20px rgba(10, 125, 214, .28);
+      --grad-primary: linear-gradient(135deg, #0a4d9e 0%, #2196f3 50%, #4dd0ff 100%);
+      --grad-accent: linear-gradient(135deg, var(--cy), var(--cy-soft));
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0
+    }
+
+    html {
+      font-size: max(16px, min(1.15vw, 2vh))
+    }
+
+    body {
+      font-family: 'DM Sans', system-ui, sans-serif;
+      background:
+        radial-gradient(900px 500px at 0% 0%, #d6ecff 0%, transparent 60%),
+        radial-gradient(800px 500px at 100% 100%, #e3f4ff 0%, transparent 60%),
+        linear-gradient(135deg, var(--bg) 0%, var(--bg-2) 100%);
+      color: var(--tx);
+      height: 100vh;
+      width: 100vw;
+      overflow: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(60rem 40rem at 85% -10%, rgba(33, 150, 243, .12), transparent 60%),
+        radial-gradient(50rem 36rem at -10% 110%, rgba(77, 208, 255, .12), transparent 60%);
+    }
+
+    #deck {
+      position: fixed;
+      inset: 0;
+      z-index: 1
+    }
+
+    .slide {
+      position: absolute;
+      inset: 0;
+      padding: 1.8rem 3rem 4.4rem;
+      display: flex;
+      flex-direction: column;
+      gap: .9rem;
+      overflow-y: auto;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateX(3.5rem);
+      transition: opacity .45s ease, transform .45s ease, visibility 0s .45s
+    }
+
+    .slide.active {
+      opacity: 1;
+      visibility: visible;
+      transform: none;
+      transition: opacity .45s ease, transform .45s ease
+    }
+
+    .slide.past {
+      transform: translateX(-3.5rem)
+    }
+
+    .slide::-webkit-scrollbar {
+      width: 8px
+    }
+
+    .slide::-webkit-scrollbar-thumb {
+      background: rgba(10, 125, 214, .35);
+      border-radius: 8px
+    }
+
+    h1,
+    h2,
+    h3 {
+      font-family: 'Sora', sans-serif;
+      line-height: 1.12;
+      color: var(--tx)
+    }
+
+    h1 {
+      font-size: 3rem;
+      font-weight: 800;
+      letter-spacing: -.02em
+    }
+
+    h1 em {
+      font-style: normal;
+      background: var(--grad-primary);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent
+    }
+
+    h2 {
+      font-size: 2.1rem;
+      font-weight: 700
+    }
+
+    h3 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: .4rem
+    }
+
+    p,
+    li {
+      font-size: 1.05rem;
+      line-height: 1.55;
+      color: var(--tx)
+    }
+
+    .lead {
+      font-size: 1.15rem;
+      color: var(--mut);
+      max-width: 50rem;
+      line-height: 1.5
+    }
+
+    .mut {
+      color: var(--mut-2)
+    }
+
+    .sh {
+      display: flex;
+      flex-direction: column;
+      gap: .45rem;
+      align-items: flex-start
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: .5rem;
+      padding: .32rem .85rem;
+      border-radius: 99px;
+      font-size: .82rem;
+      font-weight: 700;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      background: var(--cy-bg);
+      border: 1px solid var(--cy-line);
+      color: var(--cy)
+    }
+
+    .tag.am {
+      background: var(--am-bg);
+      border-color: var(--am-line);
+      color: var(--am)
+    }
+
+    .ds-sub {
+      display: flex;
+      align-items: center;
+      gap: .6rem;
+      color: var(--mut);
+      font-size: 1.08rem
+    }
+
+    .ds-sub i {
+      color: var(--cy)
+    }
+
+    .ds-sub b {
+      color: var(--tx)
+    }
+
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 1.1rem;
+      padding: 1.1rem 1.3rem;
+      box-shadow: var(--shadow-soft);
+      transition: border-color .2s, box-shadow .2s
+    }
+
+    .card:hover {
+      border-color: var(--cy-line);
+      box-shadow: var(--shadow-card)
+    }
+
+    .grow {
+      flex: 1;
+      min-height: 0
+    }
+
+    .row {
+      display: flex;
+      gap: 1rem
+    }
+
+    .col {
+      display: flex;
+      flex-direction: column;
+      gap: .75rem
+    }
+
+    .grid2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem
+    }
+
+    .grid3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem
+    }
+
+    .ic {
+      font-size: 1.9rem;
+      color: var(--c, var(--cy))
+    }
+
+    .list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: .45rem
+    }
+
+    .list li {
+      display: flex;
+      gap: .6rem;
+      align-items: flex-start
+    }
+
+    .list li>i {
+      color: var(--c, var(--gr));
+      margin-top: .25rem;
+      font-size: 1.05rem
+    }
+
+    .formula {
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 500;
+      font-size: 1.12rem;
+      background: var(--panel-soft);
+      border-left: 4px solid var(--c, var(--cy));
+      padding: .7rem .95rem;
+      border-radius: .6rem;
+      line-height: 1.5;
+      color: var(--tx)
+    }
+
+    .formula small {
+      display: block;
+      font-family: 'DM Sans', sans-serif;
+      font-size: .78rem;
+      font-weight: 700;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      color: var(--mut-2);
+      margin-bottom: .22rem
+    }
+
+    .formula.w {
+      font-size: 1.05rem;
+      line-height: 1.55
+    }
+
+    .c-mean {
+      --c: var(--cy)
+    }
+
+    .c-med {
+      --c: var(--am)
+    }
+
+    .c-mode {
+      --c: var(--ro)
+    }
+
+    .c-vi {
+      --c: var(--cy-soft)
+    }
+
+    .c-gr {
+      --c: var(--gr)
+    }
+
+    .topbar-c {
+      border-top: 4px solid var(--c);
+      box-shadow: var(--shadow-soft)
+    }
+
+    .illus {
+      width: 100%;
+      height: auto;
+      color: var(--c)
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: .5rem;
+      padding: .38rem .85rem;
+      border-radius: .7rem;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      font-size: 1rem
+    }
+
+    .pill i {
+      color: var(--c, var(--cy))
+    }
+
+    .note {
+      display: flex;
+      gap: .7rem;
+      align-items: flex-start;
+      padding: .75rem 1rem;
+      border-radius: .85rem;
+      background: var(--cy-bg);
+      border: 1px solid var(--cy-line);
+      font-size: 1rem;
+      line-height: 1.5
+    }
+
+    .note i {
+      color: var(--cy);
+      font-size: 1.15rem;
+      flex-shrink: 0;
+      margin-top: .1rem
+    }
+
+    .note.cy {
+      background: rgba(77, 208, 255, .10);
+      border-color: rgba(33, 150, 243, .35)
+    }
+
+    .note.cy i {
+      color: var(--cy-soft)
+    }
+
+    .tip {
+      display: flex;
+      gap: .65rem;
+      align-items: flex-start;
+      padding: .7rem .95rem;
+      border-radius: .8rem;
+      background: var(--gr-bg);
+      border: 1px solid rgba(0, 137, 123, .3);
+      font-size: .98rem;
+      line-height: 1.5
+    }
+
+    .tip i {
+      color: var(--gr);
+      font-size: 1.1rem;
+      flex-shrink: 0;
+      margin-top: .1rem
+    }
+
+    .tbl {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      border: 1px solid var(--line);
+      border-radius: .8rem;
+      overflow: hidden;
+      font-variant-numeric: tabular-nums;
+      background: var(--panel)
+    }
+
+    .tbl th {
+      background: var(--cy-bg);
+      color: var(--cy);
+      font-family: 'Sora';
+      font-size: .9rem;
+      padding: .55rem .7rem;
+      text-align: center;
+      font-weight: 700
+    }
+
+    .tbl td {
+      padding: .45rem .7rem;
+      text-align: center;
+      font-size: .98rem;
+      border-top: 1px solid var(--line);
+      color: var(--tx)
+    }
+
+    .tbl tbody tr:nth-child(even) td {
+      background: rgba(10, 125, 214, .03)
+    }
+
+    .tbl tfoot td {
+      font-weight: 700;
+      background: var(--am-bg);
+      color: var(--am)
+    }
+
+    .cover {
+      flex-direction: row;
+      align-items: center;
+      gap: 2.2rem;
+      padding-bottom: 4.4rem
+    }
+
+    .cover-left {
+      flex: 1.15;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      align-items: flex-start
+    }
+
+    .cover-right {
+      flex: .85
+    }
+
+    .cover-right svg {
+      width: 100%;
+      height: auto;
+      filter: drop-shadow(0 1rem 2.5rem rgba(10, 125, 214, .25))
+    }
+
+    .integrantes {
+      background: var(--cy-bg);
+      border: 1px solid var(--cy-line);
+      border-radius: .9rem;
+      padding: .85rem 1.15rem;
+      display: flex;
+      flex-direction: column;
+      gap: .3rem
+    }
+
+    .integrantes strong {
+      color: var(--cy);
+      font-size: .8rem;
+      letter-spacing: .1em;
+      text-transform: uppercase
+    }
+
+    .integrantes span {
+      color: var(--tx);
+      font-size: 1.05rem;
+      line-height: 1.45
+    }
+
+    .hint {
+      display: flex;
+      gap: .6rem;
+      align-items: center;
+      color: var(--mut-2);
+      font-size: .92rem
+    }
+
+    .speech {
+      font-style: italic;
+      color: var(--mut);
+      border-left: 3px solid var(--cy-line);
+      padding-left: .9rem;
+      font-size: 1.02rem;
+      line-height: 1.55
+    }
+
+    label.fl {
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+      font-weight: 700;
+      margin-bottom: .4rem;
+      font-size: 1.02rem
+    }
+
+    label.fl i {
+      color: var(--cy)
+    }
+
+    input[type=text],
+    textarea {
+      width: 100%;
+      background: var(--panel);
+      border: 1.5px solid var(--line-strong);
+      border-radius: .8rem;
+      color: var(--tx);
+      padding: .85rem 1rem;
+      font: inherit;
+      font-size: 1.08rem;
+      outline: none;
+      transition: border .2s, box-shadow .2s
+    }
+
+    textarea {
+      font-family: 'JetBrains Mono', monospace;
+      resize: none;
+      height: 8.5rem;
+      line-height: 1.55
+    }
+
+    input:focus,
+    textarea:focus {
+      border-color: var(--cy);
+      box-shadow: 0 0 0 4px rgba(10, 125, 214, .18)
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: .55rem;
+      padding: .8rem 1.35rem;
+      border: none;
+      border-radius: .9rem;
+      cursor: pointer;
+      font: inherit;
+      font-weight: 700;
+      font-size: 1.04rem;
+      color: #fff;
+      background: var(--grad-accent);
+      transition: transform .15s, filter .15s, box-shadow .15s;
+      box-shadow: var(--shadow-accent)
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      filter: brightness(1.08);
+      box-shadow: 0 10px 26px rgba(10, 125, 214, .40)
+    }
+
+    .btn.ghost {
+      background: var(--panel);
+      color: var(--tx);
+      border: 1px solid var(--line-strong);
+      box-shadow: none
+    }
+
+    .btn.ghost:hover {
+      border-color: var(--cy);
+      box-shadow: 0 4px 14px rgba(10, 125, 214, .18)
+    }
+
+    .btns {
+      display: flex;
+      gap: .7rem;
+      flex-wrap: wrap;
+      margin-top: .9rem
+    }
+
+    .msg {
+      display: flex;
+      align-items: center;
+      gap: .6rem;
+      min-height: 1.6rem;
+      margin-top: .5rem;
+      font-weight: 500;
+      font-size: 1rem
+    }
+
+    .msg.err {
+      color: var(--ro)
+    }
+
+    .msg.ok {
+      color: var(--gr)
+    }
+
+    .msg.warn {
+      color: var(--am)
+    }
+
+    .live {
+      display: flex;
+      gap: .6rem;
+      flex-wrap: wrap;
+      margin-top: .55rem
+    }
+
+    .res-body {
+      display: none;
+      flex-direction: column;
+      gap: .85rem;
+      flex: 1;
+      min-height: 0
+    }
+
+    body.ready .res-body {
+      display: flex
+    }
+
+    .empty {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
+      text-align: center;
+      color: var(--mut-2)
+    }
+
+    .empty i.big {
+      font-size: 3.6rem;
+      color: var(--cy)
+    }
+
+    body.ready .empty {
+      display: none
+    }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .55rem
+    }
+
+    .chip {
+      padding: .4rem .85rem;
+      border-radius: .7rem;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      font-size: 1rem
+    }
+
+    .chip b {
+      color: var(--cy);
+      font-family: 'JetBrains Mono';
+      margin-left: .25rem
+    }
+
+    .calc {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .95rem;
+      color: var(--mut);
+      line-height: 1.65
+    }
+
+    .calc b {
+      color: var(--tx)
+    }
+
+    .mcard {
+      display: flex;
+      flex-direction: column;
+      gap: .55rem
+    }
+
+    .mcard .head {
+      display: flex;
+      align-items: center;
+      gap: .65rem
+    }
+
+    .mcard .head i {
+      font-size: 1.65rem;
+      color: var(--c)
+    }
+
+    .mcard .head h3 {
+      margin: 0;
+      color: var(--c);
+      font-size: 1.4rem
+    }
+
+    .mcard .blk {
+      padding: .8rem .95rem;
+      border-radius: .7rem;
+      background: var(--panel-soft);
+      border: 1px solid var(--line)
+    }
+
+    .mcard .blk small {
+      display: block;
+      font-size: .75rem;
+      font-weight: 700;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      color: var(--mut-2);
+      margin-bottom: .18rem
+    }
+
+    .mcard .calc {
+      font-size: 1.08rem;
+      line-height: 1.65
+    }
+
+    .legend {
+      display: flex;
+      gap: 1.2rem;
+      flex-wrap: wrap;
+      font-size: .98rem
+    }
+
+    .legend span {
+      display: inline-flex;
+      align-items: center;
+      gap: .45rem
+    }
+
+    .legend s {
+      display: inline-block;
+      width: 1.5rem;
+      height: 0;
+      border-top: 3px solid var(--c, #fff);
+      text-decoration: none
+    }
+
+    .chartbox {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 1rem;
+      padding: .5rem;
+      flex: 1;
+      min-height: 0;
+      display: flex;
+      box-shadow: var(--shadow-soft)
+    }
+
+    .chartbox svg {
+      width: 100%;
+      height: 100%
+    }
+
+    .net-wrap {
+      display: flex;
+      gap: 1.4rem;
+      flex: 1;
+      min-height: 0
+    }
+
+    .net-wrap canvas {
+      flex: 1.7;
+      min-width: 0;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 1.1rem;
+      width: 100%;
+      height: 100%;
+      box-shadow: var(--shadow-soft)
+    }
+
+    .steps {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: .8rem;
+      justify-content: center
+    }
+
+    .stp {
+      display: flex;
+      align-items: center;
+      gap: .7rem;
+      padding: .7rem .95rem;
+      border-radius: .9rem;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      color: var(--mut-2);
+      transition: all .3s;
+      font-size: 1rem
+    }
+
+    .stp i {
+      font-size: 1.3rem
+    }
+
+    .stp.act {
+      color: var(--tx);
+      border-color: var(--cy);
+      background: var(--cy-bg)
+    }
+
+    .stp.act i {
+      color: var(--cy);
+      animation: spin 1s linear infinite
+    }
+
+    .stp.done {
+      color: var(--tx)
+    }
+
+    .stp.done i {
+      color: var(--gr)
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg)
+      }
+    }
+
+    .pbar {
+      height: .65rem;
+      border-radius: 99px;
+      background: var(--bg-2);
+      overflow: hidden
+    }
+
+    .pbar i {
+      display: block;
+      height: 100%;
+      width: 0;
+      background: var(--grad-primary);
+      border-radius: 99px;
+      transition: width .2s
+    }
+
+    .status {
+      display: flex;
+      justify-content: space-between;
+      font-size: .98rem;
+      color: var(--mut);
+      margin-top: .55rem
+    }
+
+    .status b {
+      color: var(--cy);
+      font-family: 'JetBrains Mono'
+    }
+
+    #bar {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 3.3rem;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 1.5rem;
+      background: linear-gradient(transparent, rgba(234, 246, 255, .95) 45%)
+    }
+
+    .bar-l {
+      display: flex;
+      gap: .55rem;
+      align-items: center;
+      color: var(--mut);
+      font-size: .92rem;
+      font-weight: 500
+    }
+
+    .bar-l i {
+      color: var(--cy)
+    }
+
+    .bar-r {
+      display: flex;
+      align-items: center;
+      gap: .45rem;
+      color: var(--mut);
+      font-size: .96rem
+    }
+
+    .ib {
+      background: var(--panel);
+      border: 1px solid var(--line-strong);
+      color: var(--tx);
+      width: 2.2rem;
+      height: 2.2rem;
+      border-radius: .6rem;
+      cursor: pointer;
+      display: grid;
+      place-items: center;
+      font-size: 1rem;
+      transition: background .2s, box-shadow .2s, color .2s
+    }
+
+    .ib:hover {
+      background: var(--cy-bg);
+      color: var(--cy);
+      box-shadow: 0 4px 14px rgba(10, 125, 214, .18);
+      border-color: var(--cy)
+    }
+
+    .ib:disabled {
+      opacity: .35;
+      cursor: default
+    }
+
+    #counter {
+      margin-right: .5rem;
+      font-family: 'JetBrains Mono';
+      font-size: .92rem
+    }
+
+    #prog {
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      height: 3px;
+      width: 100%;
+      background: rgba(10, 125, 214, .10)
+    }
+
+    #prog i {
+      display: block;
+      height: 100%;
+      width: 0;
+      background: var(--grad-primary);
+      transition: width .4s;
+      box-shadow: 0 0 12px rgba(10, 125, 214, .5)
+    }
+
+    @media (max-width:900px) {
+      html {
+        font-size: 15px
+      }
+
+      .grid2,
+      .grid3,
+      .row,
+      .cover,
+      .net-wrap {
+        grid-template-columns: 1fr;
+        flex-direction: column
+      }
+
+      .slide {
+        padding: 1.3rem 1rem 4.4rem
+      }
+
+      h1 {
+        font-size: 2rem
+      }
+
+      h2 {
+        font-size: 1.6rem
+      }
+    }
+
+    .scroll {
+      overflow: auto;
+      min-height: 0;
+      border-radius: .8rem
+    }
+
+    .scroll .tbl th {
+      position: sticky;
+      top: 0;
+      background: #e6f2ff;
+      z-index: 1;
+      color: var(--cy)
+    }
+
+    .scroll .tbl td:nth-child(n+3) {
+      font-family: 'JetBrains Mono', monospace
+    }
+
+    @media (max-width: 640px) {
+      html {
+        font-size: 14px;
+      }
+
+      .slide {
+        gap: .7rem;
+        padding: .9rem .8rem 4.2rem;
+      }
+
+      .cover {
+        align-items: flex-start;
+      }
+
+      .cover-right {
+        width: 100%;
+      }
+
+      .cover-right svg {
+        max-height: 220px;
+      }
+
+      .grid2,
+      .grid3 {
+        grid-template-columns: 1fr !important;
+      }
+
+      .grid3[style*="repeat(4"] {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+      }
+
+      .row {
+        flex-wrap: wrap;
+      }
+
+      .formula {
+        overflow-wrap: anywhere;
+      }
+
+      .tbl {
+        min-width: 520px;
+      }
+
+      .net-wrap {
+        min-height: 420px;
+      }
+
+      #bar {
+        padding: 0 .65rem;
+      }
+
+      .bar-l {
+        max-width: 42%;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+
+      *,
+      *::before,
+      *::after {
+        scroll-behavior: auto !important;
+        animation-duration: .01ms !important;
+        transition-duration: .01ms !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div id="deck">
+
+    <!-- 1. PORTADA -->
+    <section class="slide cover active" data-title="Portada">
+      <div class="cover-left">
+        <span class="tag"><i class="bi bi-distribute-horizontal"></i> Estadística descriptiva</span>
+        <h1>Medidas de <em>dispersión</em> y herramientas para la <em>calidad</em></h1>
+        <p class="lead">¿Por qué un promedio no siempre es suficiente para comprender un conjunto de datos? En esta
+          exposición veremos cómo las medidas de dispersión nos permiten identificar si los valores están cerca o lejos
+          entre sí, y cómo se aplican en la gestión de la calidad.</p>
+        <div class="integrantes">
+          <strong><i class="bi bi-people-fill"></i> Integrantes</strong>
+          <span>Jesús André Bautista Sánchez</span>
+          <span>Roger Alberto Gonzales Peña</span>
+          <span>Gerald Fernando Marcelo Chapoñán</span>
+        </div>
+        <div class="row" style="flex-wrap:wrap;gap:.7rem">
+          <span class="pill c-mean"><i class="bi bi-rulers"></i> Rango</span>
+          <span class="pill c-med"><i class="bi bi-bounding-box"></i> Varianza</span>
+          <span class="pill c-mode"><i class="bi bi-arrows-expand"></i> Desviación estándar</span>
+          <span class="pill c-gr"><i class="bi bi-tools"></i> Calidad Total</span>
+        </div>
+        <div class="hint"><i class="bi bi-keyboard"></i> Navegación: flechas del teclado · F: pantalla completa ·
+          deslizar en móvil</div>
+      </div>
+      <div class="cover-right">
+        <svg viewBox="0 0 520 400" role="img" aria-label="Dos distribuciones con el mismo centro y distinta dispersión">
+          <rect x="10" y="10" width="500" height="380" rx="26" fill="rgba(10,125,214,.06)"
+            stroke="rgba(10,125,214,.35)" />
+          <line x1="260" y1="50" x2="260" y2="330" stroke="rgba(10,37,64,.35)" stroke-width="2"
+            stroke-dasharray="6 6" />
+          <path d="M40 330 C 130 330, 200 190, 260 190 C 320 190, 390 330, 480 330 Z" fill="rgba(224,139,0,.18)"
+            stroke="#e08b00" stroke-width="3" />
+          <path d="M80 330 C 190 330, 225 70, 260 70 C 295 70, 330 330, 440 330 Z" fill="rgba(10,125,214,.22)"
+            stroke="#0a7dd6" stroke-width="3" />
+          <line x1="40" y1="330" x2="480" y2="330" stroke="rgba(10,37,64,.45)" stroke-width="2" />
+          <g font-family="Sora,sans-serif" font-size="15" font-weight="700">
+            <text x="306" y="62" fill="#0a7dd6">Menor dispersión</text>
+            <text x="396" y="222" fill="#e08b00" text-anchor="middle">Mayor dispersión</text>
+            <text x="266" y="304" fill="#0a2540" font-size="13">Mismo centro</text>
+          </g>
+        </svg>
+      </div>
+    </section>
+
+    <!-- 2. TENDENCIA CENTRAL -->
+    <section class="slide" data-title="Medidas de tendencia central">
+      <header class="sh"><span class="tag"><i class="bi bi-bullseye"></i> Punto de partida</span>
+        <h2>Antes de la dispersión: el centro</h2>
+      </header>
+      <p class="lead">Para entender la dispersión primero tenemos que saber dónde está el centro. Estas tres medidas
+        resumen un conjunto de datos en un solo número, pero no nos dicen si los datos están juntos o separados entre
+        sí.</p>
+      <div class="grid3 grow">
+        <article class="card c-mean topbar-c col">
+          <i class="bi bi-calculator-fill ic"></i>
+          <h3 style="color:var(--c)">Media aritmética</h3>
+          <p>Es el promedio de todos los valores: sumamos todos los datos y dividimos entre la cantidad de datos.
+            Utiliza toda la información disponible, pero tiene una debilidad importante: un solo valor extremo puede
+            desplazarla muy lejos del resto.</p>
+          <p class="mut"><b>Ejemplo:</b> si en un salón de 10 alumnos nueve obtienen 15 y uno obtiene 20, la media sube
+            aunque la mayoría tenga la misma nota.</p>
+          <div class="formula w c-mean"><small>Fórmula</small>MEDIA = SUMA ÷ NÚMERO DE DATOS</div>
+        </article>
+        <article class="card c-med topbar-c col">
+          <i class="bi bi-sort-numeric-down ic"></i>
+          <h3 style="color:var(--c)">Mediana</h3>
+          <p>Es el valor que ocupa la posición central cuando ordenamos los datos de menor a mayor. Su gran ventaja es
+            que no se ve afectada por valores extremos: si un dato se dispara, la mediana casi no cambia.</p>
+          <p class="mut"><b>Ejemplo:</b> con 20, 22, 23, 24, 25 la mediana es 23. Si el 25 se convierte en 250, la
+            mediana sigue siendo 23.</p>
+          <div class="formula w c-med"><small>Fórmula</small>MEDIANA = VALOR CENTRAL ORDENADO</div>
+        </article>
+        <article class="card c-mode topbar-c col">
+          <i class="bi bi-bar-chart-fill ic"></i>
+          <h3 style="color:var(--c)">Moda</h3>
+          <p>Es el valor que más se repite dentro del conjunto. Resulta especialmente útil para datos cualitativos
+            (colores, marcas, categorías), donde la media y la mediana no tienen sentido.</p>
+          <p class="mut"><b>Ejemplo:</b> si en una encuesta de tallas la más vendida es la M, esa talla es la moda.</p>
+          <div class="formula w c-mode"><small>Fórmula</small>MODA = VALOR MÁS FRECUENTE</div>
+        </article>
+      </div>
+      <div class="note cy"><i class="bi bi-info-circle-fill"></i><span>Estas medidas nos dan el <b>centro</b>, pero no
+          la <b>dispersión</b>. Y aquí viene la pregunta clave: dos grupos con la misma media, ¿son realmente iguales?
+          La respuesta es no, y lo veremos en la siguiente diapositiva.</span></div>
+    </section>
+
+    <!-- 3. ¿POR QUÉ LA DISPERSIÓN? -->
+    <section class="slide" data-title="Medidas de dispersión">
+      <header class="sh"><span class="tag"><i class="bi bi-distribute-horizontal"></i> Medidas de dispersión</span>
+        <h2>¿Por qué no basta con la media?</h2>
+      </header>
+      <p class="lead">Imagina dos salones con la misma nota promedio: 50. A simple vista parecen iguales. Pero cuando
+        miramos los datos uno por uno, la historia cambia completamente.</p>
+      <div class="grid2 grow">
+        <div class="card c-mean topbar-c col">
+          <h3 style="color:var(--c)"><i class="bi bi-1-circle-fill"></i> Grupo A: notas parejas</h3>
+          <svg viewBox="0 0 600 120" class="illus" style="color:var(--cy)">
+            <line x1="20" y1="80" x2="580" y2="80" stroke="rgba(10,37,64,.45)" stroke-width="2" />
+            <line x1="300" y1="22" x2="300" y2="80" stroke="#4da3e0" stroke-width="3" stroke-dasharray="5 5" />
+            <g fill="currentColor">
+              <circle cx="244" cy="64" r="9" />
+              <circle cx="272" cy="64" r="9" />
+              <circle cx="300" cy="64" r="9" />
+              <circle cx="300" cy="44" r="9" />
+              <circle cx="328" cy="64" r="9" />
+              <circle cx="356" cy="64" r="9" />
+            </g>
+          </svg>
+          <p class="calc"><b>46, 48, 50, 50, 52, 54</b> → media = 50</p>
+          <p>Aquí la media sí representa al grupo: todos los estudiantes están cerca de 50, nadie se aleja demasiado. Es
+            un grupo <b>homogéneo</b>, donde el promedio describe bien la realidad.</p>
+        </div>
+        <div class="card c-mode topbar-c col">
+          <h3 style="color:var(--c)"><i class="bi bi-2-circle-fill"></i> Grupo B: notas desiguales</h3>
+          <svg viewBox="0 0 600 120" class="illus" style="color:var(--ro)">
+            <line x1="20" y1="80" x2="580" y2="80" stroke="rgba(10,37,64,.45)" stroke-width="2" />
+            <line x1="300" y1="22" x2="300" y2="80" stroke="#4da3e0" stroke-width="3" stroke-dasharray="5 5" />
+            <g fill="currentColor">
+              <circle cx="132" cy="64" r="9" />
+              <circle cx="216" cy="64" r="9" />
+              <circle cx="300" cy="64" r="9" />
+              <circle cx="300" cy="44" r="9" />
+              <circle cx="384" cy="64" r="9" />
+              <circle cx="468" cy="64" r="9" />
+            </g>
+          </svg>
+          <p class="calc"><b>20, 35, 50, 50, 65, 80</b> → media = 50</p>
+          <p>Aquí la media engaña: hay estudiantes con 20 y otros con 80. Es un grupo <b>heterogéneo</b>, con realidades
+            muy distintas detrás del mismo promedio. El 50 no representa a nadie.</p>
+        </div>
+      </div>
+      <div class="note cy"><i class="bi bi-lightbulb-fill"></i><span><b>Moraleja:</b> para describir bien un conjunto
+          hay que dar siempre <b>el centro y la dispersión</b>. Para eso tenemos tres herramientas: rango, varianza y
+          desviación estándar. Vamos una por una.</span></div>
+    </section>
+
+    <!-- 4. RANGO -->
+    <section class="slide" data-title="El rango">
+      <header class="sh"><span class="tag"><i class="bi bi-rulers"></i> Medidas de dispersión</span>
+        <h2>El rango: la forma más rápida</h2>
+      </header>
+      <p class="lead">El rango es la diferencia entre el dato más grande y el más pequeño. Es la medida más sencilla y
+        directa: nos dice cuánto terreno ocupan nuestros datos.</p>
+      <div class="grid2 grow" style="grid-template-columns:1.15fr .85fr">
+        <div class="col">
+          <div class="formula w c-mean"><small>Fórmula</small>RANGO = VALOR MÁXIMO − VALOR MÍNIMO</div>
+          <div class="grid2" style="gap:.9rem">
+            <div class="card">
+              <h3 style="color:var(--gr)"><i class="bi bi-hand-thumbs-up-fill"></i> Ventajas</h3>
+              <ul class="list" style="gap:.35rem">
+                <li><i class="bi bi-check-circle-fill"></i><span>Se calcula en segundos, sin fórmulas
+                    complicadas.</span></li>
+                <li><i class="bi bi-check-circle-fill"></i><span>Está en la misma unidad que los datos (años, mm,
+                    soles).</span></li>
+                <li><i class="bi bi-check-circle-fill"></i><span>Sirve para un primer vistazo: ¿los datos están juntos o
+                    regados?</span></li>
+              </ul>
+            </div>
+            <div class="card">
+              <h3 style="color:var(--ro)"><i class="bi bi-exclamation-triangle-fill"></i> Limitaciones</h3>
+              <ul class="list" style="gap:.35rem">
+                <li><i class="bi bi-x-circle-fill" style="color:var(--ro)"></i><span>Usa solo dos datos: ignora todo lo
+                    que pasa en medio.</span></li>
+                <li><i class="bi bi-x-circle-fill" style="color:var(--ro)"></i><span>Es muy sensible a un valor extremo
+                    o a un error de tipeo.</span></li>
+                <li><i class="bi bi-x-circle-fill" style="color:var(--ro)"></i><span>Dos grupos con el mismo rango
+                    pueden tener formas muy distintas.</span></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="card c-mean topbar-c col">
+          <h3 style="color:var(--c)"><i class="bi bi-pencil-square"></i> Ejemplo con edades</h3>
+          <p>Tenemos cinco edades: <b>20, 22, 23, 24, 25</b>.</p>
+          <p class="calc"><b>RANGO = 25 − 20 = 5 años</b></p>
+          <p>El grupo ocupa una franja de 5 años. Es un grupo compacto.</p>
+          <div class="note" style="margin-top:.3rem"><i class="bi bi-exclamation-circle-fill"></i><span>Pero si mañana
+              aparece una persona de 60 años, el rango sube a 40 y ya no describe al grupo. Por eso el rango solo no
+              basta.</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. VARIANZA -->
+    <section class="slide" data-title="La varianza">
+      <header class="sh"><span class="tag am"><i class="bi bi-bounding-box"></i> Medidas de dispersión</span>
+        <h2>La varianza: medir todas las distancias</h2>
+      </header>
+      <p class="lead">El rango solo mira los extremos. La varianza considera todos los datos: calcula cuánto se aleja
+        cada valor de la media y promedia esas diferencias al cuadrado. Para que las distancias negativas no se cancelen
+        con las positivas, se elevan al cuadrado.</p>
+      <div class="grid2 grow" style="grid-template-columns:1.1fr .9fr">
+        <div class="col">
+          <div class="formula w c-med"><small>Población</small>VARIANZA = SUMA (VALOR − MEDIA)² ÷ N</div>
+          <div class="formula w c-med"><small>Muestra</small>VARIANZA MUESTRAL = SUMA (VALOR − MEDIA)² ÷ (N − 1)</div>
+          <div class="tip"><i class="bi bi-lightbulb-fill"></i><span><b>¿Por qué N−1 en la muestra?</b> Porque al
+              trabajar con una muestra de la población, dividir entre N−1 da una estimación más justa. Es un detalle
+              técnico, pero conviene saberlo.</span></div>
+          <div class="note"><i class="bi bi-exclamation-circle-fill"></i><span>La varianza queda en <b>unidades al
+                cuadrado</b> (años², mm², soles²). Por eso es difícil interpretarla directamente y normalmente
+              preferimos la desviación estándar.</span></div>
+        </div>
+        <div class="card c-med topbar-c col">
+          <h3 style="color:var(--c)"><i class="bi bi-pencil-square"></i> Ejemplo paso a paso</h3>
+          <p class="calc">Con 20, 22, 23, 24, 25 → MEDIA = 114 ÷ 5 = <b>22,8</b></p>
+          <table class="tbl">
+            <thead>
+              <tr>
+                <th>VALOR</th>
+                <th>VALOR − MEDIA</th>
+                <th>CUADRADO</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>20</td>
+                <td>−2,8</td>
+                <td>7,84</td>
+              </tr>
+              <tr>
+                <td>22</td>
+                <td>−0,8</td>
+                <td>0,64</td>
+              </tr>
+              <tr>
+                <td>23</td>
+                <td>0,2</td>
+                <td>0,04</td>
+              </tr>
+              <tr>
+                <td>24</td>
+                <td>1,2</td>
+                <td>1,44</td>
+              </tr>
+              <tr>
+                <td>25</td>
+                <td>2,2</td>
+                <td>4,84</td>
+              </tr>
+            </tbody>
+            <tfoot>
+              <tr>
+                <td>SUMA</td>
+                <td>0</td>
+                <td>14,8</td>
+              </tr>
+            </tfoot>
+          </table>
+          <p class="calc"><b>VARIANZA = 14,8 ÷ 5 = 2,96 años²</b></p>
+          <p class="mut">Fíjate que la suma de las distancias sin elevar da 0 (por eso hay que elevarlas al cuadrado).
+            Ese es el truco de la varianza.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6. DESVIACIÓN ESTÁNDAR -->
+    <section class="slide" data-title="La desviación estándar">
+      <header class="sh"><span class="tag"
+          style="background:var(--ro-bg);border-color:var(--ro-line);color:var(--ro)"><i
+            class="bi bi-arrows-expand"></i> Medidas de dispersión</span>
+        <h2>La desviación estándar: la más útil</h2>
+      </header>
+      <p class="lead">La desviación estándar es simplemente la raíz cuadrada de la varianza. ¿Y por qué hacerle raíz?
+        Porque así devolvemos el resultado a la unidad original de los datos (años, no años²). Por eso es la medida que
+        más se usa para informar e interpretar.</p>
+      <div class="grid2 grow" style="grid-template-columns:1.15fr .85fr">
+        <div class="col">
+          <div class="formula w c-mode"><small>Fórmula</small>DESVIACIÓN ESTÁNDAR = √(VARIANZA)</div>
+          <div class="card c-mode">
+            <h3 style="color:var(--c)"><i class="bi bi-pencil-square"></i> Con el ejemplo anterior</h3>
+            <p class="calc"><b>DESVIACIÓN = √(2,96) ≈ 1,72 años</b></p>
+            <p style="margin-top:.4rem">Esto significa que los datos presentan una separación típica de aproximadamente
+              <b>1,72 años</b> respecto a la media, que es 22,8. Cuanto menor sea este valor, más concentradas estarán
+              las edades.</p>
+          </div>
+          <div class="note cy"><i class="bi bi-lightbulb-fill"></i><span><b>Regla empírica:</b> cuando los datos forman
+              una campana (distribución normal), aproximadamente el <b>68 %</b> cae dentro de MEDIA ± 1 desviación
+              estándar, el <b>95 %</b> dentro de ±2 y el <b>99,7 %</b> dentro de ±3. Por eso los gráficos de control
+              usan justo ±3.</span></div>
+        </div>
+        <div class="card c-mode topbar-c col">
+          <h3 style="color:var(--c)"><i class="bi bi-eye-fill"></i> ¿Cómo se interpreta?</h3>
+          <ul class="list">
+            <li><i class="bi bi-arrow-down-circle-fill" style="color:var(--gr)"></i><span><b>Valor pequeño:</b> los
+                datos están concentrados. Grupo homogéneo, proceso estable.</span></li>
+            <li><i class="bi bi-arrow-up-circle-fill" style="color:var(--ro)"></i><span><b>Valor grande:</b> los datos
+                están dispersos. Grupo heterogéneo, proceso inestable.</span></li>
+            <li><i class="bi bi-slash-circle-fill" style="color:var(--mut-2)"></i><span><b>Valor cero:</b> todos los
+                datos son exactamente iguales. No hay dispersión alguna.</span></li>
+          </ul>
+          <div class="tip" style="margin-top:.3rem"><i class="bi bi-chat-quote-fill"></i><span><b>Ejemplo:</b> si dos
+              máquinas tienen el mismo promedio de producción, pero una presenta una desviación estándar mayor, sus
+              resultados son menos uniformes. Esto puede aumentar la cantidad de piezas que no cumplen con las
+              especificaciones.</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 7. CALIDAD TOTAL -->
+    <section class="slide" data-title="Calidad Total">
+      <header class="sh"><span class="tag am"><i class="bi bi-tools"></i> Calidad Total</span>
+        <h2>¿Qué es la Calidad Total?</h2>
+      </header>
+      <p class="lead">Ya tenemos las herramientas estadísticas. Ahora la pregunta es: ¿para qué las usa una empresa? La
+        Calidad Total es una forma de gestionar una organización en la que <b>todos sus integrantes</b> participan en la
+        mejora continua de los productos, los procesos y los servicios, con el objetivo de satisfacer al cliente.</p>
+      <div class="grid3 grow">
+        <article class="card c-mean topbar-c col"><i class="bi bi-patch-check-fill ic"></i>
+          <h3>¿Qué busca?</h3>
+          <p>Satisfacer al cliente y reducir defectos, reprocesos y desperdicios. Un proceso con poca variabilidad
+            produce menos errores, y eso se traduce directamente en menos costos y clientes más contentos.</p>
+        </article>
+        <article class="card c-med topbar-c col"><i class="bi bi-people-fill ic"></i>
+          <h3>¿Quiénes participan?</h3>
+          <p>Absolutamente todos: la dirección y los trabajadores. Cada persona aporta mejoras desde su puesto, porque
+            quien está en la línea de producción es quien mejor conoce los problemas del día a día.</p>
+        </article>
+        <article class="card c-mode topbar-c col"><i class="bi bi-database-fill-check ic"></i>
+          <h3>¿Cómo se logra?</h3>
+          <p>Tomando decisiones con datos, no con corazonadas. Para eso se apoya en herramientas estadísticas sencillas
+            que cualquier trabajador puede usar sin ser especialista.</p>
+        </article>
+      </div>
+      <div class="note cy"><i class="bi bi-person-fill"></i><span><b>Dato histórico:</b> Kaoru Ishikawa popularizó las
+          <b>siete herramientas básicas de la calidad</b>, pensadas justamente para que cualquier persona de la empresa
+          pudiera usarlas sin ser estadístico. Son visuales, sencillas y basadas en datos.</span></div>
+    </section>
+
+    <!-- 8. HERRAMIENTAS -->
+    <section class="slide" data-title="Herramientas de calidad">
+      <header class="sh"><span class="tag am"><i class="bi bi-tools"></i> Calidad Total</span>
+        <h2>Las herramientas que más se usan</h2>
+      </header>
+      <p class="lead">Estas son técnicas sencillas y visuales que permiten identificar, analizar y resolver problemas de
+        calidad. La mayoría se pueden hacer a mano, en una pizarra, con el equipo de trabajo.</p>
+      <div class="grid3 grow" style="grid-template-columns:repeat(4,1fr);grid-template-rows:1fr 1fr">
+        <article class="card c-mean col"><i class="bi bi-ui-checks ic"></i>
+          <h3 style="color:var(--c)">Hoja de verificación</h3>
+          <p>Registra datos ordenadamente en el momento en que ocurren. Es el punto de partida: sin datos confiables,
+            nada funciona.</p>
+        </article>
+        <article class="card c-med col"><i class="bi bi-bar-chart-fill ic"></i>
+          <h3 style="color:var(--c)">Diagrama de Pareto</h3>
+          <p>Basado en la regla 80/20: pocas causas producen la mayoría de los problemas. Ayuda a priorizar dónde atacar
+            primero.</p>
+        </article>
+        <article class="card c-mode col"><i class="bi bi-diagram-3-fill ic"></i>
+          <h3 style="color:var(--c)">Causa y efecto</h3>
+          <p>También llamado Ishikawa o "espina de pescado". Ordena en categorías (mano de obra, método, material, etc.)
+            las posibles causas.</p>
+        </article>
+        <article class="card c-vi col"><i class="bi bi-bar-chart-line-fill ic"></i>
+          <h3 style="color:var(--c)">Histograma</h3>
+          <p>Muestra cómo se distribuyen los datos y qué tan dispersos están respecto a la media. Es la foto de la
+            variabilidad.</p>
+        </article>
+        <article class="card c-gr col"><i class="bi bi-graph-up-arrow ic"></i>
+          <h3 style="color:var(--c)">Diagrama de dispersión</h3>
+          <p>Revela si dos variables están relacionadas: por ejemplo, si a mayor temperatura de la máquina, mayor error
+            en la pieza.</p>
+        </article>
+        <article class="card c-mean col"><i class="bi bi-activity ic"></i>
+          <h3 style="color:var(--c)">Gráfico de control</h3>
+          <p>Vigila el proceso en el tiempo y avisa cuando un punto sale de los límites (media ± 3 desviaciones). Es el
+            detector de anomalías.</p>
+        </article>
+        <article class="card c-med col"><i class="bi bi-layers-fill ic"></i>
+          <h3 style="color:var(--c)">Estratificación</h3>
+          <p>Separa los datos por grupos (turno, máquina, proveedor) para encontrar diferencias que se esconden cuando
+            todo se ve junto.</p>
+        </article>
+        <article class="card c-mode col" style="justify-content:center;border-style:dashed"><i
+            class="bi bi-distribute-horizontal ic"></i>
+          <h3 style="color:var(--c)">Base estadística</h3>
+          <p>La media, el rango y la desviación estándar son el motor detrás del histograma y del gráfico de control.
+            Sin ellas, las demás herramientas no funcionan.</p>
+        </article>
+      </div>
+    </section>
+
+    <!-- 9. DISPERSIÓN Y CALIDAD -->
+    <section class="slide" data-title="La dispersión y la calidad">
+      <header class="sh"><span class="tag"><i class="bi bi-link-45deg"></i> Conexión</span>
+        <h2>La variabilidad y su relación con la calidad</h2>
+      </header>
+      <div class="grid2 grow" style="grid-template-columns:1.1fr .9fr">
+        <div class="col">
+          <p class="lead" style="max-width:none">Un proceso de calidad no solo tiene buen promedio: también tiene <b
+              style="color:var(--ro)">poca dispersión</b>. Dos máquinas con la misma media pueden producir distinta
+            cantidad de piezas fuera de especificación, y eso se traduce directamente en pérdidas.</p>
+          <div class="formula w c-mean"><small>Gráfico de control</small>LÍMITE SUPERIOR = MEDIA + 3 × DESVIACIÓN
+            ESTÁNDAR<br>LÍMITE INFERIOR = MEDIA − 3 × DESVIACIÓN ESTÁNDAR</div>
+          <p class="mut">Si un punto cae fuera de esos límites, el proceso dejó de comportarse como siempre y hay que
+            investigar. Puede ser un cambio de material, un error humano, un ajuste de máquina… la causa la buscamos con
+            las otras herramientas.</p>
+          <div class="tip"><i class="bi bi-chat-quote-fill"></i><span><b>Ejemplo:</b> en una fábrica de tornillos, el
+              largo promedio puede ser de 5 cm. Sin embargo, si las medidas varían demasiado, algunas piezas podrían no
+              cumplir con las especificaciones. Reducir esa variabilidad ayuda a mantener una calidad uniforme y evitar
+              reclamos.</span></div>
+        </div>
+        <div class="card c-mean topbar-c col">
+          <h3 style="color:var(--c)"><i class="bi bi-activity"></i> Gráfico de control</h3>
+          <svg viewBox="0 0 400 240" class="illus">
+            <rect x="6" y="6" width="388" height="228" rx="14" fill="rgba(10,125,214,.04)" />
+            <line x1="24" y1="40" x2="380" y2="40" stroke="#d32f4a" stroke-width="2.5" stroke-dasharray="7 6" />
+            <line x1="24" y1="120" x2="380" y2="120" stroke="#0a7dd6" stroke-width="2.5" />
+            <line x1="24" y1="200" x2="380" y2="200" stroke="#d32f4a" stroke-width="2.5" stroke-dasharray="7 6" />
+            <polyline points="34,118 68,102 102,136 136,112 170,128 204,96 238,122 272,108 306,64 340,24 372,92"
+              fill="none" stroke="#0a2540" stroke-width="2.5" stroke-linejoin="round" />
+            <g fill="#0a2540">
+              <circle cx="34" cy="118" r="4.5" />
+              <circle cx="68" cy="102" r="4.5" />
+              <circle cx="102" cy="136" r="4.5" />
+              <circle cx="136" cy="112" r="4.5" />
+              <circle cx="170" cy="128" r="4.5" />
+              <circle cx="204" cy="96" r="4.5" />
+              <circle cx="238" cy="122" r="4.5" />
+              <circle cx="272" cy="108" r="4.5" />
+              <circle cx="306" cy="64" r="4.5" />
+              <circle cx="372" cy="92" r="4.5" />
+            </g>
+            <circle cx="340" cy="24" r="8" fill="#d32f4a" />
+            <g font-family="DM Sans,sans-serif" font-size="12" font-weight="700"><text x="28" y="34"
+                fill="#d32f4a">Límite superior</text><text x="28" y="114" fill="#0a7dd6">Media</text><text x="28"
+                y="218" fill="#d32f4a">Límite inferior</text><text x="262" y="20" fill="#d32f4a" text-anchor="end">fuera
+                de control</text></g>
+          </svg>
+        </div>
+      </div>
+    </section>
+
+    <!-- 10. INGRESO -->
+    <section class="slide" id="s-input" data-title="Ejemplo: ingreso de datos">
+      <header class="sh"><span class="tag"
+          style="background:var(--ro-bg);border-color:var(--ro-line);color:var(--ro)"><i class="bi bi-cpu-fill"></i>
+          Ejemplo práctico</span>
+        <h2>Aplicación práctica: analicemos un conjunto de datos</h2>
+      </header>
+      <p class="lead" style="max-width:none">A continuación ingresaremos un conjunto de datos para calcular la media, el
+        rango, la varianza y la desviación estándar. Así podremos observar cómo se aplican estas medidas en un caso
+        concreto.</p>
+      <div class="grid2 grow" style="grid-template-columns:1.25fr .75fr">
+        <div class="card col">
+          <div>
+            <label class="fl" for="in-title"><i class="bi bi-fonts"></i> Título del conjunto de datos</label>
+            <input type="text" id="in-title" maxlength="70" placeholder="Ej.: Diámetro de piezas producidas (mm)"
+              autocomplete="off">
+          </div>
+          <div>
+            <label class="fl" for="in-data"><i class="bi bi-123"></i> Datos (enteros, mínimo 10)</label>
+            <textarea id="in-data" placeholder="Ej.: 48 50 52 49 51 50 47 53 50 49 51 52"></textarea>
+            <div class="live" id="live"></div>
+          </div>
+          <div class="msg" id="msg"></div>
+          <div class="btns" style="margin-top:auto">
+            <button class="btn" id="b-go"><i class="bi bi-cpu-fill"></i> Procesar</button>
+            <button class="btn ghost" id="b-rand"><i class="bi bi-shuffle"></i> Datos de ejemplo</button>
+            <button class="btn ghost" id="b-clear"><i class="bi bi-eraser-fill"></i> Limpiar</button>
+          </div>
+        </div>
+        <div class="card col">
+          <h3><i class="bi bi-info-circle-fill" style="color:var(--cy)"></i> Reglas</h3>
+          <ul class="list">
+            <li><i class="bi bi-check-circle-fill"></i><span>Solo <b>números enteros</b> (nada de decimales).</span>
+            </li>
+            <li><i class="bi bi-check-circle-fill"></i><span>Mínimo <b>10 datos</b>, máximo 500.</span></li>
+            <li><i class="bi bi-check-circle-fill"></i><span>Sepáralos con espacios, comas o saltos de línea.</span>
+            </li>
+          </ul>
+          <div class="note cy" style="margin-top:auto"><i class="bi bi-lightbulb-fill"></i><span>El sistema realizará
+              los cálculos paso a paso y mostrará una tabla de desviaciones, los resultados de las medidas y un gráfico
+              para observar la dispersión.</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 11. PROCESANDO -->
+    <section class="slide" id="s-proc" data-skip data-title="Procesando">
+      <header class="sh"><span class="tag"
+          style="background:var(--ro-bg);border-color:var(--ro-line);color:var(--ro)"><i class="bi bi-cpu-fill"></i>
+          Ejemplo práctico</span>
+        <h2>Proceso de cálculo</h2>
+        <p class="ds-sub"><i class="bi bi-card-heading"></i> <b id="proc-title"></b></p>
+      </header>
+      <div class="net-wrap grow">
+        <canvas id="net"></canvas>
+        <div class="steps">
+          <div class="stp" data-i="0"><i class="bi bi-circle"></i><span>Validar y leer los datos enteros</span></div>
+          <div class="stp" data-i="1"><i class="bi bi-circle"></i><span>Calcular la media aritmética</span></div>
+          <div class="stp" data-i="2"><i class="bi bi-circle"></i><span>Calcular el rango</span></div>
+          <div class="stp" data-i="3"><i class="bi bi-circle"></i><span>Calcular la varianza</span></div>
+          <div class="stp" data-i="4"><i class="bi bi-circle"></i><span>Calcular la desviación estándar</span></div>
+          <div>
+            <div class="pbar"><i id="pfill"></i></div>
+            <div class="status"><span id="pstatus">Iniciando…</span><b id="ppct">0 %</b></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 12. TABLA -->
+    <section class="slide" id="s-table" data-title="Ejemplo: desviaciones">
+      <div class="empty"><i class="bi bi-inbox big"></i>
+        <p>Aún no hay datos procesados.</p><button class="btn" data-go="s-input"><i class="bi bi-pencil-square"></i> Ir
+          a ingresar datos</button>
+      </div>
+      <div class="res-body">
+        <header class="sh"><span class="tag"><i class="bi bi-table"></i> Ejemplo práctico</span>
+          <h2>Distancia de cada dato a la media</h2>
+          <p class="ds-sub"><i class="bi bi-card-heading"></i> <b class="ds-title"></b></p>
+        </header>
+        <p class="speech" style="max-width:none">En esta tabla vemos dato por dato cuánto se aleja de la media. Los
+          valores negativos son los que están por debajo, los positivos por encima. Al final, la suma de las distancias
+          sin elevar siempre da cero: por eso elevamos al cuadrado.</p>
+        <div class="grid2 grow" style="grid-template-columns:1.25fr .75fr;min-height:0">
+          <div class="scroll" id="t-table"></div>
+          <div class="col" style="min-height:0">
+            <div class="chips" id="t-chips"></div>
+            <div class="card c-mean">
+              <h3 style="color:var(--c)"><i class="bi bi-calculator-fill"></i> Media aritmética</h3>
+              <div class="calc" id="t-mean"></div>
+            </div>
+            <div class="note"><i class="bi bi-info-circle-fill"></i><span>La tabla se muestra redondeada a 2 decimales,
+                pero los cálculos usan todos los decimales para mayor precisión.</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 13. MEDIDAS -->
+    <section class="slide" id="s-meas" data-title="Ejemplo: medidas de dispersión">
+      <div class="empty"><i class="bi bi-inbox big"></i>
+        <p>Aún no hay datos procesados.</p><button class="btn" data-go="s-input"><i class="bi bi-pencil-square"></i> Ir
+          a ingresar datos</button>
+      </div>
+      <div class="res-body">
+        <header class="sh"><span class="tag am"><i class="bi bi-distribute-horizontal"></i> Ejemplo práctico</span>
+          <h2>Las tres medidas, calculadas</h2>
+          <p class="ds-sub"><i class="bi bi-card-heading"></i> <b class="ds-title"></b></p>
+        </header>
+        <p class="speech" style="max-width:none">Aquí ya tenemos los resultados finales. Fíjate cómo el rango es un solo
+          número grande, la varianza queda en unidades al cuadrado (por eso se ve rara) y la desviación estándar vuelve
+          a la unidad original. Cada una cuenta una parte de la historia.</p>
+        <div class="grid3 grow" id="m-cards" style="align-items:stretch"></div>
+      </div>
+    </section>
+
+    <!-- 14. GRÁFICO -->
+    <section class="slide" id="s-chart" data-title="Ejemplo: gráfico">
+      <div class="empty"><i class="bi bi-inbox big"></i>
+        <p>Aún no hay datos procesados.</p><button class="btn" data-go="s-input"><i class="bi bi-pencil-square"></i> Ir
+          a ingresar datos</button>
+      </div>
+      <div class="res-body">
+        <header class="sh"><span class="tag"><i class="bi bi-bar-chart-line-fill"></i> Ejemplo práctico</span>
+          <h2>Los datos y su dispersión, en una imagen</h2>
+          <p class="ds-sub"><i class="bi bi-card-heading"></i> <b class="ds-title"></b></p>
+        </header>
+        <div class="chartbox" id="c-box"></div>
+        <div class="legend">
+          <span class="c-mean"><s></s> Media</span>
+          <span class="c-med"><s style="border-top-width:10px;opacity:.6"></s> MEDIA ± 1 DESVIACIÓN ESTÁNDAR</span>
+          <span class="c-mode"><s></s> Rango (mínimo a máximo)</span>
+        </div>
+        <div class="note cy" style="padding:.55rem .85rem"><i class="bi bi-chat-left-text-fill"></i><span
+            id="c-interp"></span></div>
+        <div class="grid2" style="margin-top:.2rem;gap:.8rem">
+          <div class="card c-mean topbar-c" style="padding:.85rem 1rem">
+            <h3
+              style="color:var(--cy);font-size:1.02rem;display:flex;align-items:center;gap:.45rem;margin-bottom:.35rem">
+              <i class="bi bi-check2-circle"></i> A partir del ejemplo podemos concluir que:
+            </h3>
+            <ul class="list" id="c-concl" style="font-size:.92rem;gap:.3rem"></ul>
+          </div>
+          <div class="card c-gr topbar-c" style="padding:.85rem 1rem">
+            <h3
+              style="color:var(--gr);font-size:1.02rem;display:flex;align-items:center;gap:.45rem;margin-bottom:.35rem">
+              <i class="bi bi-tools"></i> Y esto nos ayudará a:
+            </h3>
+            <ul class="list" id="c-helps" style="font-size:.92rem;gap:.3rem"></ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 15. CIERRE / REPASO -->
+    <section class="slide" data-title="Repaso">
+      <header class="sh"><span class="tag"><i class="bi bi-flag-fill"></i> Cierre</span>
+        <h2>Repasemos lo importante</h2>
+      </header>
+      <p class="lead" style="max-width:none">En esta última parte se resumen las ideas principales que hemos visto a lo
+        largo de la exposición.</p>
+      <div class="col grow" style="justify-content:center">
+        <div class="card c-mean topbar-c">
+          <h3 style="color:var(--c)"><i class="bi bi-1-circle-fill"></i> Lo que aprendimos</h3>
+          <ul class="list">
+            <li><i class="bi bi-check-circle-fill"></i><span><b>La media por sí sola no es suficiente.</b> Dos grupos
+                con la misma media pueden ser completamente distintos: uno puede tener datos muy concentrados y otro
+                datos muy dispersos.</span></li>
+            <li><i class="bi bi-check-circle-fill"></i><span><b>El rango</b> es rápido pero frágil: solo mira los dos
+                extremos e ignora todo lo que pasa en medio, además de ser muy sensible a un valor atípico.</span></li>
+            <li><i class="bi bi-check-circle-fill"></i><span><b>La varianza</b> mide todas las distancias a la media
+                elevándolas al cuadrado, pero queda en unidades al cuadrado y es difícil de interpretar
+                directamente.</span></li>
+            <li><i class="bi bi-check-circle-fill"></i><span><b>La desviación estándar</b> es la más útil: está en la
+                unidad original, se interpreta directamente y resume la separación típica de los datos respecto a la
+                media.</span></li>
+            <li><i class="bi bi-check-circle-fill"></i><span><b>Menor variabilidad favorece la calidad.</b> Los gráficos
+                de control ayudan a identificar cambios inusuales en un proceso y a mantener la calidad uniforme.</span>
+            </li>
+          </ul>
+        </div>
+        <div class="tip"><i class="bi bi-lightbulb-fill"></i><span><b>Idea clave:</b> un promedio resume los datos, pero
+            la dispersión permite comprender cuánto varían. Ambas medidas ofrecen una descripción más completa de la
+            información.</span></div>
+      </div>
+    </section>
+
+  </div>
+
+  <footer id="bar">
+    <div class="bar-l"><i class="bi bi-distribute-horizontal"></i><span id="bar-title">Portada</span></div>
+    <div class="bar-r">
+      <span id="counter">1 / 14</span>
+      <button class="ib" id="b-prev" title="Anterior"><i class="bi bi-chevron-left"></i></button>
+      <button class="ib" id="b-next" title="Siguiente"><i class="bi bi-chevron-right"></i></button>
+      <button class="ib" id="b-full" title="Pantalla completa (F)"><i class="bi bi-fullscreen"></i></button>
+    </div>
+    <div id="prog"><i></i></div>
+  </footer>
+
+  <script>
+    (function () {
+      const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
+      const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+      const slides = $$('.slide'); let cur = 0, busy = false;
+      const navIdx = () => slides.map((s, i) => i).filter(i => !slides[i].hasAttribute('data-skip'));
+      function go(i) {
+        i = Math.max(0, Math.min(slides.length - 1, i));
+        slides.forEach((s, k) => { s.classList.toggle('active', k === i); s.classList.toggle('past', k < i) });
+        cur = i; slides[i].scrollTop = 0;
+        const nl = navIdx(), p = nl.indexOf(i);
+        $('#counter').textContent = (p < 0 ? '…' : (p + 1)) + ' / ' + nl.length;
+        $('#bar-title').textContent = slides[i].dataset.title || '';
+        $('#prog i').style.width = ((Math.max(p, 0) + 1) / nl.length * 100) + '%';
+        $('#b-prev').disabled = (i === 0); $('#b-next').disabled = (i === slides.length - 1);
+      }
+      function step(d) {
+        if (busy) return;
+        let i = cur + d; while (i >= 0 && i < slides.length && slides[i].hasAttribute('data-skip')) i += d;
+        if (i >= 0 && i < slides.length) go(i);
+      }
+      $('#b-prev').onclick = () => step(-1); $('#b-next').onclick = () => step(1);
+      $('#b-full').onclick = toggleFull;
+      function toggleFull() { if (!document.fullscreenElement) document.documentElement.requestFullscreen && document.documentElement.requestFullscreen(); else document.exitFullscreen(); }
+      document.addEventListener('keydown', e => {
+        const t = e.target.tagName; if (t === 'INPUT' || t === 'TEXTAREA') return;
+        if (['ArrowRight', 'PageDown', ' ', 'Enter'].includes(e.key)) { e.preventDefault(); step(1) }
+        else if (['ArrowLeft', 'PageUp', 'Backspace'].includes(e.key)) { e.preventDefault(); step(-1) }
+        else if (e.key === 'Home') { go(0) } else if (e.key === 'End') { go(slides.length - 1) }
+        else if (e.key === 'f' || e.key === 'F') { toggleFull() }
+      });
+      let tx = null;
+      document.addEventListener('touchstart', e => { tx = e.touches[0].clientX }, { passive: true });
+      document.addEventListener('touchend', e => { if (tx === null) return; const d = e.changedTouches[0].clientX - tx; if (Math.abs(d) > 70) step(d < 0 ? 1 : -1); tx = null; });
+      $$('[data-go]').forEach(b => b.addEventListener('click', () => go(slides.indexOf(document.getElementById(b.dataset.go)))));
+
+      function fmt(x, d = 2) { if (Number.isInteger(x)) return String(x).replace('-', '−'); let t = x.toFixed(d); t = t.replace(/\.?0+$/, ''); return t.replace('.', ',').replace('-', '−'); }
+      const ta = $('#in-data'), ti = $('#in-title'), msg = $('#msg'), live = $('#live');
+      function setMsg(t, c, icon) { msg.className = 'msg ' + (c || ''); msg.innerHTML = t ? `<i class="bi bi-${icon || 'info-circle-fill'}"></i><span>${t}</span>` : ''; }
+      function parse(txt) {
+        const toks = txt.split(/[\s,;]+/).filter(Boolean), vals = [], invalid = [];
+        toks.forEach(t => { if (/^-?\d+$/.test(t)) vals.push(parseInt(t, 10)); else invalid.push(t); });
+        return { vals, invalid };
+      }
+      function updateLive() {
+        const { vals, invalid } = parse(ta.value); const n = vals.length;
+        let h = `<span class="chip"><i class="bi bi-hash" style="color:var(--cy)"></i> Datos válidos:<b>${n}</b></span>`;
+        if (n) { h += `<span class="chip">Mín:<b>${Math.min(...vals)}</b></span><span class="chip">Máx:<b>${Math.max(...vals)}</b></span>`; }
+        if (n < 10) h += `<span class="chip" style="color:var(--am)"><i class="bi bi-exclamation-triangle-fill"></i> Faltan ${10 - n}</span>`;
+        else h += `<span class="chip" style="color:var(--gr)"><i class="bi bi-check-circle-fill"></i> Mínimo alcanzado</span>`;
+        if (invalid.length) h += `<span class="chip" style="color:var(--ro)"><i class="bi bi-x-circle-fill"></i> Revisa: ${esc(invalid[0])}</span>`;
+        live.innerHTML = h;
+      }
+      ta.addEventListener('keydown', e => {
+        if (e.ctrlKey || e.metaKey || e.altKey || e.key.length !== 1) return;
+        if (!/[0-9\-\s,;]/.test(e.key)) { e.preventDefault(); setMsg('Solo se permiten números enteros.', 'warn', 'exclamation-triangle-fill'); }
+      });
+      ta.addEventListener('input', () => {
+        let v = ta.value;
+        if (/\./.test(v) || /[^0-9\-\s,;]/.test(v)) {
+          v = v.replace(/\.\d*/g, '').replace(/[^0-9\-\s,;]/g, ''); ta.value = v;
+          setMsg('Solo se permiten números enteros: se quitó lo que no era entero.', 'warn', 'exclamation-triangle-fill');
+        } else setMsg('');
+        updateLive();
+      });
+      ti.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); ta.focus(); } });
+      $('#b-clear').onclick = () => { ti.value = ''; ta.value = ''; setMsg(''); updateLive(); ti.focus(); };
+      $('#b-rand').onclick = () => {
+        const out = []; for (let i = 0; i < 30; i++) { out.push(Math.round(50 + (Math.random() + Math.random() + Math.random() - 1.5) * 7)); }
+        ti.value = 'Diámetro de piezas producidas (mm)'; ta.value = out.join(' ');
+        setMsg('Datos de ejemplo cargados.', 'ok', 'check-circle-fill'); updateLive();
+      };
+      $('#b-go').onclick = () => {
+        const title = ti.value.trim(); const { vals, invalid } = parse(ta.value);
+        if (!title) return setMsg('Escribe el título del conjunto de datos.', 'err', 'exclamation-triangle-fill');
+        if (invalid.length) return setMsg('Hay valores que no son enteros: "' + esc(invalid[0]) + '".', 'err', 'x-circle-fill');
+        if (vals.length < 10) return setMsg('Ingresa al menos 10 datos (tienes ' + vals.length + ').', 'err', 'exclamation-triangle-fill');
+        if (vals.length > 500) return setMsg('El máximo es 500 datos.', 'err', 'exclamation-triangle-fill');
+        if (vals.some(v => Math.abs(v) > 1000000)) return setMsg('Usa valores entre −1 000 000 y 1 000 000.', 'err', 'exclamation-triangle-fill');
+        setMsg(''); startProcessing(vals, title);
+      };
+      updateLive();
+
+      const layers = [6, 9, 10, 9, 6, 3], outCols = ['#0a7dd6', '#e08b00', '#d32f4a'], outLabels = ['Rango', 'Varianza', 'Desviación'];
+      function runNet(canvas, dur, onProg, onDone) {
+        const ctx = canvas.getContext('2d'), dpr = Math.min(window.devicePixelRatio || 1, 2);
+        const w = canvas.clientWidth, h = canvas.clientHeight; canvas.width = w * dpr; canvas.height = h * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        const padX = Math.max(40, w * .07), padY = Math.max(30, h * .1), maxN = Math.max(...layers), gap = (h - 2 * padY) / (maxN - 1), L = layers.length;
+        const pos = layers.map((n, l) => Array.from({ length: n }, (_, i) => ({ x: padX + l * (w - padX - padX - 110) / (L - 1), y: h / 2 + (i - (n - 1) / 2) * gap })));
+        const R = Math.max(6, Math.min(12, h / 42)), pulses = []; const t0 = performance.now(); let finished = false;
+        function frame(now) {
+          const p = Math.min(1, (now - t0) / dur), wave = p * (L + .8) - .4; ctx.clearRect(0, 0, w, h);
+          const act = l => Math.min(1, Math.exp(-Math.pow(l - wave, 2) * 1.2) + (l < wave ? .35 : 0) + .08);
+          for (let l = 0; l < L - 1; l++) {
+            const b = (act(l) + act(l + 1)) / 2;
+            ctx.lineWidth = 1; ctx.strokeStyle = `rgba(10,${100 + b * 80},${180 + b * 50},${.10 + .45 * b})`;
+            pos[l].forEach(a => pos[l + 1].forEach(c => { ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(c.x, c.y); ctx.stroke(); }));
+          }
+          if (p < 1) { const lw = Math.max(0, Math.min(L - 2, Math.floor(wave))); for (let q = 0; q < 3; q++) if (Math.random() < .6) pulses.push({ l: lw, i: Math.floor(Math.random() * layers[lw]), j: Math.floor(Math.random() * layers[lw + 1]), t: 0, sp: .02 + Math.random() * .02 }); }
+          for (let q = pulses.length - 1; q >= 0; q--) {
+            const u = pulses[q]; u.t += u.sp; if (u.t >= 1) { pulses.splice(q, 1); continue; }
+            const a = pos[u.l][u.i], c = pos[u.l + 1][u.j], x = a.x + (c.x - a.x) * u.t, y = a.y + (c.y - a.y) * u.t;
+            const g = ctx.createRadialGradient(x, y, 0, x, y, 10); g.addColorStop(0, 'rgba(10,125,214,.95)'); g.addColorStop(1, 'rgba(10,125,214,0)');
+            ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, 10, 0, 6.3); ctx.fill();
+          }
+          pos.forEach((col, l) => col.forEach((nd, i) => {
+            const b = Math.min(1, act(l) + .1 * Math.sin(now / 180 + i * 1.7 + l)), isOut = l === L - 1, base = isOut ? outCols[i] : '#0a7dd6';
+            const g = ctx.createRadialGradient(nd.x, nd.y, 0, nd.x, nd.y, R * 3); g.addColorStop(0, base + Math.round(40 + b * 140).toString(16).padStart(2, '0')); g.addColorStop(1, base + '00');
+            ctx.fillStyle = g; ctx.beginPath(); ctx.arc(nd.x, nd.y, R * 3, 0, 6.3); ctx.fill();
+            ctx.beginPath(); ctx.arc(nd.x, nd.y, R, 0, 6.3); ctx.fillStyle = '#ffffff'; ctx.fill();
+            ctx.lineWidth = 2.5; ctx.strokeStyle = base; ctx.globalAlpha = .35 + .65 * b; ctx.stroke(); ctx.globalAlpha = 1;
+            if (isOut) { ctx.fillStyle = base; ctx.font = '700 ' + Math.round(R * 1.7) + 'px Sora,sans-serif'; ctx.textBaseline = 'middle'; ctx.fillText(outLabels[i], nd.x + R * 2, nd.y); }
+          }));
+          ctx.fillStyle = '#2c5a85'; ctx.font = '600 ' + Math.round(R * 1.25) + 'px DM Sans,sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'alphabetic';
+          ctx.fillText('Entrada', pos[0][0].x, h - 8); ctx.fillText('Etapas de cálculo', (pos[2][0].x + pos[3][0].x) / 2, h - 8); ctx.fillText('Salida', pos[L - 1][0].x, h - 8); ctx.textAlign = 'start';
+          onProg(p);
+          if (p < 1) requestAnimationFrame(frame); else if (!finished) { finished = true; setTimeout(onDone, 500); }
+        }
+        requestAnimationFrame(frame);
+      }
+      function analyze(data) {
+        const n = data.length, sum = data.reduce((a, b) => a + b, 0), mean = sum / n;
+        const min = Math.min(...data), max = Math.max(...data), R = max - min;
+        const dev = data.map(v => v - mean), sq = dev.map(d => d * d), sumsq = sq.reduce((a, b) => a + b, 0);
+        const varP = sumsq / n, varS = sumsq / (n - 1), sdP = Math.sqrt(varP), sdS = Math.sqrt(varS);
+        const within = data.filter(v => Math.abs(v - mean) <= sdP + 1e-9).length;
+        return { data, n, sum, mean, min, max, R, dev, sq, sumsq, varP, varS, sdP, sdS, within };
+      }
+      const F2 = x => fmt(x, 2);
+      function renderAll(a, title) {
+        $$('.ds-title').forEach(e => e.textContent = title);
+        $('#t-chips').innerHTML = [['NÚMERO DE DATOS', a.n], ['MÍNIMO', a.min], ['MÁXIMO', a.max]].map(([l, v]) => `<span class="chip">${l} =<b>${fmt(v)}</b></span>`).join('');
+        $('#t-mean').innerHTML = `MEDIA = ${fmt(a.sum)} ÷ ${a.n} = <b style="color:var(--cy);font-size:1.3em">${F2(a.mean)}</b>`;
+        let t = `<table class="tbl"><thead><tr><th>N.º</th><th>VALOR</th><th>VALOR − MEDIA</th><th>(VALOR − MEDIA)²</th></tr></thead><tbody>`;
+        a.data.forEach((v, i) => { t += `<tr><td>${i + 1}</td><td>${v}</td><td>${F2(a.dev[i])}</td><td>${F2(a.sq[i])}</td></tr>`; });
+        t += `</tbody><tfoot><tr><td>SUMA</td><td>${fmt(a.sum)}</td><td>0</td><td>${F2(a.sumsq)}</td></tr></tfoot></table>`;
+        $('#t-table').innerHTML = t;
+
+        const big = (c, s) => `<b style="color:var(--${c});font-size:1.3em">${s}</b>`;
+        const card = (cls, icon, name, blocks) => `<article class="card mcard ${cls} topbar-c"><div class="head"><i class="bi bi-${icon}"></i><h3>${name}</h3></div>${blocks.map(([lab, html]) => `<div class="blk"><small>${lab}</small><div class="calc">${html}</div></div>`).join('')}</article>`;
+        $('#m-cards').innerHTML =
+          card('c-mean', 'rulers', 'Rango', [
+            ['Fórmula', 'RANGO = MÁXIMO − MÍNIMO'],
+            ['Con tus datos', `${fmt(a.max)} − ${fmt(a.min)} = ${big('cy', fmt(a.R))}`]]) +
+          card('c-med', 'bounding-box', 'Varianza', [
+            ['Origen del numerador (tabla)', `Σ(VALOR − MEDIA)² = <b>${F2(a.sumsq)}</b>`],
+            ['Población (N = ' + a.n + ')', `${F2(a.sumsq)} ÷ ${a.n} = ${big('am', F2(a.varP))} <small style="display:inline;color:var(--mut-2)">(unidades²)</small>`],
+            ['Muestra (n − 1 = ' + (a.n - 1) + ')', `${F2(a.sumsq)} ÷ (${a.n} − 1) = ${big('am', F2(a.varS))} <small style="display:inline;color:var(--mut-2)">(unidades²)</small>`]]) +
+          card('c-mode', 'arrows-expand', 'Desviación estándar', [
+            ['Población (σ)', `√(${F2(a.varP)}) = ${big('ro', F2(a.sdP))} <small style="display:inline;color:var(--mut-2)">(unidades)</small>`],
+            ['Muestra (s)', `√(${F2(a.varS)}) = ${big('ro', F2(a.sdS))} <small style="display:inline;color:var(--mut-2)">(unidades)</small>`]]);
+
+        const mExpl = $('#m-expl-text');
+        if (mExpl) {
+          mExpl.innerHTML = `
+      <div style="display:flex;flex-direction:column;gap:.35rem;margin-top:.35rem;font-size:.93rem">
+        <div><i class="bi bi-dot" style="color:var(--cy);font-size:1.2rem"></i><b>¿De dónde sale ${F2(a.sumsq)}?</b> Es la suma total de la última columna de la tabla (<code>Σ(VALOR − MEDIA)²</code>). Se elevaron al cuadrado las distancias a la media (${F2(a.mean)}) para que los números negativos no anulen a los positivos.</div>
+        <div><i class="bi bi-dot" style="color:var(--cy);font-size:1.2rem"></i><b>¿Por qué entre ${a.n} en Población y entre ${a.n - 1} en Muestra?</b> Si consideramos que estos son todos los datos del universo se divide entre <b>N = ${a.n}</b>. Pero si es una muestra, se divide entre <b>n − 1 = ${a.n - 1}</b> (<i>Corrección de Bessel</i>) para corregir el sesgo y no subestimar la dispersión real de la población.</div>
+        <div><i class="bi bi-dot" style="color:var(--cy);font-size:1.2rem"></i><b>Unidades al cuadrado:</b> El resultado queda en unidades cuadradas (ej. mm², años²). Por eso la Desviación Estándar le aplica raíz cuadrada para devolverlo a la escala original.</div>
+      </div>`;
+        }
+
+        $('#c-box').innerHTML = chartSVG(a);
+        const pct = Math.round(a.within / a.n * 100);
+        $('#c-interp').innerHTML = `<b>Lectura de dispersión:</b> Los ${a.n} datos van de <b>${fmt(a.min)}</b> a <b>${fmt(a.max)}</b> (amplitud o RANGO = <b>${fmt(a.R)}</b>). Su media es <b>${F2(a.mean)}</b> y varían en promedio <b>±${F2(a.sdP)}</b> unidades (${pct} % dentro de ±1 desviación estándar).`;
+
+        const cConcl = $('#c-concl');
+        if (cConcl) {
+          cConcl.innerHTML = `
+      <li><i class="bi bi-check-circle-fill"></i><span><b>La media no es suficiente:</b> Saber que el centro es <b>${F2(a.mean)}</b> no evita que existan piezas en los extremos (mínimo ${fmt(a.min)} y máximo ${fmt(a.max)}).</span></li>
+      <li><i class="bi bi-check-circle-fill"></i><span><b>Dispersión típica:</b> El <b>${pct} %</b> de las observaciones (${a.within} de ${a.n}) se concentra en [${F2(a.mean - a.sdP)} a ${F2(a.mean + a.sdP)}], mientras que el resto evidencia la variabilidad del proceso.</span></li>
+      <li><i class="bi bi-check-circle-fill"></i><span><b>Variabilidad real del proceso:</b> La desviación de <b>${F2(a.sdP)}</b> (o muestral <b>${F2(a.sdS)}</b>) refleja qué tan consistente es el proceso analizado.</span></li>
+    `;
+        }
+
+        const cHelps = $('#c-helps');
+        if (cHelps) {
+          cHelps.innerHTML = `
+      <li><i class="bi bi-check-circle-fill"></i><span><b>Controlar la calidad del producto:</b> Comparar el rango y la desviación contra las tolerancias de diseño para prevenir piezas no conformes.</span></li>
+      <li><i class="bi bi-check-circle-fill"></i><span><b>Tomar decisiones preventivas:</b> Detectar a tiempo descalibraciones en maquinaria o desgaste de herramientas antes de generar mermas.</span></li>
+      <li><i class="bi bi-check-circle-fill"></i><span><b>Estandarizar y mejorar la calidad:</b> Servir de base para gráficos de control (límites a ±3σ) y proyectos de mejora continua (Kaizen / Six Sigma).</span></li>
+    `;
+        }
+      }
+      function chartSVG(a) {
+        const W = 900, H = 420, m = { l: 50, r: 50, t: 108, b: 62 };
+        const iw = W - m.l - m.r, ih = H - m.t - m.b, base = m.t + ih;
+        const lo0 = Math.min(a.min, a.mean - a.sdP), hi0 = Math.max(a.max, a.mean + a.sdP);
+        const pad = Math.max((hi0 - lo0) * .07, 1), x0 = lo0 - pad, x1 = hi0 + pad;
+        const X = v => m.l + (v - x0) / (x1 - x0) * iw;
+        /* Agrupar valores */
+        const counts = new Map();
+        a.data.forEach(v => counts.set(v, (counts.get(v) || 0) + 1));
+        const sortedVals = [...counts.keys()].sort((a, b) => a - b);
+        const maxStack = Math.max(...counts.values());
+        /* Radio sin solapamiento */
+        let minPixGap = iw;
+        for (let i = 1; i < sortedVals.length; i++) {
+          const g = X(sortedVals[i]) - X(sortedVals[i - 1]);
+          if (g < minPixGap) minPixGap = g;
+        }
+        const rH = sortedVals.length > 1 ? minPixGap / 2 - 1.5 : iw / 4;
+        const rV = (ih - 30) / (maxStack * 2.2);
+        const r = Math.max(3, Math.min(11, rH, rV));
+        /* Ticks eje X */
+        const raw = (hi0 - lo0) / 7 || 1, pw = Math.pow(10, Math.floor(Math.log10(raw))); let st = pw;
+        for (const c of [1, 2, 5, 10]) { if (c * pw >= raw) { st = c * pw; break; } } st = Math.max(1, Math.round(st));
+        let s = `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Diagrama de puntos">`;
+        /* Banda ±1 sigma */
+        s += `<rect x="${X(a.mean - a.sdP)}" y="${m.t - 4}" width="${X(a.mean + a.sdP) - X(a.mean - a.sdP)}" height="${ih + 4}" fill="rgba(224,139,0,.12)" stroke="rgba(224,139,0,.5)" stroke-dasharray="6 4" rx="4"/>`;
+        /* Eje base */
+        s += `<line x1="${m.l}" x2="${W - m.r}" y1="${base}" y2="${base}" stroke="rgba(10,37,64,.5)" stroke-width="2"/>`;
+        /* Ticks y etiquetas */
+        for (let v = Math.ceil(x0 / st) * st; v <= x1 + .001; v += st) {
+          const xv = X(v);
+          s += `<line x1="${xv}" x2="${xv}" y1="${base}" y2="${base + 6}" stroke="rgba(10,125,214,.45)"/>`;
+          s += `<text x="${xv}" y="${base + 22}" text-anchor="middle" fill="#2c5a85" font-size="13" font-family="JetBrains Mono,monospace">${v}</text>`;
+        }
+        /* Puntos apilados sin solapamiento */
+        sortedVals.forEach(v => {
+          const c = counts.get(v), cx = X(v);
+          for (let i = 0; i < c; i++) {
+            const cy = base - r - i * r * 2.15 - 2;
+            const inside = Math.abs(v - a.mean) <= a.sdP + 1e-9;
+            s += `<circle cx="${cx}" cy="${cy}" r="${r}" fill="${inside ? '#0a7dd6' : '#5aafe8'}" stroke="#fff" stroke-width="${r > 5 ? 1.5 : 1}" opacity="${inside ? 1 : .8}"/>`;
+          }
+          if (c > 1) {
+            const topCy = base - r - (c - 1) * r * 2.15 - 2;
+            const fz = Math.max(9, Math.min(13, Math.round(r * 1.1)));
+            s += `<text x="${cx}" y="${topCy - r - 3}" text-anchor="middle" fill="#0a4d9e" font-size="${fz}" font-weight="700" font-family="JetBrains Mono,monospace">x${c}</text>`;
+          }
+        });
+        /* Linea de la media */
+        s += `<line x1="${X(a.mean)}" x2="${X(a.mean)}" y1="${m.t - 4}" y2="${base}" stroke="#0a7dd6" stroke-width="2.5" stroke-dasharray="4 3"/>`;
+        const anc = v => { const x = X(v); return x < m.l + 120 ? 'start' : x > W - m.r - 120 ? 'end' : 'middle'; };
+        s += `<text x="${X(a.mean)}" y="${m.t - 14}" text-anchor="${anc(a.mean)}" fill="#0a7dd6" font-size="14" font-weight="700" font-family="Sora,sans-serif">Media = ${F2(a.mean)}</text>`;
+        s += `<text x="${X(a.mean)}" y="${m.t - 32}" text-anchor="${anc(a.mean)}" fill="#c07000" font-size="13" font-weight="700" font-family="Sora,sans-serif">+/- desv = ${F2(a.sdP)}</text>`;
+        const yb = 26;
+        s += `<g stroke="#d32f4a" stroke-width="2.5" stroke-linecap="round"><line x1="${X(a.min)}" x2="${X(a.max)}" y1="${yb + 16}" y2="${yb + 16}"/><line x1="${X(a.min)}" x2="${X(a.min)}" y1="${yb + 8}" y2="${yb + 24}"/><line x1="${X(a.max)}" x2="${X(a.max)}" y1="${yb + 8}" y2="${yb + 24}"/></g>`;
+        s += `<text x="${(X(a.min) + X(a.max)) / 2}" y="${yb + 2}" text-anchor="middle" fill="#d32f4a" font-size="14" font-weight="700" font-family="Sora,sans-serif">RANGO = ${fmt(a.R)}</text>`;
+        return s + '</svg>';
+      }
+      const msgs = ['Leyendo y validando los datos enteros…', 'Calculando la media aritmética…', 'Calculando el rango…', 'Calculando la varianza…', 'Calculando la desviación estándar…', 'Resultados listos.'];
+      function startProcessing(vals, title) {
+        busy = true; const a = analyze(vals);
+        $('#proc-title').textContent = title;
+        $$('.stp').forEach(s => { s.className = 'stp'; s.querySelector('i').className = 'bi bi-circle' });
+        $('#pfill').style.width = '0'; $('#ppct').textContent = '0 %'; $('#pstatus').textContent = msgs[0];
+        go(slides.findIndex(s => s.id === 's-proc'));
+        setTimeout(() => runNet($('#net'), 4600, p => {
+          const idx = Math.min(5, Math.floor(p * 5 + (p >= 1 ? .01 : 0)));
+          $('#pfill').style.width = (p * 100) + '%'; $('#ppct').textContent = Math.round(p * 100) + ' %'; $('#pstatus').textContent = msgs[p >= 1 ? 5 : idx];
+          $$('.stp').forEach(s => { const i = +s.dataset.i, st = p >= 1 || i < idx ? 'done' : (i === idx ? 'act' : ''); const cl = 'stp ' + st; if (s.className !== cl) { s.className = cl; s.querySelector('i').className = 'bi bi-' + (st === 'done' ? 'check-circle-fill' : st === 'act' ? 'arrow-repeat' : 'circle'); } });
+        }, () => {
+          renderAll(a, title); document.body.classList.add('ready'); busy = false;
+          go(slides.findIndex(s => s.id === 's-table'));
+        }), 350);
+      }
+      go(0);
+    })();
+  </script>
+</body>
+
+</html>
