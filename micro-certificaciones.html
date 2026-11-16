@@ -1,837 +1,413 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
-  <title>Micro-certificaciones · Stackable Credentials · Silicon Valley</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes, viewport-fit=cover">
+<title>Micro-certificaciones · Stackable Credentials · Silicon Valley</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<style>
+:root{
+  --bg:#0b1020; --card:#18213f; --card2:#1f2a4f;
+  --text:#eef1fb; --muted:#aab4d4; --accent:#4f8cff; --accent2:#22d3a6; --warn:#ff7a7a;
+  --radius:18px; --nav-h:64px;
+  --pad: clamp(16px, 4vw, 56px);
+  --fs-body: clamp(15px, 1.1vw + 11px, 20px);
+  --fs-h1: clamp(26px, 4.2vw + 8px, 56px);
+  --fs-h2: clamp(22px, 2.6vw + 10px, 40px);
+  --fs-h3: clamp(16px, 1vw + 12px, 22px);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:var(--bg);color:var(--text);
+  font-family:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  font-size:var(--fs-body);line-height:1.55;overflow:hidden;-webkit-text-size-adjust:100%}
+img{max-width:100%;display:block}
+.bi{line-height:1;vertical-align:-.125em}
 
-    body {
-      font-family: 'Inter', sans-serif;
-      background: linear-gradient(145deg, #DFF6FC 0%, #C8EFF9 100%);
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 1rem;
-      color: #15364B;
-    }
+/* Texto justificado; títulos y subtítulos centrados */
+p,li,.note,.quote{text-align:justify;text-justify:inter-word;hyphens:auto;-webkit-hyphens:auto}
+h1,h2,h3,h4,.tag,.sub{text-align:center}
 
-    .presentation {
-      position: relative;
-      width: 100%;
-      max-width: 1280px;
-      height: 90vh;
-      min-height: 620px;
-      max-height: 820px;
-      background: rgba(255, 255, 255, 0.75);
-      backdrop-filter: blur(4px);
-      border-radius: 3rem;
-      box-shadow: 0 25px 50px -8px rgba(21, 54, 75, 0.25), 0 0 0 1px rgba(255, 255, 255, 0.7);
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-    }
+.deck{position:fixed;inset:0;bottom:calc(var(--nav-h) + env(safe-area-inset-bottom))}
+.slide{position:absolute;inset:0;display:none;overflow-y:auto;overflow-x:hidden;
+  padding:var(--pad);padding-left:max(var(--pad),env(safe-area-inset-left));padding-right:max(var(--pad),env(safe-area-inset-right));
+  background:radial-gradient(1200px 600px at 80% -10%,#1b2a5e55,transparent),var(--bg);
+  -webkit-overflow-scrolling:touch}
+.slide.active{display:block;animation:fade .35s ease}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.wrap{max-width:1100px;margin:0 auto;min-height:100%;display:flex;flex-direction:column;justify-content:center;gap:clamp(14px,2.2vw,26px)}
+h1{font-size:var(--fs-h1);line-height:1.15;letter-spacing:-.01em}
+h2{font-size:var(--fs-h2);line-height:1.2;color:#fff}
+h2 .bi{color:var(--accent2);margin-right:.35em}
+h3{font-size:var(--fs-h3);line-height:1.3}
+h4{font-size:var(--fs-h3);line-height:1.3;color:var(--accent2)}
+h1 span{color:var(--accent)}
+.muted{color:var(--muted)}
+.sub{color:var(--muted)}
+.tag{display:block;color:var(--accent2);font-weight:700;letter-spacing:.08em;text-transform:uppercase;font-size:.75em}
+.quote{font-style:italic;color:var(--muted);border-left:4px solid var(--accent);padding:6px 0 6px 14px;font-size:clamp(14px,.8vw + 11px,18px)}
+.quote .bi{color:var(--accent);margin-right:6px;font-style:normal}
+.quote.center{border:0;padding:0;margin-top:6px}
+.img{width:100%;height:auto;aspect-ratio:16/9;object-fit:cover;border-radius:var(--radius);box-shadow:0 10px 30px #0006}
+.grid{display:grid;gap:clamp(10px,1.6vw,18px)}
+.cols-2{grid-template-columns:repeat(2,1fr)}
+.cols-3{grid-template-columns:repeat(3,1fr)}
+.cols-4{grid-template-columns:repeat(4,1fr)}
+.auto{grid-template-columns:repeat(auto-fit,minmax(min(100%,230px),1fr))}
+.card{background:var(--card);border:1px solid #ffffff14;border-radius:var(--radius);padding:clamp(14px,2vw,22px)}
+.card h4{margin-bottom:8px}
+.ic{width:52px;height:52px;border-radius:14px;margin:0 auto 10px;display:grid;place-items:center;font-size:1.6rem;
+  background:linear-gradient(135deg,#4f8cff33,#22d3a633);color:var(--accent2);border:1px solid #ffffff1a}
+.two{display:grid;grid-template-columns:1.1fr 1fr;gap:clamp(16px,3vw,40px);align-items:center}
+ul{list-style:none;display:grid;gap:10px}
+ul li{padding-left:30px;position:relative}
+ul li .bi{position:absolute;left:0;top:.28em;color:var(--accent);font-size:1.05em}
+.pro li .bi{color:var(--accent2)}
+.con li .bi{color:var(--warn)}
+.names{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
+.names span{background:var(--card2);border:1px solid #ffffff1a;border-radius:999px;padding:8px 16px;font-size:.92em}
+.names span .bi{color:var(--accent2);margin-right:6px}
 
-    .slides-container {
-      flex: 1;
-      position: relative;
-      overflow: hidden;
-    }
+/* Apilado */
+.stack{display:flex;flex-wrap:wrap;align-items:stretch;gap:10px}
+.stack div{border-radius:12px;padding:14px 18px;font-weight:700;text-align:center;flex:1 1 90px}
+.stack .a{background:#2c4fa3}.stack .b{background:#3a63c9}.stack .c{background:#4f8cff}
+.stack .top{background:linear-gradient(135deg,var(--accent2),#12a37f);color:#04251c;flex:1.4 1 140px}
+.stack .bi{margin-right:6px}
 
-    .slide {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      padding: 1.4rem 2rem;
-      opacity: 0;
-      visibility: hidden;
-      transition: opacity 0.45s cubic-bezier(0.25, 0.46, 0.45, 0.94), visibility 0.45s;
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-      background: linear-gradient(135deg, #ffffffcc 0%, #f4fdffdd 100%);
-      backdrop-filter: blur(2px);
-    }
+/* Tarjetas que se voltean */
+.flip{perspective:1000px;cursor:pointer;outline:none;-webkit-tap-highlight-color:transparent}
+.flip-in{display:grid;transition:transform .6s cubic-bezier(.4,.2,.2,1);transform-style:preserve-3d}
+.flip.flipped .flip-in{transform:rotateY(180deg)}
+.flip:focus-visible .face{outline:2px solid var(--accent2)}
+.face{grid-area:1/1;min-height:210px;border-radius:var(--radius);padding:18px;border:1px solid #ffffff14;
+  backface-visibility:hidden;-webkit-backface-visibility:hidden;
+  display:flex;flex-direction:column;justify-content:center;align-items:center;gap:8px}
+.front{background:var(--card);text-align:center}
+.front .n{position:absolute;top:12px;left:14px;width:32px;height:32px;border-radius:50%;background:var(--accent);
+  display:grid;place-items:center;font-weight:800;font-size:.9rem}
+.front{position:relative}
+.front .big{font-size:2.4rem;color:var(--accent2)}
+.front .t{font-weight:700;text-align:center}
+.front .hint{color:var(--muted);font-size:.78em}
+.back{background:linear-gradient(160deg,var(--card2),#14305a);border-color:var(--accent2);transform:rotateY(180deg)}
+.back p{font-size:.93em;color:var(--text)}
 
-    .slide.active { opacity: 1; visibility: visible; z-index: 10; }
+.note{background:linear-gradient(135deg,#4f8cff22,#22d3a622);border:1px solid #4f8cff55;border-radius:var(--radius);padding:16px 18px}
+.note .bi{color:#ffd166;margin-right:8px}
 
-    h1, h2, h3 {
-      font-family: 'Space Grotesk', sans-serif;
-      font-weight: 700;
-      letter-spacing: -0.02em;
-      color: #15364B;
-      line-height: 1.2;
-    }
+/* Navegación */
+.nav{position:fixed;left:0;right:0;bottom:0;height:calc(var(--nav-h) + env(safe-area-inset-bottom));
+  padding:0 max(12px,env(safe-area-inset-left)) env(safe-area-inset-bottom);
+  background:#0b1020ee;backdrop-filter:blur(10px);border-top:1px solid #ffffff14;
+  display:flex;align-items:center;justify-content:space-between;gap:8px;z-index:10}
+.nav button{font:inherit;color:#fff;background:var(--card2);border:1px solid #ffffff22;border-radius:12px;
+  min-height:44px;min-width:44px;padding:0 16px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:8px}
+.nav button:hover:not(:disabled){background:var(--accent)}
+.nav button:disabled{opacity:.35;cursor:default}
+.nav .mid{display:flex;align-items:center;gap:10px;flex:1;justify-content:center;min-width:0}
+.dots{display:flex;gap:6px}
+.dots i{width:8px;height:8px;border-radius:50%;background:#ffffff33;transition:.2s}
+.dots i.on{background:var(--accent2);width:22px;border-radius:6px}
+.count{font-variant-numeric:tabular-nums;color:var(--muted);font-size:.9em;white-space:nowrap}
 
-    h1 {
-      font-size: 3.6rem;
-      margin-bottom: 0.5rem;
-      background: linear-gradient(135deg, #15364B 0%, #299FCB 100%);
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-    }
-
-    h2 {
-      font-size: 2.8rem;
-      margin-bottom: 0.4rem;
-      display: flex;
-      align-items: center;
-      gap: 0.8rem;
-    }
-
-    h2 i {
-      font-size: 2.2rem;
-      color: #299FCB;
-      background: #DFF6FC;
-      padding: 0.5rem;
-      border-radius: 1.2rem;
-    }
-
-    /* FRASE REFLEXIVA (sin la palabra "Reflexión") */
-    .reflection {
-      background: linear-gradient(135deg, #DFF6FC, #C8EFF9);
-      border-left: 8px solid #299FCB;
-      border-radius: 1.5rem;
-      padding: 0.8rem 1.2rem;
-      margin-bottom: 0.8rem;
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      box-shadow: 0 6px 16px -8px rgba(41, 159, 203, 0.3);
-    }
-
-    .reflection i {
-      font-size: 2rem;
-      color: #299FCB;
-      flex-shrink: 0;
-    }
-
-    .reflection p {
-      font-size: 1.2rem;
-      font-weight: 600;
-      color: #15364B;
-      font-style: italic;
-      line-height: 1.4;
-      margin: 0;
-    }
-
-    .slide-subtitle {
-      font-size: 1.25rem;
-      color: #299FCB;
-      font-weight: 500;
-      margin-bottom: 1.5rem;
-      border-left: 5px solid #72CDE8;
-      padding-left: 1rem;
-    }
-
-    p, li { font-size: 1.25rem; line-height: 1.6; color: #1a3d4f; margin: 0.3rem 0; }
-
-    .card-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 1rem;
-      margin-top: 0.8rem;
-    }
-
-    .card {
-      background: white;
-      padding: 1.3rem 1.2rem;
-      border-radius: 1.8rem;
-      box-shadow: 0 8px 20px -6px rgba(21, 54, 75, 0.12);
-      border: 1px solid rgba(114, 205, 232, 0.35);
-      transition: transform 0.2s, box-shadow 0.2s;
-    }
-
-    .card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 18px 30px -10px rgba(41, 159, 203, 0.3);
-    }
-
-    .card i {
-      font-size: 1.8rem;
-      color: #299FCB;
-      margin-bottom: 0.6rem;
-      display: inline-block;
-      background: #DFF6FC;
-      padding: 0.45rem;
-      border-radius: 0.9rem;
-    }
-
-    .card h4 { font-size: 1.2rem; font-weight: 700; margin-bottom: 0.4rem; color: #15364B; }
-    .card p { font-size: 1.05rem; color: #2f5569; line-height: 1.45; }
-
-    .flex-row { display: flex; flex-wrap: wrap; gap: 1.3rem; align-items: center; margin-top: 0.5rem; }
-
-    .img-card {
-      flex: 1 1 240px;
-      border-radius: 2rem;
-      overflow: hidden;
-      box-shadow: 0 16px 28px -10px rgba(21, 54, 75, 0.25);
-      min-height: 170px;
-      background: #C8EFF9;
-    }
-
-    .img-card img {
-      width: 100%; height: 100%; object-fit: cover; display: block;
-      transition: transform 0.4s ease;
-    }
-
-    .img-card:hover img { transform: scale(1.03); }
-
-    .stack-visual {
-      display: flex; flex-wrap: wrap; gap: 0.7rem;
-      justify-content: center; margin: 1.2rem 0;
-    }
-
-    .stack-block {
-      background: white;
-      padding: 0.9rem 1.6rem;
-      border-radius: 3rem;
-      box-shadow: 0 6px 0 #72CDE8, 0 10px 20px -8px #15364B40;
-      font-weight: 700;
-      color: #15364B;
-      border: 2px solid #72CDE8;
-      font-size: 1rem;
-      transition: all 0.2s;
-    }
-
-    .stack-block i { margin-right: 0.4rem; color: #299FCB; }
-    .stack-block.plus { background: #DFF6FC; box-shadow: 0 6px 0 #299FCB; border-color: #299FCB; }
-
-    /* FLIP CARDS */
-    .steps-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 1rem;
-      margin: 1rem 0;
-    }
-
-    .step-flip {
-      perspective: 1000px;
-      height: 190px;
-      cursor: pointer;
-    }
-
-    .step-flip-inner {
-      position: relative;
-      width: 100%; height: 100%;
-      text-align: center;
-      transition: transform 0.6s;
-      transform-style: preserve-3d;
-    }
-
-    .step-flip.flipped .step-flip-inner { transform: rotateY(180deg); }
-
-    .step-front, .step-back {
-      position: absolute;
-      width: 100%; height: 100%;
-      backface-visibility: hidden;
-      border-radius: 1.5rem;
-      padding: 0.9rem 0.7rem;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 8px 16px -6px rgba(21, 54, 75, 0.2);
-      background: white;
-      border: 1px solid #C8EFF9;
-    }
-
-    .step-back {
-      background: linear-gradient(145deg, #DFF6FC, #C8EFF9);
-      transform: rotateY(180deg);
-      border: 2px solid #299FCB;
-      padding: 0.7rem;
-    }
-
-    .step-front .number {
-      background: #299FCB;
-      color: white;
-      width: 2rem; height: 2rem;
-      display: flex; align-items: center; justify-content: center;
-      border-radius: 50%;
-      font-weight: 700;
-      margin-bottom: 0.5rem;
-      font-size: 0.95rem;
-    }
-
-    .step-front i { font-size: 1.8rem; color: #299FCB; margin-bottom: 0.3rem; }
-    .step-front p { font-size: 1rem; font-weight: 600; margin: 0; line-height: 1.3; }
-
-    .step-back h4 { font-size: 1.05rem; font-weight: 700; color: #15364B; margin-bottom: 0.4rem; line-height: 1.2; }
-    .step-back p { font-size: 0.9rem; color: #15364B; line-height: 1.35; margin: 0; }
-    .step-back i { font-size: 1.3rem; color: #299FCB; margin-bottom: 0.2rem; }
-
-    .two-columns { display: grid; grid-template-columns: 1fr 1fr; gap: 1.3rem; margin-top: 0.8rem; }
-
-    .adv-card, .disadv-card {
-      background: white;
-      border-radius: 2rem;
-      padding: 1.3rem;
-      box-shadow: 0 10px 18px -8px rgba(21, 54, 75, 0.12);
-      border-left: 8px solid;
-    }
-
-    .adv-card { border-left-color: #299FCB; }
-    .disadv-card { border-left-color: #72CDE8; }
-    .adv-card h3 i, .disadv-card h3 i { margin-right: 0.5rem; }
-    .adv-card ul, .disadv-card ul { list-style: none; padding-left: 0; margin-top: 0.6rem; }
-
-    .adv-card li, .disadv-card li {
-      font-size: 1.1rem;
-      margin-bottom: 0.55rem;
-      display: flex;
-      align-items: flex-start;
-      gap: 0.6rem;
-    }
-
-    .adv-card li i { color: #299FCB; font-size: 1.2rem; margin-top: 0.1rem; }
-    .disadv-card li i { color: #15364B; font-size: 1.2rem; margin-top: 0.1rem; }
-
-    .members { display: flex; flex-wrap: wrap; gap: 1rem; margin: 1.3rem 0 0.3rem; }
-
-    .member-badge {
-      background: white;
-      padding: 0.8rem 1.4rem;
-      border-radius: 4rem;
-      font-weight: 600;
-      box-shadow: 0 8px 14px -8px #15364B30;
-      border: 1px solid #C8EFF9;
-      display: flex;
-      align-items: center;
-      gap: 0.6rem;
-      font-size: 1.05rem;
-    }
-
-    .member-badge i { color: #299FCB; font-size: 1.3rem; }
-
-    .controls {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0.8rem 2rem;
-      background: rgba(255, 255, 255, 0.85);
-      backdrop-filter: blur(8px);
-      border-top: 1px solid rgba(114, 205, 232, 0.4);
-      flex-wrap: wrap;
-      gap: 0.8rem;
-    }
-
-    .progress-area { flex: 2; min-width: 180px; display: flex; align-items: center; gap: 1rem; }
-    .progress-bar-bg { flex: 1; height: 8px; background: #C8EFF9; border-radius: 4px; overflow: hidden; }
-
-    .progress-fill {
-      height: 100%; width: 11.11%;
-      background: linear-gradient(90deg, #299FCB, #72CDE8);
-      border-radius: 4px;
-      transition: width 0.3s ease;
-    }
-
-    .slide-counter { font-weight: 600; color: #15364B; font-size: 1rem; white-space: nowrap; }
-    .nav-buttons { display: flex; align-items: center; gap: 1rem; }
-
-    .btn-nav {
-      background: white;
-      border: none;
-      width: 2.8rem; height: 2.8rem;
-      border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 1.4rem;
-      color: #15364B;
-      cursor: pointer;
-      box-shadow: 0 6px 12px -6px #15364B30;
-      transition: all 0.2s;
-      border: 1px solid #DFF6FC;
-    }
-
-    .btn-nav:hover:not(:disabled) { background: #299FCB; color: white; transform: scale(1.05); }
-    .btn-nav:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
-
-    .btn-fullscreen {
-      background: white;
-      border: 1px solid #C8EFF9;
-      border-radius: 2rem;
-      padding: 0.5rem 1.2rem;
-      font-weight: 500;
-      color: #15364B;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      cursor: pointer;
-      transition: 0.2s;
-    }
-
-    .btn-fullscreen:hover { background: #DFF6FC; }
-
-    .slide.active .animate-up { animation: slideUp 0.6s ease forwards; }
-
-    @keyframes slideUp {
-      from { opacity: 0; transform: translateY(30px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    .slide.active .card,
-    .slide.active .step-flip,
-    .slide.active .stack-block,
-    .slide.active .member-badge,
-    .slide.active .img-card,
-    .slide.active .adv-card,
-    .slide.active .disadv-card,
-    .slide.active .reflection {
-      animation: fadeInScale 0.5s ease backwards;
-    }
-
-    @keyframes fadeInScale {
-      from { opacity: 0; transform: scale(0.96); }
-      to { opacity: 1; transform: scale(1); }
-    }
-
-    .slide.active .reflection { animation-delay: 0.02s; }
-    .slide.active .card:nth-child(1), .slide.active .step-flip:nth-child(1) { animation-delay: 0.05s; }
-    .slide.active .card:nth-child(2), .slide.active .step-flip:nth-child(2) { animation-delay: 0.1s; }
-    .slide.active .card:nth-child(3), .slide.active .step-flip:nth-child(3) { animation-delay: 0.15s; }
-    .slide.active .card:nth-child(4), .slide.active .step-flip:nth-child(4) { animation-delay: 0.2s; }
-    .slide.active .card:nth-child(5), .slide.active .step-flip:nth-child(5) { animation-delay: 0.25s; }
-    .slide.active .card:nth-child(6), .slide.active .step-flip:nth-child(6) { animation-delay: 0.3s; }
-    .slide.active .step-flip:nth-child(7) { animation-delay: 0.35s; }
-
-    @media (max-width: 800px) {
-      .presentation { height: 95vh; min-height: 580px; border-radius: 2rem; }
-      .slide { padding: 1.4rem; }
-      h1 { font-size: 2.2rem; }
-      h2 { font-size: 1.8rem; }
-      .reflection p { font-size: 1.05rem; }
-      .two-columns { grid-template-columns: 1fr; }
-      .controls { padding: 0.7rem 1rem; }
-      .btn-fullscreen span { display: none; }
-      .step-flip { height: 175px; }
-    }
-
-    @media (max-width: 480px) {
-      .slide { padding: 1rem; }
-      h1 { font-size: 1.8rem; }
-      h2 { font-size: 1.5rem; }
-      p, li { font-size: 1rem; }
-      .member-badge { font-size: 0.9rem; padding: 0.55rem 0.9rem; }
-      .steps-grid { grid-template-columns: 1fr 1fr; }
-      .step-flip { height: 160px; }
-      .step-front p { font-size: 0.8rem; }
-      .step-back p { font-size: 0.72rem; }
-      .reflection { padding: 0.8rem 1rem; }
-      .reflection p { font-size: 0.95rem; }
-      .reflection i { font-size: 1.5rem; }
-    }
-  </style>
+@media (max-width:900px){
+  .cols-4{grid-template-columns:repeat(2,1fr)}
+  .cols-3{grid-template-columns:repeat(2,1fr)}
+  .two{grid-template-columns:1fr}
+}
+@media (max-width:600px){
+  :root{--nav-h:58px}
+  .cols-2,.cols-3,.cols-4{grid-template-columns:1fr}
+  .wrap{justify-content:flex-start}
+  .dots{display:none}
+  .nav button .lbl{display:none}
+  .stack div{flex:1 1 100%}
+  .face{min-height:190px}
+}
+@media (max-height:520px) and (orientation:landscape){
+  :root{--nav-h:48px}
+  .wrap{justify-content:flex-start}
+  .img{aspect-ratio:21/9;max-height:34vh}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
 </head>
 <body>
-  <div class="presentation" id="presentation">
-    <div class="slides-container" id="slidesContainer">
 
-      <!-- 1 · PORTADA -->
-      <div class="slide active" data-index="0">
-        <div style="display: flex; flex-direction: column; min-height: 100%; justify-content: center; padding: 0.5rem 0;">
-          
-          <h1 class="animate-up" style="margin-bottom: 0.3rem;">Modelos de micro-certificaciones</h1>
-          <h1 class="animate-up" style="margin-bottom: 0.3rem;">(Stackable Credentials) en Silicon Valley</h1>
-          <div class="reflection animate-up" style="margin-bottom: 0.8rem;">
-            <i class="bi bi-quote"></i>
-            <div>
-              <p style="font-size: 1.2rem;">"El futuro del aprendizaje no está en un solo título, sino en la suma de experiencias que nos hacen altamente empleables."</p>
-            </div>
-          </div>
-          <div class="flex-row animate-up" style="margin-top: 0.5rem; gap: 1.5rem;">
-            <div class="img-card" style="flex: 0.8; min-height: 200px;">
-              <img src="https://images.unsplash.com/photo-1504384308090-c894fdcc538d?q=80&w=1200&auto=format&fit=crop" alt="Silicon Valley tecnología e innovación">
-            </div>
-            <div style="flex: 1.2; background: white; padding: 1rem; border-radius: 2rem; box-shadow: 0 12px 24px -12px #15364B40; display: flex; flex-direction: column;">
-              <h3 style="margin-bottom: 0.6rem; font-size: 1rem;"><i class="bi bi-people-fill" style="color: #299FCB; margin-right: 0.4rem;"></i>Integrantes</h3>
-              <div class="members" style="flex-direction: column; gap: 0.4rem; margin: 0; flex: 1;">
-                <div class="member-badge" style="padding: 0.6rem 1rem; font-size: 0.9rem;"><i class="bi bi-person-circle"></i>Bancayán Valera Kevin Roger</div>
-                <div class="member-badge" style="padding: 0.6rem 1rem; font-size: 0.9rem;"><i class="bi bi-person-circle"></i>Marcelo Chapoñan Gerald Fernando</div>
-                <div class="member-badge" style="padding: 0.6rem 1rem; font-size: 0.9rem;"><i class="bi bi-person-circle"></i>Valdera Soto Joel Alberto</div>
-              </div>
-            </div>
-          </div>
+<main class="deck" id="deck">
+
+<!-- 1 -->
+<section class="slide active">
+  <div class="wrap">
+    <div>
+      <span class="tag"><i class="bi bi-geo-alt-fill"></i> Silicon Valley</span>
+      <h1>Modelos de micro-certificaciones<br><span>(Stackable Credentials)</span> en Silicon Valley</h1>
+    </div>
+    <p class="quote"><i class="bi bi-quote"></i>"El futuro del aprendizaje no está en un solo título, sino en la suma de experiencias que nos hacen altamente empleables."</p>
+    <img class="img" src="https://images.unsplash.com/photo-1504384308090-c894fdcc538d?q=80&w=1200&auto=format&fit=crop" alt="Silicon Valley tecnología e innovación">
+    <div>
+      <h3 class="muted" style="margin-bottom:10px"><i class="bi bi-people-fill"></i> Integrantes</h3>
+      <div class="names">
+        <span><i class="bi bi-person-fill"></i>Bancayán Valera Kevin Roger</span>
+        <span><i class="bi bi-person-fill"></i>Marcelo Chapoñan Gerald Fernando</span>
+        <span><i class="bi bi-person-fill"></i>Valdera Soto Joel Alberto</span>
+      </div>
+    </div>
+    <p class="quote center"><i class="bi bi-quote"></i>"Aprender no es acumular títulos, sino demostrar lo que sabemos hacer."</p>
+  </div>
+</section>
+
+<!-- 2 -->
+<section class="slide">
+  <div class="wrap">
+    <h2><i class="bi bi-patch-check-fill"></i>¿Qué son las micro-certificaciones?</h2>
+    <div class="two">
+      <div class="grid">
+        <p>Son credenciales digitales que validan una habilidad o competencia específica tras haber realizado un programa corto y enfocado. No reemplazan un título, pero <strong>demuestran lo que sabes hacer</strong>.</p>
+        <div class="card">
+          <h4><i class="bi bi-stars"></i> Características esenciales</h4>
+          <ul>
+            <li><i class="bi bi-clock-history"></i>Duración breve: semanas o meses.</li>
+            <li><i class="bi bi-tools"></i>Enfoque práctico y aplicado.</li>
+            <li><i class="bi bi-clipboard-check"></i>Evaluación de competencias reales.</li>
+            <li><i class="bi bi-shield-check"></i>Emisión digital verificable.</li>
+            <li><i class="bi bi-arrows-move"></i>Flexibilidad total para el estudiante.</li>
+          </ul>
         </div>
       </div>
+      <img class="img" src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?q=80&w=1000&auto=format&fit=crop" alt="Aprendizaje en línea y micro-certificaciones">
+    </div>
+    <p class="quote center"><i class="bi bi-quote"></i>"Cada pequeño logro es un ladrillo en la construcción de una carrera sólida."</p>
+  </div>
+</section>
 
-      <!-- 2 · ¿QUÉ SON? -->
-      <div class="slide" data-index="1">
-        <div class="reflection">
-          <i class="bi bi-quote"></i>
-          <div>
-            <p>"Aprender no es acumular títulos, sino demostrar lo que sabemos hacer."</p>
-          </div>
-        </div>
-        <h2><i class="bi bi-patch-check-fill"></i> ¿Qué son las micro-certificaciones?</h2>
-        <div class="flex-row">
-          <div style="flex: 1.3;">
-            <p>Son credenciales digitales que validan una habilidad o competencia específica tras haber realizado un programa corto y enfocado. No reemplazan un título, pero <strong>demuestran lo que sabes hacer</strong>.</p>
-            <div class="card" style="margin-top: 1rem;">
-              <i class="bi bi-check2-circle"></i>
-              <h4>Características esenciales</h4>
-              <p>▪ Duración breve: semanas o meses.<br>▪ Enfoque práctico y aplicado.<br>▪ Evaluación de competencias reales.<br>▪ Emisión digital verificable.<br>▪ Flexibilidad total para el estudiante.</p>
-            </div>
-          </div>
-          <div class="img-card" style="flex: 1;">
-            <img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?q=80&w=1000&auto=format&fit=crop" alt="Aprendizaje en línea y micro-certificaciones">
-          </div>
-        </div>
-      </div>
+<!-- 3 -->
+<section class="slide">
+  <div class="wrap">
+    <h2><i class="bi bi-layers-fill"></i>¿Qué significa Stackable Credentials?</h2>
+    <p>Significa credenciales acumulables que permiten que cada micro-certificación se sume a las anteriores, como bloques. Progresivamente se alcanza una cualificación mayor sin repetir contenidos.</p>
+    <div class="stack">
+      <div class="a"><i class="bi bi-puzzle-fill"></i>Curso A</div>
+      <div class="b"><i class="bi bi-puzzle-fill"></i>Curso B</div>
+      <div class="c"><i class="bi bi-puzzle-fill"></i>Curso C</div>
+      <div class="top"><i class="bi bi-trophy-fill"></i>Certificado mayor</div>
+    </div>
+    <div class="grid cols-3">
+      <div class="card"><div class="ic"><i class="bi bi-boxes"></i></div><h4>Modularidad</h4><p class="muted">Cada credencial es una pieza independiente.</p></div>
+      <div class="card"><div class="ic"><i class="bi bi-graph-up-arrow"></i></div><h4>Progresión</h4><p class="muted">Se avanza de lo simple a lo complejo.</p></div>
+      <div class="card"><div class="ic"><i class="bi bi-sliders"></i></div><h4>Personalización</h4><p class="muted">El estudiante elige su propia ruta.</p></div>
+    </div>
+    <p class="quote center"><i class="bi bi-quote"></i>"En Silicon Valley, lo que sabes hacer vale más que lo que dices ser."</p>
+  </div>
+</section>
 
-      <!-- 3 · STACKABLE CREDENTIALS -->
-      <div class="slide" data-index="2">
-        <div class="reflection">
-          <i class="bi bi-quote"></i>
-          <div>
-            <p>"Cada pequeño logro es un ladrillo en la construcción de una carrera sólida."</p>
-          </div>
-        </div>
-        <h2><i class="bi bi-layers-half"></i> ¿Qué significa Stackable Credentials?</h2>
-        <p> Significa credenciales acumulables que permiten que cada micro-certificación se sume a las anteriores, como bloques. Progresivamente se alcanza una cualificación mayor sin repetir contenidos.</p>
-        <div class="stack-visual">
-          <div class="stack-block"><i class="bi bi-1-circle-fill"></i> Curso A</div>
-          <div class="stack-block plus"><i class="bi bi-plus-circle-fill"></i></div>
-          <div class="stack-block"><i class="bi bi-2-circle-fill"></i> Curso B</div>
-          <div class="stack-block plus"><i class="bi bi-plus-circle-fill"></i></div>
-          <div class="stack-block"><i class="bi bi-3-circle-fill"></i> Curso C</div>
-          <div class="stack-block" style="background: #299FCB; color: white; box-shadow: 0 6px 0 #15364B;"><i class="bi bi-award-fill" style="color: white;"></i> Certificado mayor</div>
-        </div>
-        <div class="card-grid" style="grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));">
-          <div class="card"><i class="bi bi-puzzle"></i><h4>Modularidad</h4><p>Cada credencial es una pieza independiente.</p></div>
-          <div class="card"><i class="bi bi-arrow-up-circle"></i><h4>Progresión</h4><p>Se avanza de lo simple a lo complejo.</p></div>
-          <div class="card"><i class="bi bi-diagram-3"></i><h4>Personalización</h4><p>El estudiante elige su propia ruta.</p></div>
-        </div>
+<!-- 4 -->
+<section class="slide">
+  <div class="wrap">
+    <h2><i class="bi bi-cpu-fill"></i>Silicon Valley y su relación con este modelo</h2>
+    <div class="two">
+      <div class="grid">
+        <p>Silicon Valley es el epicentro global de la innovación. Empresas como Google y Apple, startups y universidades como Stanford impulsan la demanda de competencias ágiles y actualizadas.</p>
+        <ul>
+          <li><i class="bi bi-building"></i>Empresas tecnológicas que valoran habilidades específicas.</li>
+          <li><i class="bi bi-rocket-takeoff-fill"></i>Startups que requieren aprendizaje rápido.</li>
+          <li><i class="bi bi-mortarboard-fill"></i>Universidades que ofrecen micro-credenciales.</li>
+          <li><i class="bi bi-lightbulb-fill"></i>Cultura de innovación y emprendimiento.</li>
+        </ul>
       </div>
+      <img class="img" src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=1000&auto=format&fit=crop" alt="Equipo de tecnología en Silicon Valley">
+    </div>
+    <p class="quote center"><i class="bi bi-quote"></i>"El conocimiento se convierte en competencia cuando se aplica y se demuestra."</p>
+  </div>
+</section>
 
-      <!-- 4 · SILICON VALLEY -->
-      <div class="slide" data-index="3">
-        <div class="reflection">
-          <i class="bi bi-quote"></i>
-          <div>
-            <p>"En Silicon Valley, lo que sabes hacer vale más que lo que dices ser."</p>
-          </div>
-        </div>
-        <h2><i class="bi bi-geo-alt-fill"></i> Silicon Valley y su relación con este modelo</h2>
-        <div class="flex-row">
-          <div style="flex: 1.2;">
-            <p>Silicon Valley es el epicentro global de la innovación. Empresas como Google y Apple, startups y universidades como Stanford impulsan la demanda de competencias ágiles y actualizadas.</p>
-            <ul style="margin-top: 0.8rem; list-style: none; padding-left: 0;">
-              <li><i class="bi bi-check-circle-fill" style="color: #299FCB; margin-right: 0.5rem;"></i> Empresas tecnológicas que valoran habilidades específicas.</li>
-              <li><i class="bi bi-check-circle-fill" style="color: #299FCB; margin-right: 0.5rem;"></i> Startups que requieren aprendizaje rápido.</li>
-              <li><i class="bi bi-check-circle-fill" style="color: #299FCB; margin-right: 0.5rem;"></i> Universidades que ofrecen micro-credenciales.</li>
-              <li><i class="bi bi-check-circle-fill" style="color: #299FCB; margin-right: 0.5rem;"></i> Cultura de innovación y emprendimiento.</li>
-            </ul>
-          </div>
-          <div class="img-card" style="flex: 1;">
-            <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=1000&auto=format&fit=crop" alt="Equipo de tecnología en Silicon Valley">
-          </div>
-        </div>
-      </div>
+<!-- 5 -->
+<section class="slide">
+  <div class="wrap">
+    <div>
+      <h2><i class="bi bi-diagram-3-fill"></i>¿Cómo funciona el modelo?</h2>
+      <p class="sub"><i class="bi bi-hand-index-thumb"></i> Haz clic en cada tarjeta para ver la información complementaria.</p>
+    </div>
+    <div class="grid auto" id="steps">
 
-      <!-- 5 · ¿CÓMO FUNCIONA? FLIP CARDS -->
-      <div class="slide" data-index="4">
-        <div class="reflection">
-          <i class="bi bi-quote"></i>
-          <div>
-            <p>"El conocimiento se convierte en competencia cuando se aplica y se demuestra."</p>
-          </div>
-        </div>
-        <h2><i class="bi bi-gear-wide-connected"></i> ¿Cómo funciona el modelo?</h2>
-        <p style="font-size: 0.8rem; margin-bottom: 0.5rem;"><i class="bi bi-hand-index-thumb" style="color:#299FCB;"></i> Haz clic en cada tarjeta para ver la información complementaria.</p>
-        <div class="steps-grid">
-          <div class="step-flip">
-            <div class="step-flip-inner">
-              <div class="step-front">
-                <div class="number">1</div>
-                <i class="bi bi-search"></i>
-                <p>Identificar habilidad</p>
-              </div>
-              <div class="step-back">
-                <i class="bi bi-lightbulb"></i>
-                <h4>Identificar habilidad</h4>
-                <p>Reconocer qué competencia necesitas según tus objetivos profesionales o las demandas del mercado.</p>
-              </div>
-            </div>
-          </div>
-          <div class="step-flip">
-            <div class="step-flip-inner">
-              <div class="step-front">
-                <div class="number">2</div>
-                <i class="bi bi-book"></i>
-                <p>Elegir curso</p>
-              </div>
-              <div class="step-back">
-                <i class="bi bi-journal-check"></i>
-                <h4>Elegir curso</h4>
-                <p>Seleccionar un programa corto y acreditado que se enfoque exactamente en la habilidad que deseas adquirir.</p>
-              </div>
-            </div>
-          </div>
-          <div class="step-flip">
-            <div class="step-flip-inner">
-              <div class="step-front">
-                <div class="number">3</div>
-                <i class="bi bi-pencil-square"></i>
-                <p>Desarrollar conocimientos</p>
-              </div>
-              <div class="step-back">
-                <i class="bi bi-brain"></i>
-                <h4>Desarrollar conocimientos</h4>
-                <p>Estudiar y practicar los contenidos del curso, aplicando lo aprendido en ejercicios y proyectos reales.</p>
-              </div>
-            </div>
-          </div>
-          <div class="step-flip">
-            <div class="step-flip-inner">
-              <div class="step-front">
-                <div class="number">4</div>
-                <i class="bi bi-lightbulb"></i>
-                <p>Aplicar lo aprendido</p>
-              </div>
-              <div class="step-back">
-                <i class="bi bi-tools"></i>
-                <h4>Aplicar lo aprendido</h4>
-                <p>Poner en práctica las habilidades en situaciones reales: trabajo, proyectos personales o laboratorios.</p>
-              </div>
-            </div>
-          </div>
-          <div class="step-flip">
-            <div class="step-flip-inner">
-              <div class="step-front">
-                <div class="number">5</div>
-                <i class="bi bi-clipboard-check"></i>
-                <p>Evaluar competencias</p>
-              </div>
-              <div class="step-back">
-                <i class="bi bi-check2-square"></i>
-                <h4>Evaluar competencias</h4>
-                <p>Demostrar el dominio de la habilidad mediante evaluaciones, proyectos o exámenes diseñados por la institución.</p>
-              </div>
-            </div>
-          </div>
-          <div class="step-flip">
-            <div class="step-flip-inner">
-              <div class="step-front">
-                <div class="number">6</div>
-                <i class="bi bi-patch-check"></i>
-                <p>Obtener micro-certificación</p>
-              </div>
-              <div class="step-back">
-                <i class="bi bi-award"></i>
-                <h4>Obtener micro-certificación</h4>
-                <p>Recibir una credencial digital verificable que acredita oficialmente la competencia adquirida.</p>
-              </div>
-            </div>
-          </div>
-          <div class="step-flip">
-            <div class="step-flip-inner">
-              <div class="step-front">
-                <div class="number">7</div>
-                <i class="bi bi-stack"></i>
-                <p>Acumular credenciales</p>
-              </div>
-              <div class="step-back">
-                <i class="bi bi-layers"></i>
-                <h4>Acumular credenciales</h4>
-                <p>Sumar nuevas micro-certificaciones para construir una cualificación mayor y un perfil profesional más completo.</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      <div class="flip" tabindex="0" role="button" aria-pressed="false"><div class="flip-in">
+        <div class="face front"><span class="n">1</span><i class="bi bi-bullseye big"></i><span class="t">Identificar habilidad</span><span class="hint"><i class="bi bi-arrow-repeat"></i> Toca para voltear</span></div>
+        <div class="face back"><h4>Identificar habilidad</h4><p>Reconocer qué competencia necesitas según tus objetivos profesionales o las demandas del mercado.</p></div>
+      </div></div>
 
-      <!-- 6 · EJEMPLOS Y ÁREAS -->
-      <div class="slide" data-index="5">
-        <div class="reflection">
-          <i class="bi bi-quote"></i>
-          <div>
-            <p>"La especialización ya no es un lujo, es una necesidad del mercado actual."</p>
-          </div>
-        </div>
-        <h2><i class="bi bi-grid-3x3-gap-fill"></i> Ejemplos y áreas de aplicación</h2>
-        <div class="card-grid">
-          <div class="card"><i class="bi bi-code-slash"></i><h4>Tecnología e informática</h4><p>Programación, ciberseguridad, cloud.</p></div>
-          <div class="card"><i class="bi bi-robot"></i><h4>Inteligencia artificial</h4><p>Machine learning, NLP, visión artificial.</p></div>
-          <div class="card"><i class="bi bi-briefcase"></i><h4>Administración y negocios</h4><p>Gestión ágil, finanzas, liderazgo.</p></div>
-          <div class="card"><i class="bi bi-megaphone"></i><h4>Marketing digital</h4><p>SEO, redes sociales, analítica.</p></div>
-          <div class="card"><i class="bi bi-palette"></i><h4>Diseño y creatividad</h4><p>UX/UI, diseño gráfico, animación.</p></div>
-          <div class="card"><i class="bi bi-bar-chart-line"></i><h4>Análisis de datos</h4><p>SQL, Python, visualización.</p></div>
-          <div class="card"><i class="bi bi-mortarboard"></i><h4>Educación</h4><p>Metodologías activas, evaluación.</p></div>
-          <div class="card"><i class="bi bi-kanban"></i><h4>Gestión de proyectos</h4><p>Scrum, PMP, herramientas digitales.</p></div>
-        </div>
-      </div>
+      <div class="flip" tabindex="0" role="button" aria-pressed="false"><div class="flip-in">
+        <div class="face front"><span class="n">2</span><i class="bi bi-journal-check big"></i><span class="t">Elegir curso</span><span class="hint"><i class="bi bi-arrow-repeat"></i> Toca para voltear</span></div>
+        <div class="face back"><h4>Elegir curso</h4><p>Seleccionar un programa corto y acreditado que se enfoque exactamente en la habilidad que deseas adquirir.</p></div>
+      </div></div>
 
-      <!-- 7 · VENTAJAS Y DESVENTAJAS -->
-      <div class="slide" data-index="6">
-        <div class="reflection">
-          <i class="bi bi-quote"></i>
-          <div>
-            <p>"Toda innovación educativa trae oportunidades, pero también desafíos que debemos conocer."</p>
-          </div>
-        </div>
-        <h2><i class="bi bi-sliders2"></i> Ventajas y desventajas</h2>
-        <div class="two-columns">
-          <div class="adv-card">
-            <h3><i class="bi bi-hand-thumbs-up-fill" style="color:#299FCB;"></i> Ventajas</h3>
-            <ul>
-              <li><i class="bi bi-check-circle-fill"></i> Aprendizaje flexible y autónomo.</li>
-              <li><i class="bi bi-check-circle-fill"></i> Menor duración que un título tradicional.</li>
-              <li><i class="bi bi-check-circle-fill"></i> Actualización constante de contenidos.</li>
-              <li><i class="bi bi-check-circle-fill"></i> Desarrollo de competencias específicas.</li>
-              <li><i class="bi bi-check-circle-fill"></i> Progresión mediante acumulación.</li>
-              <li><i class="bi bi-check-circle-fill"></i> Alta adaptación al mercado laboral.</li>
-            </ul>
-          </div>
-          <div class="disadv-card">
-            <h3><i class="bi bi-exclamation-triangle-fill" style="color:#15364B;"></i> Desventajas</h3>
-            <ul>
-              <li><i class="bi bi-dash-circle-fill"></i> Reconocimiento variable entre instituciones.</li>
-              <li><i class="bi bi-dash-circle-fill"></i> Algunas requieren pagos adicionales.</li>
-              <li><i class="bi bi-dash-circle-fill"></i> Necesidad de verificar la calidad del emisor.</li>
-              <li><i class="bi bi-dash-circle-fill"></i> No sustituyen automáticamente un título profesional.</li>
-            </ul>
-          </div>
-        </div>
-      </div>
+      <div class="flip" tabindex="0" role="button" aria-pressed="false"><div class="flip-in">
+        <div class="face front"><span class="n">3</span><i class="bi bi-book-half big"></i><span class="t">Desarrollar conocimientos</span><span class="hint"><i class="bi bi-arrow-repeat"></i> Toca para voltear</span></div>
+        <div class="face back"><h4>Desarrollar conocimientos</h4><p>Estudiar y practicar los contenidos del curso, aplicando lo aprendido en ejercicios y proyectos reales.</p></div>
+      </div></div>
 
-      <!-- 8 · IMPACTO LABORAL -->
-      <div class="slide" data-index="7">
-        <div class="reflection">
-          <i class="bi bi-quote"></i>
-          <div>
-            <p>"El mercado laboral ya no pregunta qué estudiaste, sino qué sabes hacer y cómo lo demuestras."</p>
-          </div>
-        </div>
-        <h2><i class="bi bi-graph-up-arrow"></i> Impacto en el mercado laboral</h2>
-        <div class="card-grid" style="grid-template-columns: 1fr 1fr;">
-          <div class="card"><i class="bi bi-person-check-fill"></i><h4>Mejora la empleabilidad</h4><p>Las micro-certificaciones demuestran habilidades concretas muy valoradas por los reclutadores.</p></div>
-          <div class="card"><i class="bi bi-award-fill"></i><h4>Fortalece el perfil</h4><p>Complementan la formación tradicional con evidencia de competencias actuales.</p></div>
-          <div class="card"><i class="bi bi-lightning-charge-fill"></i><h4>Actualización profesional</h4><p>Permiten adquirir rápidamente nuevas habilidades sin interrumpir la carrera.</p></div>
-          <div class="card"><i class="bi bi-globe2"></i><h4>Respuesta a demandas</h4><p>Se alinean con las necesidades cambiantes de la industria tecnológica.</p></div>
-        </div>
-        <p style="margin-top: 1rem; background: #DFF6FC; padding: 0.9rem 1.2rem; border-radius: 1.5rem;"><i class="bi bi-briefcase-fill" style="color:#299FCB;"></i> En Silicon Valley, muchas empresas ya consideran estas credenciales como un plus en los procesos de selección.</p>
-      </div>
+      <div class="flip" tabindex="0" role="button" aria-pressed="false"><div class="flip-in">
+        <div class="face front"><span class="n">4</span><i class="bi bi-tools big"></i><span class="t">Aplicar lo aprendido</span><span class="hint"><i class="bi bi-arrow-repeat"></i> Toca para voltear</span></div>
+        <div class="face back"><h4>Aplicar lo aprendido</h4><p>Poner en práctica las habilidades en situaciones reales: trabajo, proyectos personales o laboratorios.</p></div>
+      </div></div>
 
-      <!-- 9 · CONCLUSIÓN -->
-      <div class="slide" data-index="8">
-        <h2><i class="bi bi-lightbulb-fill"></i> Conclusión</h2>
-        <div style="display: flex; flex-direction: column; justify-content: center; height: 75%;">
-          <p style="font-size: 1.2rem; margin-bottom: 1.2rem;">Las micro-certificaciones y las credenciales acumulables están transformando la educación moderna. En un entorno como Silicon Valley, donde la tecnología avanza a gran velocidad, aprender de forma continua y demostrar competencias específicas se vuelve esencial para el desarrollo profesional.</p>
-          <div style="background: linear-gradient(135deg, #DFF6FC, #C8EFF9); padding: 1.8rem; border-radius: 2.5rem; border-left: 10px solid #299FCB;">
-            <i class="bi bi-quote" style="font-size: 2.2rem; color: #299FCB; opacity: 0.7;"></i>
-            <p style="font-size: 1.5rem; font-weight: 600; font-family: 'Space Grotesk', sans-serif; color: #15364B; margin: 0.4rem 0 0 0.8rem;">"El aprendizaje no termina con un certificado; cada nueva habilidad representa una oportunidad para seguir creciendo".</p>
-          </div>
-          <div style="margin-top: 1.5rem; text-align: center;">
-            
-            <p style="font-size: 1.1rem; color: #299FCB;"><i class="bi bi-people-fill"></i> Bancayán Valera Kevin Roger</p>
-            <p style="font-size: 1.1rem; color: #299FCB;"><i class="bi bi-people-fill"></i> Marcelo Chapoñan Gerald Fernando</p>
-            <p style="font-size: 1.1rem; color: #299FCB;"><i class="bi bi-people-fill"></i> Valdera Soto Joel Alberto</p>
-          </div>
-        </div>
-      </div>
+      <div class="flip" tabindex="0" role="button" aria-pressed="false"><div class="flip-in">
+        <div class="face front"><span class="n">5</span><i class="bi bi-clipboard2-check-fill big"></i><span class="t">Evaluar competencias</span><span class="hint"><i class="bi bi-arrow-repeat"></i> Toca para voltear</span></div>
+        <div class="face back"><h4>Evaluar competencias</h4><p>Demostrar el dominio de la habilidad mediante evaluaciones, proyectos o exámenes diseñados por la institución.</p></div>
+      </div></div>
+
+      <div class="flip" tabindex="0" role="button" aria-pressed="false"><div class="flip-in">
+        <div class="face front"><span class="n">6</span><i class="bi bi-patch-check-fill big"></i><span class="t">Obtener micro-certificación</span><span class="hint"><i class="bi bi-arrow-repeat"></i> Toca para voltear</span></div>
+        <div class="face back"><h4>Obtener micro-certificación</h4><p>Recibir una credencial digital verificable que acredita oficialmente la competencia adquirida.</p></div>
+      </div></div>
+
+      <div class="flip" tabindex="0" role="button" aria-pressed="false"><div class="flip-in">
+        <div class="face front"><span class="n">7</span><i class="bi bi-layers-fill big"></i><span class="t">Acumular credenciales</span><span class="hint"><i class="bi bi-arrow-repeat"></i> Toca para voltear</span></div>
+        <div class="face back"><h4>Acumular credenciales</h4><p>Sumar nuevas micro-certificaciones para construir una cualificación mayor y un perfil profesional más completo.</p></div>
+      </div></div>
 
     </div>
+    <p class="quote center"><i class="bi bi-quote"></i>"La especialización ya no es un lujo, es una necesidad del mercado actual."</p>
+  </div>
+</section>
 
-    <!-- CONTROLES -->
-    <div class="controls">
-      <div class="progress-area">
-        <div class="progress-bar-bg">
-          <div class="progress-fill" id="progressFill" style="width: 11.11%;"></div>
-        </div>
-        <div class="slide-counter" id="slideCounter">1 / 9</div>
+<!-- 6 -->
+<section class="slide">
+  <div class="wrap">
+    <h2><i class="bi bi-grid-3x3-gap-fill"></i>Ejemplos y áreas de aplicación</h2>
+    <div class="grid cols-4">
+      <div class="card"><div class="ic"><i class="bi bi-laptop"></i></div><h4>Tecnología e informática</h4><p class="muted">Programación, ciberseguridad, cloud.</p></div>
+      <div class="card"><div class="ic"><i class="bi bi-robot"></i></div><h4>Inteligencia artificial</h4><p class="muted">Machine learning, NLP, visión artificial.</p></div>
+      <div class="card"><div class="ic"><i class="bi bi-briefcase-fill"></i></div><h4>Administración y negocios</h4><p class="muted">Gestión ágil, finanzas, liderazgo.</p></div>
+      <div class="card"><div class="ic"><i class="bi bi-megaphone-fill"></i></div><h4>Marketing digital</h4><p class="muted">SEO, redes sociales, analítica.</p></div>
+      <div class="card"><div class="ic"><i class="bi bi-palette-fill"></i></div><h4>Diseño y creatividad</h4><p class="muted">UX/UI, diseño gráfico, animación.</p></div>
+      <div class="card"><div class="ic"><i class="bi bi-bar-chart-line-fill"></i></div><h4>Análisis de datos</h4><p class="muted">SQL, Python, visualización.</p></div>
+      <div class="card"><div class="ic"><i class="bi bi-mortarboard-fill"></i></div><h4>Educación</h4><p class="muted">Metodologías activas, evaluación.</p></div>
+      <div class="card"><div class="ic"><i class="bi bi-kanban-fill"></i></div><h4>Gestión de proyectos</h4><p class="muted">Scrum, PMP, herramientas digitales.</p></div>
+    </div>
+    <p class="quote center"><i class="bi bi-quote"></i>"Toda innovación educativa trae oportunidades, pero también desafíos que debemos conocer."</p>
+  </div>
+</section>
+
+<!-- 7 -->
+<section class="slide">
+  <div class="wrap">
+    <h2><i class="bi bi-hand-thumbs-up-fill"></i>Ventajas y desventajas</h2>
+    <div class="grid cols-2">
+      <div class="card pro">
+        <h3 style="color:var(--accent2);margin-bottom:12px"><i class="bi bi-hand-thumbs-up-fill"></i> Ventajas</h3>
+        <ul>
+          <li><i class="bi bi-check-circle-fill"></i>Aprendizaje flexible y autónomo.</li>
+          <li><i class="bi bi-check-circle-fill"></i>Menor duración que un título tradicional.</li>
+          <li><i class="bi bi-check-circle-fill"></i>Actualización constante de contenidos.</li>
+          <li><i class="bi bi-check-circle-fill"></i>Desarrollo de competencias específicas.</li>
+          <li><i class="bi bi-check-circle-fill"></i>Progresión mediante acumulación.</li>
+          <li><i class="bi bi-check-circle-fill"></i>Alta adaptación al mercado laboral.</li>
+        </ul>
       </div>
-      <div class="nav-buttons">
-        <button class="btn-nav" id="prevBtn" disabled><i class="bi bi-chevron-left"></i></button>
-        <button class="btn-nav" id="nextBtn"><i class="bi bi-chevron-right"></i></button>
-        <button class="btn-fullscreen" id="fullscreenBtn"><i class="bi bi-arrows-fullscreen"></i><span>Pantalla completa</span></button>
+      <div class="card con">
+        <h3 style="color:var(--warn);margin-bottom:12px"><i class="bi bi-hand-thumbs-down-fill"></i> Desventajas</h3>
+        <ul>
+          <li><i class="bi bi-x-circle-fill"></i>Reconocimiento variable entre instituciones.</li>
+          <li><i class="bi bi-x-circle-fill"></i>Algunas requieren pagos adicionales.</li>
+          <li><i class="bi bi-x-circle-fill"></i>Necesidad de verificar la calidad del emisor.</li>
+          <li><i class="bi bi-x-circle-fill"></i>No sustituyen automáticamente un título profesional.</li>
+        </ul>
       </div>
+    </div>
+    <p class="quote center"><i class="bi bi-quote"></i>"El mercado laboral ya no pregunta qué estudiaste, sino qué sabes hacer y cómo lo demuestras."</p>
+  </div>
+</section>
+
+<!-- 8 -->
+<section class="slide">
+  <div class="wrap">
+    <h2><i class="bi bi-graph-up-arrow"></i>Impacto en el mercado laboral</h2>
+    <div class="grid cols-2">
+      <div class="card"><div class="ic"><i class="bi bi-person-check-fill"></i></div><h4>Mejora la empleabilidad</h4><p class="muted">Las micro-certificaciones demuestran habilidades concretas muy valoradas por los reclutadores.</p></div>
+      <div class="card"><div class="ic"><i class="bi bi-person-vcard-fill"></i></div><h4>Fortalece el perfil</h4><p class="muted">Complementan la formación tradicional con evidencia de competencias actuales.</p></div>
+      <div class="card"><div class="ic"><i class="bi bi-arrow-repeat"></i></div><h4>Actualización profesional</h4><p class="muted">Permiten adquirir rápidamente nuevas habilidades sin interrumpir la carrera.</p></div>
+      <div class="card"><div class="ic"><i class="bi bi-bullseye"></i></div><h4>Respuesta a demandas</h4><p class="muted">Se alinean con las necesidades cambiantes de la industria tecnológica.</p></div>
+    </div>
+    <div class="note"><i class="bi bi-star-fill"></i>En Silicon Valley, muchas empresas ya consideran estas credenciales como un plus en los procesos de selección.</div>
+  </div>
+</section>
+
+<!-- 9 -->
+<section class="slide">
+  <div class="wrap">
+    <h2><i class="bi bi-flag-fill"></i>Conclusión</h2>
+    <p>Las micro-certificaciones y las credenciales acumulables están transformando la educación moderna. En un entorno como Silicon Valley, donde la tecnología avanza a gran velocidad, aprender de forma continua y demostrar competencias específicas se vuelve esencial para el desarrollo profesional.</p>
+    <p class="quote"><i class="bi bi-quote"></i>"El aprendizaje no termina con un certificado; cada nueva habilidad representa una oportunidad para seguir creciendo".</p>
+    <div class="names">
+      <span><i class="bi bi-person-fill"></i>Bancayán Valera Kevin Roger</span>
+      <span><i class="bi bi-person-fill"></i>Marcelo Chapoñan Gerald Fernando</span>
+      <span><i class="bi bi-person-fill"></i>Valdera Soto Joel Alberto</span>
     </div>
   </div>
+</section>
 
-  <script>
-    (function() {
-      const slides = document.querySelectorAll('.slide');
-      const prevBtn = document.getElementById('prevBtn');
-      const nextBtn = document.getElementById('nextBtn');
-      const progressFill = document.getElementById('progressFill');
-      const slideCounter = document.getElementById('slideCounter');
-      const fullscreenBtn = document.getElementById('fullscreenBtn');
-      const presentation = document.getElementById('presentation');
-      let currentIndex = 0;
-      const totalSlides = slides.length;
+</main>
 
-      function updateSlide() {
-        slides.forEach((slide, i) => slide.classList.toggle('active', i === currentIndex));
-        prevBtn.disabled = currentIndex === 0;
-        nextBtn.disabled = currentIndex === totalSlides - 1;
-        progressFill.style.width = (((currentIndex + 1) / totalSlides) * 100) + '%';
-        slideCounter.textContent = (currentIndex + 1) + ' / ' + totalSlides;
-      }
+<nav class="nav" aria-label="Navegación de diapositivas">
+  <button id="prev" aria-label="Anterior"><i class="bi bi-chevron-left"></i><span class="lbl">Anterior</span></button>
+  <div class="mid">
+    <div class="dots" id="dots"></div>
+    <span class="count" id="count">1 / 9</span>
+  </div>
+  <button id="full" aria-label="Pantalla completa"><i class="bi bi-arrows-fullscreen"></i><span class="lbl">Pantalla completa</span></button>
+  <button id="next" aria-label="Siguiente"><span class="lbl">Siguiente</span><i class="bi bi-chevron-right"></i></button>
+</nav>
 
-      function goToSlide(index) {
-        if (index < 0) index = 0;
-        if (index >= totalSlides) index = totalSlides - 1;
-        currentIndex = index;
-        updateSlide();
-      }
-
-      const nextSlide = () => goToSlide(currentIndex + 1);
-      const prevSlide = () => goToSlide(currentIndex - 1);
-
-      nextBtn.addEventListener('click', nextSlide);
-      prevBtn.addEventListener('click', prevSlide);
-
-      window.addEventListener('keydown', (e) => {
-        if (e.key === 'ArrowRight' || e.key === 'ArrowDown') { e.preventDefault(); nextSlide(); }
-        if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { e.preventDefault(); prevSlide(); }
-      });
-
-      fullscreenBtn.addEventListener('click', () => {
-        if (!document.fullscreenElement) {
-          presentation.requestFullscreen().catch(err => alert('Error: ' + err.message));
-        } else {
-          document.exitFullscreen();
-        }
-      });
-
-      let touchStartX = 0;
-      let touchEndX = 0;
-      const slidesContainer = document.getElementById('slidesContainer');
-
-      slidesContainer.addEventListener('touchstart', (e) => {
-        touchStartX = e.changedTouches[0].screenX;
-      }, { passive: true });
-
-      slidesContainer.addEventListener('touchend', (e) => {
-        touchEndX = e.changedTouches[0].screenX;
-        const diff = touchEndX - touchStartX;
-        if (Math.abs(diff) > 50) {
-          if (diff < 0) nextSlide();
-          else prevSlide();
-        }
-      }, { passive: true });
-
-      // Flip cards
-      document.querySelectorAll('.step-flip').forEach(card => {
-        card.addEventListener('click', function(e) {
-          e.stopPropagation();
-          this.classList.toggle('flipped');
-        });
-      });
-
-      updateSlide();
-    })();
-  </script>
+<script>
+(function(){
+  var slides=[].slice.call(document.querySelectorAll('.slide'));
+  var dots=document.getElementById('dots'),count=document.getElementById('count');
+  var prev=document.getElementById('prev'),next=document.getElementById('next');
+  var i=0,n=slides.length;
+  slides.forEach(function(){dots.appendChild(document.createElement('i'))});
+  function go(k){
+    i=Math.max(0,Math.min(n-1,k));
+    slides.forEach(function(s,j){s.classList.toggle('active',j===i)});
+    [].forEach.call(dots.children,function(d,j){d.classList.toggle('on',j===i)});
+    count.textContent=(i+1)+' / '+n;
+    prev.disabled=i===0;next.disabled=i===n-1;
+    slides[i].scrollTop=0;
+    try{history.replaceState(null,'','#'+(i+1))}catch(e){}
+  }
+  prev.onclick=function(){go(i-1)};
+  next.onclick=function(){go(i+1)};
+  document.addEventListener('keydown',function(e){
+    if(e.target.classList&&e.target.classList.contains('flip'))return;
+    if(e.key==='ArrowRight'||e.key==='PageDown')go(i+1);
+    if(e.key==='ArrowLeft'||e.key==='PageUp')go(i-1);
+    if(e.key==='Home')go(0);if(e.key==='End')go(n-1);
+  });
+  // Deslizar con el dedo (no interfiere con el scroll vertical)
+  var sx=0,sy=0;
+  document.addEventListener('touchstart',function(e){sx=e.touches[0].clientX;sy=e.touches[0].clientY},{passive:true});
+  document.addEventListener('touchend',function(e){
+    var dx=e.changedTouches[0].clientX-sx,dy=e.changedTouches[0].clientY-sy;
+    if(Math.abs(dx)>60&&Math.abs(dx)>Math.abs(dy)*1.5)go(dx<0?i+1:i-1);
+  },{passive:true});
+  // Tarjetas que se voltean
+  [].forEach.call(document.querySelectorAll('.flip'),function(c){
+    function t(){var on=c.classList.toggle('flipped');c.setAttribute('aria-pressed',on)}
+    c.addEventListener('click',t);
+    c.addEventListener('keydown',function(e){
+      if(e.key==='Enter'||e.key===' '){e.preventDefault();t()}
+    });
+  });
+  // Pantalla completa
+  var fs=document.getElementById('full'),el=document.documentElement;
+  if(!(el.requestFullscreen||el.webkitRequestFullscreen)){fs.style.display='none'}
+  fs.onclick=function(){
+    var on=document.fullscreenElement||document.webkitFullscreenElement;
+    if(on){(document.exitFullscreen||document.webkitExitFullscreen).call(document)}
+    else{(el.requestFullscreen||el.webkitRequestFullscreen).call(el)}
+  };
+  var h=parseInt((location.hash||'').slice(1),10);
+  go(h>=1&&h<=n?h-1:0);
+})();
+</script>
 </body>
 </html>
