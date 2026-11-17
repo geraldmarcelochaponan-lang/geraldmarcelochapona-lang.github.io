@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Mind Map · What is AI & its types</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <style>
+    :root {
+      --bg: #f4f8ff;
+      --ink: #0b1f4d;
+      --blue: #1236e8;
+      --blueM: #0a8fb8;
+      --terra: #e0661b;
+      --green: #0b8a4a;
+      --purple: #6b21a8;
+      --brown: #b45309;
+      --sun: #FFC234;
+      --pink: #db2777;
+    }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      background: var(--bg);
+      font-family: "Segoe UI", Arial, sans-serif;
+      color: var(--ink);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* Background Particles */
+    .particles {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+    .particle {
+      position: absolute;
+      border-radius: 50%;
+      opacity: .15;
+      animation: float 18s infinite ease-in-out;
+    }
+    .particle:nth-child(1) { width: 120px; height: 120px; background: var(--blue); left: 5%; top: 10%; animation-duration: 22s; }
+    .particle:nth-child(2) { width: 80px; height: 80px; background: var(--blueM); left: 85%; top: 5%; animation-duration: 18s; }
+    .particle:nth-child(3) { width: 160px; height: 160px; background: var(--terra); left: 10%; top: 75%; animation-duration: 25s; }
+    .particle:nth-child(4) { width: 100px; height: 100px; background: var(--green); left: 80%; top: 80%; animation-duration: 20s; }
+    .particle:nth-child(5) { width: 60px; height: 60px; background: var(--sun); left: 50%; top: 90%; animation-duration: 16s; }
+    .particle:nth-child(6) { width: 140px; height: 140px; background: var(--purple); left: 90%; top: 40%; animation-duration: 24s; }
+    .particle:nth-child(7) { width: 90px; height: 90px; background: var(--pink); left: 20%; top: 30%; animation-duration: 21s; }
+
+    @keyframes float {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      25% { transform: translate(30px, -40px) scale(1.1); }
+      50% { transform: translate(-20px, 30px) scale(.9); }
+      75% { transform: translate(40px, 20px) scale(1.05); }
+    }
+
+    /* Map Container */
+    #map {
+      position: relative;
+      width: 1100px;
+      height: 700px;
+      margin: 0 auto;
+      z-index: 1;
+    }
+
+    /* SVG Connectors */
+    svg.connectors {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1;
+    }
+    .connector {
+      fill: none;
+      stroke-width: 4;
+      stroke-linecap: round;
+      stroke-dasharray: 900;
+      stroke-dashoffset: 900;
+      animation: draw 1.5s ease forwards;
+    }
+    .connector.c1 { stroke: var(--blue); }
+    .connector.c2 { stroke: var(--blueM); }
+    .connector.c3 { stroke: var(--terra); }
+    .connector.c4 { stroke: var(--green); }
+    .connector.c5 { stroke: var(--purple); }
+    .connector.c6 { stroke: var(--brown); }
+    .connector:nth-child(1) { animation-delay: .2s; }
+    .connector:nth-child(2) { animation-delay: .3s; }
+    .connector:nth-child(3) { animation-delay: .4s; }
+    .connector:nth-child(4) { animation-delay: .5s; }
+    .connector:nth-child(5) { animation-delay: .6s; }
+    .connector:nth-child(6) { animation-delay: .7s; }
+    @keyframes draw { to { stroke-dashoffset: 0; } }
+
+    /* Central Node */
+    .center {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      width: 290px;
+      height: 150px;
+      border-radius: 75px;
+      background: linear-gradient(135deg, #1236e8 0%, #0b1f4d 100%);
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 10px 20px;
+      box-shadow: 0 10px 40px rgba(18, 54, 232, .45), 0 0 0 6px rgba(255, 255, 255, .4);
+      border: 4px solid #00e5ff;
+      z-index: 4;
+      animation: centerPop 1s cubic-bezier(.34, 1.56, .64, 1) both;
+      cursor: pointer;
+      transition: transform .3s;
+    }
+    .center:hover {
+      transform: translate(-50%, -50%) scale(1.05);
+      box-shadow: 0 15px 50px rgba(18, 54, 232, .6), 0 0 0 8px rgba(255, 255, 255, .5);
+    }
+    .center::before {
+      content: "";
+      position: absolute;
+      inset: -12px;
+      border-radius: 85px;
+      border: 3px dashed rgba(0, 229, 255, .5);
+      animation: spinSlow 20s linear infinite;
+    }
+    @keyframes spinSlow { to { transform: rotate(360deg); } }
+    @keyframes centerPop {
+      from { opacity: 0; transform: translate(-50%, -50%) scale(.5); }
+      to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+    }
+    .center .ttl {
+      font-size: 21px;
+      font-weight: 800;
+      line-height: 1.1;
+      text-shadow: 0 2px 8px rgba(0, 0, 0, .3);
+    }
+    .center .sub {
+      font-size: 10px;
+      margin-top: 6px;
+      opacity: .85;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+    }
+    .center .people-badge {
+      margin-top: 8px;
+      background: var(--pink);
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 10px;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, .3);
+    }
+
+    /* Branches */
+    .branch {
+      position: absolute;
+      width: 270px;
+      height: 75px;
+      border-radius: 18px;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 0 16px;
+      cursor: pointer;
+      border: none;
+      text-align: left;
+      font-family: inherit;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, .2);
+      transition: transform .25s cubic-bezier(.34, 1.56, .64, 1), box-shadow .25s;
+      z-index: 3;
+      animation: branchFloat 4s ease-in-out infinite;
+    }
+    .branch:hover, .branch:focus-visible {
+      transform: translateY(-6px) scale(1.06);
+      box-shadow: 0 16px 32px rgba(0, 0, 0, .3);
+      outline: none;
+    }
+    .branch i {
+      font-size: 24px;
+      flex: none;
+    }
+    .branch .txt {
+      display: flex;
+      flex-direction: column;
+      line-height: 1.15;
+    }
+    .branch .txt b {
+      font-size: 14px;
+      font-weight: 800;
+    }
+    .branch .txt small {
+      font-size: 11px;
+      opacity: .9;
+      margin-top: 3px;
+    }
+
+    /* Radial Positions */
+    .b1 { left: 30px; top: 100px; background: linear-gradient(135deg, #1236e8, #0a2bb8); animation-delay: 0s; }
+    .b2 { left: 30px; top: 310px; background: linear-gradient(135deg, #0a8fb8, #086d8c); animation-delay: 1s; }
+    .b3 { left: 30px; top: 520px; background: linear-gradient(135deg, #e0661b, #b84f12); animation-delay: 2s; }
+    .b4 { right: 30px; top: 100px; background: linear-gradient(135deg, #0b8a4a, #086a38); animation-delay: 3s; }
+    .b5 { right: 30px; top: 310px; background: linear-gradient(135deg, #6b21a8, #4c1580); animation-delay: 4s; }
+    .b6 { right: 30px; top: 520px; background: linear-gradient(135deg, #b45309, #8a3d07); animation-delay: 5s; }
+
+    @keyframes branchFloat {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-6px); }
+    }
+    @keyframes popIn {
+      from { opacity: 0; transform: scale(.7); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    .b1 { animation: popIn .7s cubic-bezier(.34, 1.56, .64, 1) both, branchFloat 4s ease-in-out infinite .7s; }
+    .b2 { animation: popIn .7s cubic-bezier(.34, 1.56, .64, 1) .15s both, branchFloat 4s ease-in-out infinite 1.5s; }
+    .b3 { animation: popIn .7s cubic-bezier(.34, 1.56, .64, 1) .3s both, branchFloat 4s ease-in-out infinite 2s; }
+    .b4 { animation: popIn .7s cubic-bezier(.34, 1.56, .64, 1) .45s both, branchFloat 4s ease-in-out infinite 2.5s; }
+    .b5 { animation: popIn .7s cubic-bezier(.34, 1.56, .64, 1) .6s both, branchFloat 4s ease-in-out infinite 3s; }
+    .b6 { animation: popIn .7s cubic-bezier(.34, 1.56, .64, 1) .75s both, branchFloat 4s ease-in-out infinite 3.5s; }
+
+    .branch::after {
+      content: "";
+      position: absolute;
+      right: -6px;
+      top: -6px;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: var(--sun);
+      border: 3px solid #fff;
+      box-shadow: 0 0 0 0 rgba(255, 194, 52, .7);
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(255, 194, 52, .7); }
+      70% { box-shadow: 0 0 0 12px rgba(255, 194, 52, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(255, 194, 52, 0); }
+    }
+
+    /* Modal */
+    .overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(11, 31, 77, .7);
+      backdrop-filter: blur(4px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      z-index: 100;
+    }
+    .overlay.open {
+      display: flex;
+      animation: fadeIn .25s ease;
+    }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+    .modal {
+      background: #fff;
+      border-radius: 24px;
+      max-width: 680px;
+      width: 100%;
+      max-height: 88vh;
+      overflow-y: auto;
+      box-shadow: 0 30px 80px rgba(0, 0, 0, .5);
+      border-top: 10px solid var(--accent, var(--blue));
+      animation: slideUp .4s cubic-bezier(.34, 1.56, .64, 1);
+      position: relative;
+    }
+    @keyframes slideUp {
+      from { transform: translateY(60px) scale(.95); opacity: 0; }
+      to { transform: translateY(0) scale(1); opacity: 1; }
+    }
+
+    .modal-head {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      padding: 26px 30px 18px;
+      border-bottom: 2px solid #eef1f8;
+      position: sticky;
+      top: 0;
+      background: #fff;
+      border-radius: 24px 24px 0 0;
+      z-index: 3;
+    }
+    .modal-head .m-icon {
+      width: 60px;
+      height: 60px;
+      border-radius: 16px;
+      background: var(--accent, var(--blue));
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 30px;
+      flex: none;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, .25);
+    }
+    .modal-head h2 {
+      font-size: 22px;
+      line-height: 1.15;
+      color: var(--ink);
+    }
+    .modal-head .eyebrow {
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: .25em;
+      color: var(--accent, var(--blue));
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+
+    .close {
+      margin-left: auto;
+      border: none;
+      background: #0b1f4d;
+      color: #fff;
+      border-radius: 12px;
+      padding: 10px 16px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background .15s, transform .2s;
+      flex: none;
+    }
+    .close:hover {
+      background: var(--accent, var(--blue));
+      transform: scale(1.08);
+    }
+
+    .modal-body {
+      padding: 20px 30px 30px;
+      font-size: 16px;
+      line-height: 1.7;
+      color: #1b2540;
+    }
+    .modal-body p { margin: 12px 0; }
+    .modal-body b { color: var(--accent, var(--blue)); }
+    .modal-body ul { margin: 10px 0 10px 20px; }
+    .modal-body li { margin: 6px 0; }
+
+    /* Images in modal */
+    .topic-photo {
+      width: 100%;
+      height: 225px;
+      object-fit: cover;
+      border-radius: 17px;
+      margin: 4px 0 16px;
+      box-shadow: 0 8px 22px rgba(11, 31, 77, .13);
+    }
+
+    /* Members section */
+    .members-block {
+      margin-top: 30px;
+      padding: 20px 0 10px;
+      border-top: 2px dashed #cfd9e8;
+    }
+    .members-block h3 {
+      font-size: 18px;
+      margin-bottom: 12px;
+      color: var(--ink);
+    }
+    .members-block ul {
+      list-style: none;
+      padding: 0;
+    }
+    .members-block li {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 6px 0;
+      font-size: 15px;
+    }
+    .members-block li i {
+      color: var(--blue);
+    }
+    .video-link {
+      margin-top: 20px;
+      background: #eef4ff;
+      padding: 14px 18px;
+      border-radius: 14px;
+      font-size: 15px;
+    }
+    .video-link a {
+      color: var(--blue);
+      font-weight: 700;
+      text-decoration: none;
+      word-break: break-all;
+    }
+    .video-link a:hover {
+      text-decoration: underline;
+    }
+
+    /* Responsive */
+    @media (max-width: 1150px) {
+      body { overflow: auto; }
+      #map {
+        width: 100%;
+        height: auto;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 15px;
+        padding: 20px 0;
+      }
+      svg.connectors { display: none; }
+      .center {
+        position: relative;
+        left: auto;
+        top: auto;
+        transform: none;
+        margin-bottom: 20px;
+        width: 90%;
+        max-width: 340px;
+      }
+      .center::before { display: none; }
+      .branch {
+        position: relative;
+        left: auto !important;
+        right: auto !important;
+        top: auto !important;
+        width: 90%;
+        max-width: 400px;
+      }
+    }
+
+    .branch .mini-photo { display: none; }
+    .branch .txt { min-width: 0; }
+    .branch .txt small { line-height: 1.35; }
+    .page-heading {
+      position: fixed;
+      top: 12px;
+      left: 0;
+      right: 0;
+      text-align: center;
+      font-size: 13px;
+      letter-spacing: .08em;
+      color: #34517a;
+      font-weight: 700;
+      z-index: 2;
+      pointer-events: none;
+    }
+    @media(max-width: 1150px) {
+      body { overflow: auto; display: block; padding: 60px 14px 25px; }
+      .page-heading { position: absolute; top: 16px; }
+      .center { min-height: 150px; height: auto; }
+      .branch { height: 88px; }
+      .modal-head { padding: 18px; gap: 10px; }
+      .modal-body { padding: 18px; }
+      .modal-head h2 { font-size: 19px; }
+      .close { padding: 9px; font-size: 12px; }
+    }
+    @media(prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation: none !important; transition: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page-heading">INTERACTIVE MIND MAP · WHAT IS AI & ITS TYPES</div>
+
+  <div class="particles">
+    <div class="particle"></div><div class="particle"></div><div class="particle"></div>
+    <div class="particle"></div><div class="particle"></div><div class="particle"></div>
+    <div class="particle"></div>
+  </div>
+
+  <div id="map">
+    <svg class="connectors" viewBox="0 0 1100 700" preserveAspectRatio="none">
+      <defs>
+        <path id="path1" d="M 420 320 C 320 280, 260 220, 180 137" />
+        <path id="path2" d="M 400 350 C 300 350, 260 350, 180 347" />
+        <path id="path3" d="M 420 380 C 320 420, 260 480, 180 557" />
+        <path id="path4" d="M 680 320 C 780 280, 840 220, 920 137" />
+        <path id="path5" d="M 700 350 C 800 350, 840 350, 920 347" />
+        <path id="path6" d="M 680 380 C 780 420, 840 480, 920 557" />
+      </defs>
+      <use href="#path1" class="connector c1" />
+      <use href="#path2" class="connector c2" />
+      <use href="#path3" class="connector c3" />
+      <use href="#path4" class="connector c4" />
+      <use href="#path5" class="connector c5" />
+      <use href="#path6" class="connector c6" />
+    </svg>
+
+    <!-- Central Node -->
+    <div class="center" data-target="p0" role="button" tabindex="0">
+      <div class="ttl">WHAT IS<br>ARTIFICIAL INTELLIGENCE?</div>
+      <div class="sub">FOUNDATIONS</div>
+      <div class="people-badge"><i class="bi bi-robot"></i> Click to learn</div>
+    </div>
+
+    <!-- 6 Branches -->
+    <button class="branch b1" data-target="p1">
+      <i class="bi bi-cpu"></i>
+      <span class="txt">
+        <b>1. Narrow AI (ANI)</b>
+        <small>Weak AI · task‑specific</small>
+      </span>
+    </button>
+    <button class="branch b2" data-target="p2">
+      <i class="bi bi-globe2"></i>
+      <span class="txt">
+        <b>2. General AI (AGI)</b>
+        <small>Human‑level · theoretical</small>
+      </span>
+    </button>
+    <button class="branch b3" data-target="p3">
+      <i class="bi bi-stars"></i>
+      <span class="txt">
+        <b>3. Superintelligence (ASI)</b>
+        <small>Beyond human · hypothetical</small>
+      </span>
+    </button>
+    <button class="branch b4" data-target="p4">
+      <i class="bi bi-lightning-charge"></i>
+      <span class="txt">
+        <b>4. Reactive Machines</b>
+        <small>No memory · rule‑based</small>
+      </span>
+    </button>
+    <button class="branch b5" data-target="p5">
+      <i class="bi bi-memory"></i>
+      <span class="txt">
+        <b>5. Limited Memory</b>
+        <small>Short‑term data · decisions</small>
+      </span>
+    </button>
+    <button class="branch b6" data-target="p6">
+      <i class="bi bi-chat-dots"></i>
+      <span class="txt">
+        <b>6. Theory of Mind / Self‑aware</b>
+        <small>Emotions · consciousness</small>
+      </span>
+    </button>
+  </div>
+
+  <!-- Modal Overlay -->
+  <div class="overlay" id="overlay">
+    <div class="modal" id="modal" style="--accent:#1236e8;">
+      <div class="modal-head">
+        <div class="m-icon" id="modal-icon"><i class="bi bi-robot"></i></div>
+        <div>
+          <div class="eyebrow" id="modal-eyebrow">TOPIC</div>
+          <h2 id="modal-title">Title</h2>
+        </div>
+        <button class="close" id="close-btn">✕ Close</button>
+      </div>
+      <div class="modal-body" id="modal-body"></div>
+    </div>
+  </div>
+
+  <script>
+    const CONTENT = {
+      p0: {
+        eyebrow: "FOUNDATION",
+        title: "What is Artificial Intelligence?",
+        icon: "bi-robot",
+        accent: "#1236e8",
+        html: `
+          <img class="topic-photo" src="https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&w=1100&q=80" alt="Artificial Intelligence concept" loading="lazy" onerror="this.style.display='none'">
+          <p><b>Artificial Intelligence (AI)</b> is the simulation of human intelligence processes by machines, especially computer systems. These processes include learning, reasoning, problem-solving, perception, and language understanding.</p>
+          <p>In simple terms, AI allows computers to perform tasks that normally require human intelligence — such as recognizing images, understanding speech, making decisions, or translating languages. AI is not a single technology; it’s a broad field that includes many approaches and techniques.</p>
+          <p>Today, AI is present in voice assistants, recommendation systems, self-driving cars, and generative tools like ChatGPT. The field is evolving rapidly, and understanding its types helps us see how different systems work and what they can (and cannot) do.</p>
+          
+          <div class="members-block">
+            <h3><i class="bi bi-people-fill" style="color: var(--pink);"></i> Group members</h3>
+            <ul>
+              <li><i class="bi bi-person-circle"></i> Bancayán Valera, Kevin Roger</li>
+              <li><i class="bi bi-person-circle"></i> Marcelo Chapoñan, Gerald Fernando</li>
+              <li><i class="bi bi-person-circle"></i> Pravia Purihuaman, Jesus Angel</li>
+            </ul>
+          </div>
+
+          <div class="video-link">
+            <i class="bi bi-play-circle-fill" style="color: var(--blue);"></i> 
+            <b>Recommended video:</b> 
+            <a href="https://youtu.be/-NXUk2P2qKc?si=e1x6USqFGpDuUMXO" target="_blank" rel="noopener">
+              https://youtu.be/-NXUk2P2qKc?si=e1x6USqFGpDuUMXO
+            </a>
+          </div>
+        `
+      },
+      p1: {
+        eyebrow: "BY CAPABILITY",
+        title: "Narrow AI (ANI)",
+        icon: "bi-cpu",
+        accent: "#1236e8",
+        html: `
+          <img class="topic-photo" src="https://images.unsplash.com/photo-1531746790731-6c087fecd65a?auto=format&fit=crop&w=1100&q=80" alt="Narrow AI assistant" loading="lazy" onerror="this.style.display='none'">
+          <p><b>Artificial Narrow Intelligence (ANI)</b> — also known as Weak AI — is the only type of AI that exists today. It is designed and trained to perform a specific task with high efficiency, but it cannot operate outside its domain.</p>
+          <p>These systems are very good at what they do, but they lack consciousness, general understanding, and the ability to transfer skills to other areas. They operate within a narrow set of constraints and parameters.</p>
+          <p><b>Examples:</b></p>
+          <ul>
+            <li>Voice assistants like Siri, Alexa, and Google Assistant.</li>
+            <li>Search engines and recommendation systems (Netflix, YouTube, Spotify).</li>
+            <li>Generative AI models such as ChatGPT and DALL·E (they generate content but are still narrow in scope).</li>
+            <li>Facial recognition systems and spam filters.</li>
+          </ul>
+          <p>Narrow AI is extremely powerful for specific tasks, and it is what we interact with daily. However, it does not "think" or "understand" — it simply follows patterns and rules derived from training data.</p>
+        `
+      },
+      p2: {
+        eyebrow: "BY CAPABILITY",
+        title: "General AI (AGI)",
+        icon: "bi-globe2",
+        accent: "#0a8fb8",
+        html: `
+          <img class="topic-photo" src="https://images.unsplash.com/photo-1507146426996-ef05306b995a?auto=format&fit=crop&w=1100&q=80" alt="General AI concept" loading="lazy" onerror="this.style.display='none'">
+          <p><b>Artificial General Intelligence (AGI)</b> — also called Strong AI — is a theoretical concept. It refers to a machine capable of learning, reasoning, understanding, and adapting to any intellectual task just like a human being.</p>
+          <p>Unlike narrow AI, AGI would be able to transfer knowledge from one domain to another, solve novel problems, and possess general cognitive abilities. It would have self-awareness, consciousness, and the ability to plan for the future.</p>
+          <p>AGI does not exist yet; it is an active area of research. Many experts debate whether it will ever be achieved and what the timeline might be. Building AGI requires solving fundamental challenges in machine learning, cognitive science, and neuroscience.</p>
+          <p>Some researchers believe AGI could be developed within decades, while others think it may take much longer or may never be possible. Regardless, AGI remains one of the grand challenges of computer science.</p>
+        `
+      },
+      p3: {
+        eyebrow: "BY CAPABILITY",
+        title: "Superintelligence (ASI)",
+        icon: "bi-stars",
+        accent: "#e0661b",
+        html: `
+          <img class="topic-photo" src="https://images.unsplash.com/photo-1620712943543-bcc4688e7485?auto=format&fit=crop&w=1100&q=80" alt="Superintelligence abstract" loading="lazy" onerror="this.style.display='none'">
+          <p><b>Artificial Superintelligence (ASI)</b> is a hypothetical level of AI where the machine surpasses human intelligence, creativity, and problem-solving ability in every domain — including scientific discovery, social interaction, and artistic creation.</p>
+          <p>It is purely theoretical and often discussed in the context of future scenarios, ethics, and existential risk. ASI would be vastly smarter than the best human minds in every field, potentially leading to rapid technological progress or unforeseen challenges.</p>
+          <p>Researchers and philosophers debate whether ASI would be beneficial or dangerous. Ensuring that such an intelligence remains aligned with human values is a major area of study called AI alignment.</p>
+          <p>While ASI is not currently achievable, it serves as a useful concept for thinking about the long-term future of artificial intelligence and the responsibilities that come with creating increasingly powerful systems.</p>
+        `
+      },
+      p4: {
+        eyebrow: "BY FUNCTIONALITY",
+        title: "Reactive Machines",
+        icon: "bi-lightning-charge",
+        accent: "#0b8a4a",
+        html: `
+          <img class="topic-photo" src="https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1100&q=80" alt="Reactive machine circuit" loading="lazy" onerror="this.style.display='none'">
+          <p><b>Reactive machines</b> are the most basic type of AI. They have no memory and do not learn from past experiences; they only react to the present situation based on pre-programmed rules.</p>
+          <p>These systems are designed to respond to specific inputs in a deterministic way. They cannot store information, improve over time, or adapt to new situations. They simply follow a set of rules.</p>
+          <p><b>Examples:</b></p>
+          <ul>
+            <li>IBM’s Deep Blue chess computer, which defeated Garry Kasparov in 1997.</li>
+            <li>Simple rule-based chatbots that respond with predefined answers.</li>
+            <li>Basic video game AI opponents that follow scripted behaviors.</li>
+          </ul>
+          <p>Reactive machines are limited but can be very effective for well-defined tasks. They represent the earliest stage of AI development and are still used in many applications today.</p>
+        `
+      },
+      p5: {
+        eyebrow: "BY FUNCTIONALITY",
+        title: "Limited Memory",
+        icon: "bi-memory",
+        accent: "#6b21a8",
+        html: `
+          <img class="topic-photo" src="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=1100&q=80" alt="Limited memory data" loading="lazy" onerror="this.style.display='none'">
+          <p><b>Limited memory AI</b> can store data and information from the past for a short period to make better decisions in the moment. This memory is temporary and is used to improve current responses.</p>
+          <p>These systems can learn from historical data and use it to inform their actions, but they do not build a lasting memory or learn permanently. They are common in applications that require real-time decision-making.</p>
+          <p><b>Examples:</b></p>
+          <ul>
+            <li>Self-driving cars that use recent sensor data to navigate.</li>
+            <li>Recommendation algorithms that adapt to your recent behavior.</li>
+            <li>Chatbots that remember the context of a conversation for a short time.</li>
+          </ul>
+          <p>Limited memory AI represents a step up from reactive machines, as it can use past information to make better decisions. However, it still lacks the ability to learn continuously or develop a persistent memory.</p>
+        `
+      },
+      p6: {
+        eyebrow: "BY FUNCTIONALITY",
+        title: "Theory of Mind / Self‑aware",
+        icon: "bi-chat-dots",
+        accent: "#b45309",
+        html: `
+          <img class="topic-photo" src="https://images.unsplash.com/photo-1521737711867-e3b97375f902?auto=format&fit=crop&w=1100&q=80" alt="Theory of mind empathy" loading="lazy" onerror="this.style.display='none'">
+          <p><b>Theory of Mind AI</b> is a developing concept where machines would understand human emotions, beliefs, and intentions to interact with empathy. It would allow AI to perceive and respond to human mental states.</p>
+          <p>This level of AI would be able to recognize that others have their own thoughts and feelings, and adjust its behavior accordingly. It would enable more natural and intuitive human-AI interaction.</p>
+          <p><b>Self‑aware AI</b> is the most advanced and purely theoretical level, where an AI would have consciousness of its own existence and mental states. It would possess a sense of self and be able to reflect on its own thoughts and actions.</p>
+          <p>Both of these levels are currently in the realm of science fiction and theoretical research. Achieving them would require breakthroughs in understanding consciousness and machine cognition, and they raise profound ethical and philosophical questions about the nature of intelligence and being.</p>
+        `
+      }
+    };
+
+    const overlay = document.getElementById('overlay');
+    const modal = document.getElementById('modal');
+    const modalIcon = document.getElementById('modal-icon');
+    const modalEyebrow = document.getElementById('modal-eyebrow');
+    const modalTitle = document.getElementById('modal-title');
+    const modalBody = document.getElementById('modal-body');
+    const closeBtn = document.getElementById('close-btn');
+
+    function openModal(id) {
+      const data = CONTENT[id];
+      if (!data) return;
+      modal.style.setProperty('--accent', data.accent);
+      modalIcon.innerHTML = `<i class="bi ${data.icon}"></i>`;
+      modalEyebrow.textContent = data.eyebrow;
+      modalTitle.textContent = data.title;
+      modalBody.innerHTML = data.html;
+      overlay.classList.add('open');
+      document.body.style.overflow = 'hidden';
+      modal.scrollTop = 0;
+    }
+
+    function closeModal() {
+      overlay.classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
+    document.querySelectorAll('.branch, .center').forEach(btn => {
+      btn.addEventListener('click', () => openModal(btn.dataset.target));
+      btn.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          openModal(btn.dataset.target);
+        }
+      });
+    });
+
+    closeBtn.addEventListener('click', closeModal);
+    overlay.addEventListener('click', e => { if (e.target === overlay) closeModal(); });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+  </script>
+</body>
+</html>
