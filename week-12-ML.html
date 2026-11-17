@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Machine Learning Models – Texto, lectura y significado</title>
+<style>
+:root{
+  color-scheme: light dark;
+  --bg: #fff;
+  --fg: #1a1a1a;
+  --card-bg: #f5f5f5;
+  --card-border: #ddd;
+  --en-bg: #c8e6c9;      /* verde para inglés */
+  --en-fg: #1b5e20;
+  --lec-bg: #fff9c4;     /* amarillo para lectura */
+  --lec-fg: #6d4c00;
+  --es-bg: #b3e5fc;      /* celeste para español */
+  --es-fg: #01579b;
+}
+@media(prefers-color-scheme: dark){
+  :root{
+    --bg: #14161c;
+    --fg: #ececf2;
+    --card-bg: #1e2129;
+    --card-border: #333;
+    --en-bg: #1b3a1e;
+    --en-fg: #a5d6a7;
+    --lec-bg: #3e3510;
+    --lec-fg: #fff59d;
+    --es-bg: #0d2f45;
+    --es-fg: #81d4fa;
+  }
+}
+body{
+  font: 16px/1.5 Arial, sans-serif;
+  background: var(--bg);
+  color: var(--fg);
+  max-width: 900px;
+  margin: auto;
+  padding: 16px;
+}
+h1{ font-size: 1.35rem; }
+section{
+  background: var(--card-bg);
+  border-left: 8px solid var(--card-border);
+  border-radius: 10px;
+  padding: 10px 16px;
+  margin: 14px 0;
+}
+h2{
+  font-size: 1.05rem;
+  margin: 4px 0 8px;
+  color: var(--fg);
+}
+p{
+  margin: 6px 0;
+  padding: 6px 10px;
+  border-radius: 6px;
+}
+b{
+  display: inline-block;
+  min-width: 4.2em;
+  font-weight: bold;
+}
+/* Fondo de cada bloque según tipo */
+p:nth-of-type(3n+1){ background: var(--en-bg); color: var(--en-fg); }
+p:nth-of-type(3n+1) b{ color: var(--en-fg); }
+p:nth-of-type(3n+2){ background: var(--lec-bg); color: var(--lec-fg); }
+p:nth-of-type(3n+2) b{ color: var(--lec-fg); }
+p:nth-of-type(3n+3){ background: var(--es-bg); color: var(--es-fg); }
+p:nth-of-type(3n+3) b{ color: var(--es-fg); }
+.l{ font-style: italic; }
+</style>
+</head>
+<body>
+<h1>Machine Learning Models (SENATI) – EN / Lectura / ES</h1>
+
+<section><h2>Diapositiva 1</h2>
+<p><b>EN</b>Information Technology – Machine Learning Models</p>
+<p class="l"><b>Lectura</b>Informéishon Tecnólogui – Mashín Lérnin Módels</p>
+<p><b>ES</b>Tecnología de la Información – Modelos de aprendizaje automático</p></section>
+
+<section><h2>Diapositiva 2 – Objective</h2>
+<p><b>EN</b>Objective: Recognize the types of machine learning models.</p>
+<p class="l"><b>Lectura</b>Obyéctiv: Rékognais da taips of mashín lérnin módels.</p>
+<p><b>ES</b>Objetivo: Reconocer los tipos de modelos de aprendizaje automático.</p>
+<p><b>EN</b>1. What is a Machine Learning Model? 2. Characteristics of a Machine Learning Model 3. How does a Machine Learning Model work? 4. Types of Machine Learning Models: 4.1. Supervised Learning (a. Regression, b. Classification); 4.2. Unsupervised Learning (a. Clustering); 4.3. Reinforcement Learning 5. How to choose the best model? 6. Training Machine Learning Model 7. Conclusions</p>
+<p class="l"><b>Lectura</b>Juat is a mashín lérnin módel? / Karakterístiks of… / Jau dos a… uork? / Taips of… : Siúpervaisd lérnin (Rigréshon, Clasifikéishon); Anzsúpervaisd lérnin (Clásterin); Rinfórsment lérnin / Jau tu chus da best módel? / Tréinin mashín lérnin módel / Konklúshons</p>
+<p><b>ES</b>1. ¿Qué es un modelo de aprendizaje automático? 2. Características de un modelo 3. ¿Cómo funciona un modelo? 4. Tipos de modelos: 4.1. Aprendizaje supervisado (a. Regresión, b. Clasificación); 4.2. Aprendizaje no supervisado (a. Agrupamiento/clustering); 4.3. Aprendizaje por refuerzo 5. ¿Cómo elegir el mejor modelo? 6. Entrenamiento de un modelo 7. Conclusiones</p></section>
+
+<section><h2>Diapositiva 3 – 1. What is a Machine Learning Model?</h2>
+<p><b>EN</b>Machine Learning models can be understood as a program that has been trained to find patterns within new data and make predictions.</p>
+<p class="l"><b>Lectura</b>Mashín lérnin módels can bi anderstúd as a prógram dat jas bin tréind tu faind pátrns uizín niú déita an meik predíkshons.</p>
+<p><b>ES</b>Los modelos de aprendizaje automático pueden entenderse como un programa entrenado para encontrar patrones en datos nuevos y hacer predicciones.</p>
+<p><b>EN</b>These models are represented as a mathematical function that takes requests in the form of input data, makes predictions on input data, and then provides an output in response.</p>
+<p class="l"><b>Lectura</b>Dis módels ar reprisentid as a mazemátikal fánkshon dat teiks rikuésts in da form of ínput déita, meiks predíkshons on ínput déita, an den provaids an áutput in rispóns.</p>
+<p><b>ES</b>Estos modelos se representan como una función matemática que recibe solicitudes en forma de datos de entrada, hace predicciones sobre ellos y luego entrega una salida como respuesta.</p>
+<p><b>EN</b>First, these models are trained over a set of data, and then they are provided an algorithm to reason over data, extract the pattern from feed data and learn from those data.</p>
+<p class="l"><b>Lectura</b>Ferst, dis módels ar tréind óver a set of déita, an den dei ar provaided an álgoridm tu rízon óver déita, ekstráct da pátern from fid déita an lern from dóus déita.</p>
+<p><b>ES</b>Primero, estos modelos se entrenan con un conjunto de datos y luego se les da un algoritmo para razonar sobre los datos, extraer el patrón de los datos alimentados y aprender de ellos.</p>
+<p><b>EN</b>(Diagram) Supervised learning: input (data with labels), error, critic, output (mapping). Unsupervised learning: input (data without labels), output (classes). Reinforcement learning: input (states and actions), reinforcement signal, error, critic, output (state/action).</p>
+<p class="l"><b>Lectura</b>Siúpervaisd lérnin: ínput (déita wid léibols), érror, krítik, áutput (mápin). Anzsúpervaisd lérnin: ínput (déita uizáut léibols), áutput (clásis). Rinfórsment lérnin: ínput (stéits an ákshons), rinfórsment sígnal, érror, krítik, áutput (stéit/ákshon).</p>
+<p><b>ES</b>Aprendizaje supervisado: entrada (datos con etiquetas), error, crítico, salida (mapeo). No supervisado: entrada (datos sin etiquetas), salida (clases). Por refuerzo: entrada (estados y acciones), señal de refuerzo, error, crítico, salida (estado/acción).</p></section>
+
+<section><h2>Diapositiva 4 – 2. Characteristics of a Machine Learning Model</h2>
+<p><b>EN</b>Machine learning is the study of different algorithms that can improve automatically through experience &amp; old data and build the model.</p>
+<p class="l"><b>Lectura</b>Mashín lérnin is da stádi of dífrent álgoridms dat can imprúv ótomatikali zru ekspíriens an old déita an bild da módel.</p>
+<p><b>ES</b>El aprendizaje automático es el estudio de distintos algoritmos que pueden mejorar automáticamente mediante la experiencia y datos antiguos, y construir el modelo.</p>
+<p><b>EN</b>A machine learning model is similar to computer software designed to recognize patterns or behaviors based on previous experience or data.</p>
+<p class="l"><b>Lectura</b>A mashín lérnin módel is símilar tu kompiúter sóftuer disáind tu rékognais pátrns or bihéiviors beist on prívious ekspíriens or déita.</p>
+<p><b>ES</b>Un modelo de aprendizaje automático es similar a un software diseñado para reconocer patrones o comportamientos basándose en experiencia o datos previos.</p>
+<p><b>EN</b>The learning algorithm discovers patterns within the training data, and it outputs an ML model which captures these patterns and makes predictions on new data.</p>
+<p class="l"><b>Lectura</b>Da lérnin álgoridm diskávers pátrns uizín da tréinin déita, an it áutputs an em-él módel juich káptiurs dis pátrns an meiks predíkshons on niú déita.</p>
+<p><b>ES</b>El algoritmo de aprendizaje descubre patrones en los datos de entrenamiento y produce un modelo de ML que captura esos patrones y hace predicciones sobre datos nuevos.</p>
+<p><b>EN</b>(Image) Data – Training the Machine – Building a Model – Predicting Outcome</p>
+<p class="l"><b>Lectura</b>Déita – Tréinin da mashín – Bílding a módel – Predícting áutcam</p>
+<p><b>ES</b>Datos – Entrenar la máquina – Construir un modelo – Predecir el resultado</p></section>
+
+<section><h2>Diapositiva 5 – 3. How does a Machine Learning Model work?</h2>
+<p><b>EN</b>An example of the ML model is the creation of an app to recognize the user's emotions based on facial expressions.</p>
+<p class="l"><b>Lectura</b>An egsámpol of di em-él módel is da kriéishon of an ap tu rékognais da iúsers imóushons beist on féishal ekspréshons.</p>
+<p><b>ES</b>Un ejemplo de modelo de ML es crear una app que reconozca las emociones del usuario según sus expresiones faciales.</p>
+<p><b>EN</b>Machine learning models will train a model by feeding images of faces with various emotions labeled on them. So, whenever this app is used to determine the user's mood, it reads all fed data then determines any user's mood.</p>
+<p class="l"><b>Lectura</b>Mashín lérnin módels uil trein a módel bai fíding ímiches of féises wid vérios imóushons léibold on dem. Sou, juenéver dis ap is iúsd tu ditérmin da iúsers mud, it rids ol fed déita den ditérmins éni iúsers mud.</p>
+<p><b>ES</b>Los modelos se entrenan alimentándolos con imágenes de rostros con distintas emociones etiquetadas. Así, cada vez que la app se usa para determinar el estado de ánimo del usuario, lee todos los datos alimentados y luego determina el ánimo de cualquier usuario.</p>
+<p><b>EN</b>In simple words, we can say that a machine learning model is a simplified representation of something or a process. In this topic, we will discuss different machine learning models and their techniques and algorithms.</p>
+<p class="l"><b>Lectura</b>In símpol uérds, ui can sei dat a mashín lérnin módel is a símplifaid reprisentéishon of sámzin or a próses. In dis tópik, ui uil diskás dífrent mashín lérnin módels an der tekníks an álgoridms.</p>
+<p><b>ES</b>En palabras simples, un modelo de aprendizaje automático es una representación simplificada de algo o de un proceso. En este tema veremos distintos modelos de aprendizaje automático, con sus técnicas y algoritmos.</p>
+<p><b>EN</b>(Diagram) Input + Target → Machine Learning Algorithm → Prediction = Target</p>
+<p class="l"><b>Lectura</b>Ínput más Tárguet → Mashín lérnin álgoridm → Predíkshon igual Tárguet</p>
+<p><b>ES</b>Entrada + Objetivo → Algoritmo de aprendizaje automático → Predicción = Objetivo</p></section>
+
+<section><h2>Diapositiva 6 – 4. Types of Machine Learning Models</h2>
+<p><b>EN</b>Machine Learning → Supervised Learning (Model training with labelled data: Classification, Regression); Unsupervised Learning (Model training with unlabelled data: Clustering); Reinforcement Learning (Model take actions in the environment then received state updates and feedbacks: Environment, action, state, feedback, Model Agent).</p>
+<p class="l"><b>Lectura</b>Mashín lérnin → Siúpervaisd lérnin (Módel tréinin wid léibold déita: Clasifikéishon, Rigréshon); Anzsúpervaisd lérnin (…wid anléibold déita: Clásterin); Rinfórsment lérnin (Módel teik ákshons in di enváironment den risívd stéit apdéits an fídbacs: Enváironment, ákshon, stéit, fídbac, Módel Éiyent).</p>
+<p><b>ES</b>Aprendizaje automático → Supervisado (entrenamiento con datos etiquetados: clasificación, regresión); No supervisado (con datos sin etiquetar: agrupamiento); Por refuerzo (el modelo toma acciones en el entorno y recibe actualizaciones de estado y retroalimentación: entorno, acción, estado, retroalimentación, agente modelo).</p></section>
+
+<section><h2>Diapositiva 7 – 4.1. Supervised Learning</h2>
+<p><b>EN</b>Supervised Learning is the simplest machine learning model to understand in which input data is called training data and has a known label or result as an output. So, it works on the principle of input-output pairs. It requires creating a function that can be trained using a training data set, and then it is applied to unknown data and makes some predictive performance.</p>
+<p class="l"><b>Lectura</b>Siúpervaisd lérnin is da símplest mashín lérnin módel tu anderstánd in juich ínput déita is kold tréinin déita an jas a noun léibol or rizált as an áutput. Sou, it uorks on da prínsipol of ínput-áutput pérs. It rikuáirs kriéiting a fánkshon dat can bi tréind iúsing a tréinin déita set, an den it is aplaid tu annóun déita an meiks sam predíktiv perfórmans.</p>
+<p><b>ES</b>El aprendizaje supervisado es el modelo más simple de entender: los datos de entrada se llaman datos de entrenamiento y tienen una etiqueta o resultado conocido como salida. Funciona con el principio de pares entrada-salida. Requiere crear una función que se entrena con un conjunto de datos de entrenamiento y luego se aplica a datos desconocidos, logrando cierto desempeño predictivo.</p>
+<p><b>EN</b>Supervised learning is task-based and tested on labeled data sets. We can implement a supervised learning model on simple real-life problems. For example, we have a dataset consisting of age and height; then, we can build a supervised learning model to predict the person's height based on their age.</p>
+<p class="l"><b>Lectura</b>Siúpervaisd lérnin is task-beist an téstid on léibold déita sets. Ui can ímplement a siúpervaisd lérnin módel on símpol ríal-laif próblems. For egsámpol, ui jav a déitaset konsístin of eich an jait; den, ui can bild a siúpervaisd lérnin módel tu predíct da pérsons jait beist on der eich.</p>
+<p><b>ES</b>El aprendizaje supervisado se basa en tareas y se prueba con conjuntos de datos etiquetados. Se puede aplicar a problemas simples de la vida real. Por ejemplo, con un conjunto de datos de edad y estatura, podemos crear un modelo supervisado que prediga la estatura de una persona según su edad.</p></section>
+
+<section><h2>Diapositiva 8 – A. Regression</h2>
+<p><b>EN</b>Here, the output is continuous; there is no specific category. For example, what will be the temperature tomorrow?</p>
+<p class="l"><b>Lectura</b>Jíer, di áutput is kontínuiu; der is nou espesífik káteguori. For egsámpol, juat uil bi da témperacher tumórrou?</p>
+<p><b>ES</b>Aquí la salida es continua; no hay una categoría específica. Por ejemplo: ¿cuál será la temperatura mañana?</p>
+<p><b>EN</b>A human mind will think of the season and temperature of previous days and will predict some number. Some examples of these algorithms are Linear regression, gradient boosting, random forest, etc.</p>
+<p class="l"><b>Lectura</b>A hiúman maind uil zink of da sízon an témperacher of prívios déis an uil predíct sam námber. Sam egsámpols of dis álgoridms ar Línear rigréshon, gréidient bústin, rándom fórest, etcétera.</p>
+<p><b>ES</b>Una mente humana pensaría en la estación y en la temperatura de días anteriores y predeciría un número. Ejemplos de estos algoritmos: regresión lineal, gradient boosting, bosque aleatorio, etc.</p>
+<p><b>EN</b>Linear regression is the simplest machine learning model in which we try to predict one output variable using one or more input variables. The representation is a linear equation, which combines a set of input values(x) and predicted output(y).</p>
+<p class="l"><b>Lectura</b>Línear rigréshon is da símplest mashín lérnin módel in juich ui trai tu predíct juan áutput vériabol iúsing juan or mor ínput vériabols. Da reprisentéishon is a línear ikuéishon, juich kombáins a set of ínput váliues (ex) an predíctid áutput (uái).</p>
+<p><b>ES</b>La regresión lineal es el modelo más simple, en el que se intenta predecir una variable de salida usando una o más variables de entrada. Se representa con una ecuación lineal que combina un conjunto de valores de entrada (x) y la salida predicha (y).</p>
+<p><b>EN</b>(Graph) Data points – Line of Regression – Dependent Variable – Independent Variable</p>
+<p class="l"><b>Lectura</b>Déita points – Lain of rigréshon – Dipéndent vériabol – Indipéndent vériabol</p>
+<p><b>ES</b>Puntos de datos – Línea de regresión – Variable dependiente – Variable independiente</p></section>
+
+<section><h2>Diapositiva 9 – B. Classification</h2>
+<p><b>EN</b>Humans do make decision-based on classification; for example, Will this shirt look good on me or not? So here, the human mind will process some algorithm with previous experience (data), and then the output will be yes or no. In the same way, these classification algorithms will take some input data and based on this. It will predict yes or No. Some examples of these algorithms are Naïve Bayes, logistic regression, SVM, etc.</p>
+<p class="l"><b>Lectura</b>Hiúmans du meik disíshon-beist on clasifikéishon; for egsámpol, Uil dis shert luk gud on mi or not? Sou jíer, da hiúman maind uil próses sam álgoridm wid prívios ekspíriens (déita), an den di áutput uil bi iés or nou. In da seim uéi, dis clasifikéishon álgoridms uil teik sam ínput déita an beist on dis. It uil predíct iés or nou. Sam egsámpols of dis álgoridms ar Naíiv Béis, lochístik rigréshon, es-vi-em, etcétera.</p>
+<p><b>ES</b>Los humanos toman decisiones basadas en clasificación; por ejemplo: ¿Me quedará bien esta camisa o no? La mente humana procesa un algoritmo con experiencia previa (datos) y la salida es sí o no. Del mismo modo, los algoritmos de clasificación toman datos de entrada y, con base en ellos, predicen sí o no. Ejemplos: Naïve Bayes, regresión logística, SVM, etc.</p></section>
+
+<section><h2>Diapositiva 10 – B.1. Types of classification</h2>
+<p><b>EN</b>A classifier model is designed to classify the dataset into different categories, and each category is assigned a label. There are two types of classifications in machine learning:</p>
+<p class="l"><b>Lectura</b>A clásifaier módel is disáind tu clásifai da déitaset intu dífrent káteguoris, an ich káteguori is asáind a léibol. Der ar tu taips of clasifikéishons in mashín lérnin:</p>
+<p><b>ES</b>Un modelo clasificador se diseña para clasificar el conjunto de datos en distintas categorías, y a cada categoría se le asigna una etiqueta. Hay dos tipos de clasificación en aprendizaje automático:</p>
+<p><b>EN</b>Binary classification: If the problem has only two possible classes, called a binary classifier. For example, cat or dog, Yes or No.</p>
+<p class="l"><b>Lectura</b>Báinari clasifikéishon: If da próblem jas ónli tu pósibol clásis, kold a báinari clásifaier. For egsámpol, cat or dog, iés or nou.</p>
+<p><b>ES</b>Clasificación binaria: si el problema tiene solo dos clases posibles, se llama clasificador binario. Por ejemplo: gato o perro, sí o no.</p>
+<p><b>EN</b>Multi-class classification: If the problem has more than two possible classes, it is a multi-class classifier.</p>
+<p class="l"><b>Lectura</b>Málti-clas clasifikéishon: If da próblem jas mor dan tu pósibol clásis, it is a málti-clas clásifaier.</p>
+<p><b>ES</b>Clasificación multiclase: si el problema tiene más de dos clases posibles, es un clasificador multiclase.</p></section>
+
+<section><h2>Diapositiva 11 – 4.2. Unsupervised Learning</h2>
+<p><b>EN</b>Unsupervised Machine learning models implement the learning process opposite to supervised learning, because it enables the model to learn from the unlabeled training dataset. Based on the these, the model predicts the output. Using unsupervised learning, the model learns hidden patterns from the dataset by itself without any supervision.</p>
+<p class="l"><b>Lectura</b>Anzsúpervaisd mashín lérnin módels ímplement da lérnin próses ópozit tu siúpervaisd lérnin, bikós it enéibols da módel tu lern from di anléibold tréinin déitaset. Beist on dis, da módel predícts di áutput. Iúsing anzsúpervaisd lérnin, da módel lerns jíden pátrns from da déitaset bai itsélf uizáut éni siupervíshon.</p>
+<p><b>ES</b>Los modelos no supervisados implementan un proceso de aprendizaje opuesto al supervisado, pues permiten que el modelo aprenda de un conjunto de entrenamiento sin etiquetas. Con base en eso, el modelo predice la salida. Con aprendizaje no supervisado, el modelo aprende patrones ocultos del conjunto de datos por sí mismo, sin supervisión.</p>
+<p><b>EN</b>(Image) Input data – Machine Learning – Prediction: “Its an apple!” – Output data: Banana, Orange – Model – Unlabelled Data</p>
+<p class="l"><b>Lectura</b>Ínput déita – Mashín lérnin – Predíkshon: “Its an ápol!” – Áutput déita: Banána, Órinch – Módel – Anléibold déita</p>
+<p><b>ES</b>Datos de entrada – Aprendizaje automático – Predicción: “¡Es una manzana!” – Datos de salida: plátano, naranja – Modelo – Datos sin etiquetar</p></section>
+
+<section><h2>Diapositiva 12 – A. Clustering</h2>
+<p><b>EN</b>Clustering is an unsupervised learning technique that involves clustering or groping the data points into different clusters based on similarities and differences.</p>
+<p class="l"><b>Lectura</b>Clásterin is an anzsúpervaisd lérnin tecník dat inválvs clásterin or gróupin da déita points intu dífrent clásters beist on similáritis an dífrensis.</p>
+<p><b>ES</b>El agrupamiento (clustering) es una técnica de aprendizaje no supervisado que consiste en agrupar los puntos de datos en distintos grupos según similitudes y diferencias. (La fuente dice “groping”; debería ser “grouping”.)</p>
+<p><b>EN</b>The objects with the most similarities remain in the same group, and they have no or very few similarities from other groups.</p>
+<p class="l"><b>Lectura</b>Di ábyects wid da móust similáritis rimein in da seim grup, an dei jav nou or véri fiú similáritis from áder grups.</p>
+<p><b>ES</b>Los objetos con más similitudes permanecen en el mismo grupo y tienen pocas o ninguna similitud con otros grupos.</p>
+<p><b>EN</b>Clustering algorithms can be widely used in different tasks such as Image segmentation, Statistical data analysis, Market segmentation, etc. Some commonly used Clustering algorithms are K-means Clustering, hierarchal Clustering, DBSCAN, etc.</p>
+<p class="l"><b>Lectura</b>Clásterin álgoridms can bi uáidli iúsd in dífrent tasks sach as ímich segmentéishon, Estatístical déita análisis, Márket segmentéishon, etcétera. Sam kómonli iúsd clásterin álgoridms ar Kei-mins clásterin, jairárkical clásterin, di-bi-scan, etcétera.</p>
+<p><b>ES</b>Los algoritmos de agrupamiento se usan ampliamente en tareas como segmentación de imágenes, análisis estadístico de datos, segmentación de mercado, etc. Algunos comunes: K-means, agrupamiento jerárquico, DBSCAN, etc.</p>
+<p><b>EN</b>(Image) Clustering Patterns in the Data</p>
+<p class="l"><b>Lectura</b>Clásterin pátrns in da déita</p>
+<p><b>ES</b>Patrones de agrupamiento en los datos</p></section>
+
+<section><h2>Diapositiva 13 – 4.3. Reinforcement Learning</h2>
+<p><b>EN</b>In reinforcement learning, the algorithm learns actions for a given set of states that lead to a goal state. It is a feedback-based learning model that takes feedback signals after each state or action by interacting with the environment.</p>
+<p class="l"><b>Lectura</b>In rinfórsment lérnin, di álgoridm lerns ákshons for a guíven set of stéits dat lid tu a goul stéit. It is a fídbac-beist lérnin módel dat teiks fídbac sígnals áfter ich stéit or ákshon bai interáctin wid di enváironment.</p>
+<p><b>ES</b>En el aprendizaje por refuerzo, el algoritmo aprende acciones, para un conjunto dado de estados, que llevan a un estado objetivo. Es un modelo basado en retroalimentación que recibe señales después de cada estado o acción al interactuar con el entorno.</p>
+<p><b>EN</b>This feedback works as a reward (positive for each good action and negative for each bad action), and the agent's goal is to maximize the positive rewards to improve their performance. The behavior of this model is similar to human learning.</p>
+<p class="l"><b>Lectura</b>Dis fídbac uorks as a riuórd (pósitiv for ich gud ákshon an négativ for ich bad ákshon), an di éiyents goul is tu máksimais da pósitiv riuórds tu imprúv der perfórmans. Da bihéivior of dis módel is símilar tu hiúman lérnin.</p>
+<p><b>ES</b>Esa retroalimentación funciona como recompensa (positiva por cada buena acción y negativa por cada mala), y el objetivo del agente es maximizar las recompensas positivas para mejorar su desempeño. El comportamiento de este modelo es similar al aprendizaje humano.</p>
+<p><b>EN</b>(Images) Action – Agent – Environment – State, Reward / Reinforcement Learning in ML: Input Raw Data, Environment, Output, Reward, State, Agent, Best Action, Selection of Algorithm</p>
+<p class="l"><b>Lectura</b>Ákshon – Éiyent – Enváironment – Stéit, Riuórd / … Ínput ro déita, Enváironment, Áutput, Riuórd, Stéit, Éiyent, Best ákshon, Selékshon of álgoridm</p>
+<p><b>ES</b>Acción – Agente – Entorno – Estado, recompensa / Aprendizaje por refuerzo en ML: datos brutos de entrada, entorno, salida, recompensa, estado, agente, mejor acción, selección del algoritmo</p></section>
+
+<section><h2>Diapositiva 14 – A. Popular algorithms in reinforcement learning</h2>
+<p><b>EN</b>Some popular algorithms that come under reinforcement learning.</p>
+<p class="l"><b>Lectura</b>Sam pópiular álgoridms dat cam ánder rinfórsment lérnin.</p>
+<p><b>ES</b>Algunos algoritmos populares del aprendizaje por refuerzo.</p>
+<p><b>EN</b>Q-learning: Q-learning is one of the popular model-free algorithms of reinforcement learning, which is based on the Bellman equation.</p>
+<p class="l"><b>Lectura</b>Kiu-lérnin: Kiu-lérnin is juan of da pópiular módel-fri álgoridms of rinfórsment lérnin, juich is beist on da Bélman ikuéishon.</p>
+<p><b>ES</b>Q-learning: es uno de los algoritmos libres de modelo más populares del aprendizaje por refuerzo y se basa en la ecuación de Bellman.</p>
+<p><b>EN</b>State-Action-Reward-State-Action (SARSA): SARSA is an On-policy algorithm based on the Markov decision process. It uses the action performed by the current policy to learn the Q-value.</p>
+<p class="l"><b>Lectura</b>Stéit-Ákshon-Riuórd-Stéit-Ákshon (SÁRSA): Sársa is an on-pólisi álgoridm beist on da Márkov disíshon próses. It iúses di ákshon perfórmd bai da kérent pólisi tu lern da Kiu-váliu.</p>
+<p><b>ES</b>Estado-Acción-Recompensa-Estado-Acción (SARSA): es un algoritmo “on-policy” basado en el proceso de decisión de Markov. Usa la acción realizada por la política actual para aprender el valor Q.</p>
+<p><b>EN</b>Deep Q Neural network is Q-learning within the neural network. It is basically employed in a big state space environment where defining a Q-table would be a complex task.</p>
+<p class="l"><b>Lectura</b>Dip Kiu Niúral nétwork is Kiu-lérnin uizín da niúral nétwork. It is béisikali emplóid in a big stéit speis enváironment juer difáining a Kiu-téibol wud bi a kómpleks task.</p>
+<p><b>ES</b>La red neuronal Deep Q es Q-learning dentro de una red neuronal. Se usa básicamente en entornos con un espacio de estados grande, donde definir una tabla Q sería una tarea compleja.</p></section>
+
+<section><h2>Diapositiva 15 – 5. How to choose the best model?</h2>
+<p><b>EN</b>In the above section, we have discussed different machine learning models and algorithms. But one most confusing question that may arise to any beginner that "which model should I choose?". So, the answer is that it depends mainly on the business requirement or project requirement. Apart from this, it also depends on associated attributes, the volume of the available dataset, the number of features, complexity, etc. However, in practice, it is recommended that we always start with the simplest model that can be applied to the particular problem and then gradually enhance the complexity &amp; test the accuracy with the help of parameter tuning and cross-validation.</p>
+<p class="l"><b>Lectura</b>In di abóv sékshon, ui jav diskásd dífrent mashín lérnin módels an álgoridms. Bat juan móust konfiúsin kuéschon dat mei arás tu éni bigíner dat "juich módel shud ai chus?". Sou, di ánser is dat it dipénds méinli on da bísnes rikuáirment or próyect rikuáirment. Apárt from dis, it ólsou dipénds on asóushieitid átributs, da vóliun of di aveilabol déitaset, da námber of fíchers, kompléksiti, etcétera. Jauéver, in práktis, it is rekoméndid dat ui ólueis start wid da símplest módel dat can bi aplaid tu da partíkiular próblem an den grádiuali enjáns da kompléksiti an test di ákiurasi wid da jelp of parámeter túnin an cros-validéishon.</p>
+<p><b>ES</b>En la sección anterior vimos distintos modelos y algoritmos. Pero una pregunta muy confusa para cualquier principiante es: “¿qué modelo debo elegir?”. La respuesta es que depende principalmente del requisito del negocio o del proyecto. Además, depende de atributos asociados, el volumen del conjunto de datos disponible, el número de características, la complejidad, etc. Sin embargo, en la práctica se recomienda empezar siempre con el modelo más simple aplicable al problema y luego aumentar gradualmente la complejidad y probar la precisión con ayuda del ajuste de parámetros y la validación cruzada.</p></section>
+
+<section><h2>Diapositiva 16 – 6. Training Machine Learning Model</h2>
+<p><b>EN</b>Once the Machine learning model is built, it is trained in order to get the appropriate results. To train a machine learning model, one needs a huge amount of pre-processed data. Here pre-processed data means data in structured form with reduced null values, etc. If we do not provide pre-processed data, then there are huge chances that our model may perform terribly.</p>
+<p class="l"><b>Lectura</b>Uans da mashín lérnin módel is bilt, it is tréind in órder tu guet di aprópriet rizálts. Tu trein a mashín lérnin módel, uan nids a hiúch amáunt of pri-prósesd déita. Jíer pri-prósesd déita mins déita in strákchurd form wid ridúsd nal váliuis, etcétera. If ui du not provaid pri-prósesd déita, den der ar hiúch chánsis dat áur módel mei perfórm térribli.</p>
+<p><b>ES</b>Una vez construido el modelo, se entrena para obtener resultados adecuados. Para entrenarlo se necesita una gran cantidad de datos preprocesados, es decir, datos en forma estructurada con valores nulos reducidos, etc. Si no proporcionamos datos preprocesados, hay muchas probabilidades de que el modelo funcione muy mal.</p>
+<p><b>EN</b>(Diagram) Training Data – Train the Machine Learning Algorithm – Model – Evaluate – Input Data – Machine Learning Algorithm – Prediction; User / Cloud Vendor</p>
+<p class="l"><b>Lectura</b>Tréinin déita – Trein da mashín lérnin álgoridm – Módel – Ivályueit – Ínput déita – Mashín lérnin álgoridm – Predíkshon; Iúser / Cláud vendor</p>
+<p><b>ES</b>Datos de entrenamiento – Entrenar el algoritmo – Modelo – Evaluar – Datos de entrada – Algoritmo de aprendizaje automático – Predicción; Usuario / Proveedor en la nube</p></section>
+
+<section><h2>Diapositiva 17 – 7. Conclusions</h2>
+<p><b>EN</b>Since the development of complex Artificial intelligence, Algorithms, it has been able to accomplish this by creating machines and robots that are applied in a wide range of fields.</p>
+<p class="l"><b>Lectura</b>Sins da divélopment of kómpleks artifíshal intélichens, álgoridms, it jas bin éibol tu akómplish dis bai kriéitin mashínz an róbots dat ar aplaid in a uaid reinch of fíelds.</p>
+<p><b>ES</b>Desde el desarrollo de algoritmos complejos de inteligencia artificial, esta ha logrado esto creando máquinas y robots aplicados en una amplia gama de campos.</p>
+<p><b>EN</b>Machine Learning is a sub-field of Artificial Intelligence, where we try to bring AI into the equation by learning the input data.</p>
+<p class="l"><b>Lectura</b>Mashín lérnin is a sab-fíeld of artifíshal intélichens, juer ui trai tu brin ei-ái intu di ikuéishon bai lérnin di ínput déita.</p>
+<p><b>ES</b>El aprendizaje automático es un subcampo de la inteligencia artificial, donde intentamos incorporar la IA a la ecuación aprendiendo de los datos de entrada.</p>
+<p><b>EN</b>All machine learning models are categorized as either supervised or unsupervised.</p>
+<p class="l"><b>Lectura</b>Ol mashín lérnin módels ar kátegoraisd as áider siúpervaisd or anzsúpervaisd.</p>
+<p><b>ES</b>Todos los modelos de aprendizaje automático se clasifican como supervisados o no supervisados.</p>
+<p><b>EN</b>Supervised learning is a machine learning approach that’s defined by its use of labeled datasets.</p>
+<p class="l"><b>Lectura</b>Siúpervaisd lérnin is a mashín lérnin apróuch dats difáind bai its ius of léibold déitasets.</p>
+<p><b>ES</b>El aprendizaje supervisado es un enfoque de aprendizaje automático que se define por el uso de conjuntos de datos etiquetados.</p>
+<p><b>EN</b>In unsupervised learning, the algorithm doesn’t have correct answers or any answers at all, it is up to the algorithms discretion to bring together similar data and understand it.</p>
+<p class="l"><b>Lectura</b>In anzsúpervaisd lérnin, di álgoridm dásnt jav korréct ánsers or éni ánsers at ol, it is ap tu di álgoridms diskréshon tu brin tuguéder símilar déita an anderstánd it.</p>
+<p><b>ES</b>En el aprendizaje no supervisado, el algoritmo no tiene respuestas correctas ni respuesta alguna; queda a discreción del algoritmo agrupar datos similares y comprenderlos.</p></section>
+
+</body>
+</html>
