@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Perfil T-Shaped · Ingeniería de Software</title>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Fira+Code:wght@400;500;700&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --bg-dark: #0f172a;
+    --bg-slide: #f8fafc;
+    --text-main: #1e293b;
+    --text-muted: #475569;
+
+    --c-blue: #3b82f6;
+    --c-blue-bg: #eff6ff;
+    --c-green: #22c55e;
+    --c-green-bg: #f0fdf4;
+    --c-purple: #a855f7;
+    --c-purple-bg: #faf5ff;
+    --c-orange: #f97316;
+    --c-orange-bg: #fff7ed;
+    --c-red: #ef4444;
+    --c-red-bg: #fef2f2;
+    --c-cyan: #06b6d4;
+    --c-cyan-bg: #ecfeff;
+
+    --code-bg: #1e293b;
+    --code-text: #e2e8f0;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html, body {
+    height: 100%;
+    width: 100%;
+    font-family: 'Inter', system-ui, sans-serif;
+    background: var(--bg-dark);
+    color: var(--text-main);
+    overflow: hidden;
+  }
+
+  .deck {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .slide {
+    position: absolute;
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+    background: var(--bg-slide);
+    padding: clamp(1rem, 2.5vw, 2.5rem) clamp(1.2rem, 4vw, 4rem);
+    opacity: 0;
+    transform: translateY(30px) scale(0.98);
+    pointer-events: none;
+    transition: opacity 0.5s ease, transform 0.5s cubic-bezier(.2,.8,.2,1);
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .slide.active {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    pointer-events: auto;
+    z-index: 2;
+  }
+
+  .slide::-webkit-scrollbar { width: 8px; }
+  .slide::-webkit-scrollbar-thumb { background: rgba(148,163,184,0.4); border-radius: 8px; }
+
+  .content {
+    width: 100%;
+    max-width: 1500px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ===== TÍTULOS ===== */
+  .slide-title {
+    font-size: clamp(1.6rem, 3vw, 2.8rem);
+    font-weight: 900;
+    letter-spacing: -0.02em;
+    line-height: 1.05;
+    margin-bottom: clamp(0.8rem, 1.8vh, 1.5rem);
+    padding-bottom: clamp(0.4rem, 1vh, 0.8rem);
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    animation: fadeDown 0.6s ease both;
+  }
+
+  .slide-title i { font-size: 1em; flex-shrink: 0; }
+
+  .title-blue { color: var(--c-blue); border-bottom: 4px solid var(--c-blue); }
+  .title-green { color: var(--c-green); border-bottom: 4px solid var(--c-green); }
+  .title-purple { color: var(--c-purple); border-bottom: 4px solid var(--c-purple); }
+  .title-orange { color: var(--c-orange); border-bottom: 4px solid var(--c-orange); }
+  .title-red { color: var(--c-red); border-bottom: 4px solid var(--c-red); }
+  .title-cyan { color: var(--c-cyan); border-bottom: 4px solid var(--c-cyan); }
+
+  @keyframes fadeDown {
+    from { opacity: 0; transform: translateY(-15px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ===== TEXTO ===== */
+  p {
+    font-size: clamp(1rem, 1.35vw, 1.3rem);
+    line-height: 1.55;
+    color: var(--text-muted);
+    margin-bottom: 0.7rem;
+  }
+
+  strong { color: var(--text-main); font-weight: 800; }
+  code {
+    background: #e2e8f0;
+    padding: 0.1rem 0.35rem;
+    border-radius: 0.3rem;
+    font-family: 'Fira Code', monospace;
+    font-size: 0.88em;
+    color: #0f172a;
+    font-weight: 700;
+  }
+
+  /* ===== TARJETAS ===== */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 0.9rem;
+    margin-top: 0.8rem;
+  }
+
+  .card {
+    background: #ffffff;
+    border-radius: 1rem;
+    padding: 1.1rem 1.2rem;
+    box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05), 0 0 0 1px rgba(0,0,0,0.03);
+    transition: transform 0.3s ease;
+    animation: fadeUp 0.7s ease both;
+  }
+
+  .card:hover { transform: translateY(-4px); }
+  .card:nth-child(2) { animation-delay: 0.08s; }
+  .card:nth-child(3) { animation-delay: 0.16s; }
+  .card:nth-child(4) { animation-delay: 0.24s; }
+
+  .card-icon { font-size: 1.9rem; margin-bottom: 0.5rem; display: block; }
+  .card h3 { font-size: 1.1rem; margin-bottom: 0.35rem; color: var(--text-main); font-weight: 800; }
+  .card p { font-size: 0.92rem; margin-bottom: 0; line-height: 1.45; }
+
+  .card-blue { border-top: 4px solid var(--c-blue); }
+  .card-blue .card-icon { color: var(--c-blue); }
+  .card-green { border-top: 4px solid var(--c-green); }
+  .card-green .card-icon { color: var(--c-green); }
+  .card-purple { border-top: 4px solid var(--c-purple); }
+  .card-purple .card-icon { color: var(--c-purple); }
+  .card-orange { border-top: 4px solid var(--c-orange); }
+  .card-orange .card-icon { color: var(--c-orange); }
+  .card-red { border-top: 4px solid var(--c-red); }
+  .card-red .card-icon { color: var(--c-red); }
+  .card-cyan { border-top: 4px solid var(--c-cyan); }
+  .card-cyan .card-icon { color: var(--c-cyan); }
+
+  /* ===== LISTAS ===== */
+  .list { list-style: none; margin: 0.5rem 0; }
+  .list li {
+    display: flex; gap: 0.8rem; align-items: flex-start;
+    padding: 0.6rem 0; border-bottom: 1px dashed #e2e8f0;
+    font-size: clamp(0.95rem, 1.15vw, 1.2rem); line-height: 1.5; color: var(--text-muted);
+  }
+  .list li:last-child { border-bottom: none; }
+  .list li i { font-size: 1.25rem; flex-shrink: 0; margin-top: 0.15rem; }
+
+  /* ===== TABLA COMPARATIVA ===== */
+  .compare-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    margin: 0.8rem 0;
+    background: white;
+    border-radius: 1rem;
+    overflow: hidden;
+    box-shadow: 0 10px 25px -5px rgba(0,0,0,0.08);
+    font-size: clamp(0.9rem, 1.15vw, 1.15rem);
+  }
+  .compare-table th {
+    padding: 0.9rem 1rem;
+    font-weight: 900;
+    text-align: left;
+    font-size: clamp(0.95rem, 1.2vw, 1.2rem);
+    color: white;
+  }
+  .compare-table th.i-shape { background: var(--c-red); }
+  .compare-table th.t-shape { background: var(--c-green); }
+  .compare-table td {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid #f1f5f9;
+    color: var(--text-muted);
+    line-height: 1.45;
+  }
+  .compare-table tr:last-child td { border-bottom: none; }
+  .compare-table tr:nth-child(even) td { background: #f8fafc; }
+  .compare-table td strong { color: var(--text-main); }
+
+  /* ===== AUTORES ===== */
+  .authors { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.6rem; margin-top: 1.2rem; }
+  .author-badge {
+    background: white; border: 2px solid #e2e8f0; padding: 0.45rem 0.95rem;
+    border-radius: 2rem; font-weight: 700; font-size: 0.85rem;
+    color: var(--text-muted); display: flex; align-items: center; gap: 0.4rem;
+  }
+
+  /* ===== CONTROLES ===== */
+  .controls {
+    position: fixed; bottom: 0.8rem; left: 50%; transform: translateX(-50%);
+    display: flex; align-items: center; gap: 0.8rem;
+    background: rgba(15, 23, 42, 0.92); backdrop-filter: blur(10px);
+    padding: 0.4rem 0.9rem; border-radius: 3rem;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3); z-index: 50;
+  }
+  .controls button {
+    background: rgba(255,255,255,0.1); color: white; border: none;
+    width: 2.4rem; height: 2.4rem; border-radius: 50%;
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+    font-size: 1rem; transition: all 0.2s ease;
+  }
+  .controls button:hover:not(:disabled) { background: var(--c-blue); transform: scale(1.1); }
+  .controls button:disabled { opacity: 0.3; cursor: not-allowed; }
+  .counter { color: #94a3b8; font-family: 'Fira Code', monospace; font-weight: 700; font-size: 0.85rem; min-width: 55px; text-align: center; }
+
+  .progress { position: fixed; top: 0; left: 0; width: 100%; height: 4px; background: rgba(255,255,255,0.1); z-index: 100; }
+  .progress .bar { height: 100%; width: 0%; background: linear-gradient(90deg, var(--c-blue), var(--c-green), var(--c-purple), var(--c-orange), var(--c-cyan)); transition: width 0.4s ease; }
+
+  /* ===== PORTADA ===== */
+  .cover {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    text-align: center; height: 100%; background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    color: white; padding: 2rem;
+  }
+  .cover .big-ico { font-size: 4.5rem; color: #e2e8f0; margin-bottom: 0.8rem; animation: float 3s ease-in-out infinite; }
+  @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
+  .cover h1 { font-size: clamp(2rem, 4vw, 3.4rem); font-weight: 900; margin-bottom: 0.8rem; background: linear-gradient(to right, #60a5fa, #a78bfa, #f472b6); -webkit-background-clip: text; background-clip: text; color: transparent; line-height: 1.15; }
+  .cover p { color: #94a3b8; font-size: clamp(1rem, 1.4vw, 1.2rem); max-width: 780px; }
+  .subtitle-pills { display: flex; gap: 0.7rem; margin-top: 1.5rem; flex-wrap: wrap; justify-content: center; }
+  .subtitle-pills span { background: rgba(255,255,255,0.1); padding: 0.35rem 0.9rem; border-radius: 2rem; font-size: 0.85rem; color: #e2e8f0; border: 1px solid rgba(255,255,255,0.2); font-weight: 600; }
+
+  /* ===== DIAGRAMA T-SHAPED ===== */
+  .t-diagram {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 0.8rem 0;
+  }
+  .t-horizontal {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    background: linear-gradient(135deg, #ecfdf5, #d1fae5);
+    border: 3px solid var(--c-green);
+    border-radius: 1rem;
+    padding: 0.7rem 1rem;
+    width: 100%;
+    max-width: 950px;
+  }
+  .t-horizontal .t-item {
+    display: flex; flex-direction: column; align-items: center;
+    gap: 0.2rem; flex: 1; min-width: 85px;
+    text-align: center;
+  }
+  .t-horizontal .t-item i { font-size: 1.6rem; color: var(--c-green); }
+  .t-horizontal .t-item span { font-size: 0.78rem; font-weight: 700; color: #065f46; line-height: 1.2; }
+  .t-vertical {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.4rem;
+    background: linear-gradient(180deg, #eff6ff, #dbeafe);
+    border: 3px solid var(--c-blue);
+    border-radius: 0 0 1rem 1rem;
+    padding: 0.8rem 1.2rem;
+    margin-top: -3px;
+    width: 100%;
+    max-width: 300px;
+  }
+  .t-vertical .t-item {
+    display: flex; align-items: center; gap: 0.6rem;
+    width: 100%; justify-content: center;
+  }
+  .t-vertical .t-item i { font-size: 1.4rem; color: var(--c-blue); }
+  .t-vertical .t-item span { font-size: 0.85rem; font-weight: 700; color: #1e3a8a; }
+
+  .t-legend {
+    display: flex; gap: 1.2rem; justify-content: center; margin-top: 0.8rem;
+    flex-wrap: wrap;
+  }
+  .t-legend span {
+    display: inline-flex; align-items: center; gap: 0.4rem;
+    font-size: 0.9rem; font-weight: 700; color: var(--text-muted);
+  }
+  .t-legend .dot { width: 0.8rem; height: 0.8rem; border-radius: 50%; }
+
+  /* ===== FLUJO ===== */
+  .flow-container { display: flex; flex-direction: column; gap: 0.7rem; margin-top: 0.6rem; }
+  .flow-step {
+    display: flex; align-items: center; gap: 0.9rem;
+    background: white; padding: 0.8rem 1rem;
+    border-radius: 0.8rem; border-left: 6px solid var(--c-cyan);
+    box-shadow: 0 4px 15px -3px rgba(0,0,0,0.05);
+  }
+  .flow-num {
+    width: 2.4rem; height: 2.4rem; background: var(--c-cyan); color: white;
+    border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    font-size: 1.1rem; font-weight: 900; flex-shrink: 0;
+  }
+  .flow-content { flex: 1; }
+  .flow-content h4 { font-size: 1rem; color: var(--text-main); margin-bottom: 0.1rem; font-weight: 800; }
+  .flow-content p { margin: 0; font-size: 0.9rem; line-height: 1.4; }
+  .flow-icon { font-size: 1.8rem; color: var(--c-cyan); }
+
+  /* ===== CALLOUT ===== */
+  .callout {
+    margin-top: 0.8rem;
+    background: white;
+    padding: 0.9rem 1.1rem;
+    border-radius: 0.9rem;
+    border-left: 6px solid var(--c-cyan);
+    box-shadow: 0 6px 20px -5px rgba(0,0,0,0.08);
+  }
+  .callout p { margin: 0; font-size: clamp(0.95rem, 1.1vw, 1.1rem); }
+
+  /* ===== SKILL CARDS ===== */
+  .skill-section-title {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: clamp(1rem, 1.3vw, 1.25rem);
+    font-weight: 800;
+    margin-bottom: 0.5rem;
+    margin-top: 0.6rem;
+  }
+  .skill-section-title i { font-size: 1.3rem; }
+
+  .skill-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  .skill-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    background: white;
+    border: 2px solid #e2e8f0;
+    padding: 0.4rem 0.85rem;
+    border-radius: 2rem;
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: var(--text-main);
+    box-shadow: 0 3px 8px -2px rgba(0,0,0,0.05);
+    transition: all 0.2s;
+  }
+  .skill-tag i { font-size: 1rem; }
+  .skill-tag.hard { border-color: var(--c-blue); }
+  .skill-tag.hard i { color: var(--c-blue); }
+  .skill-tag.soft { border-color: var(--c-green); }
+  .skill-tag.soft i { color: var(--c-green); }
+
+  /* ===== HABILIDADES SIN DESCRIPCIÓN (slide 3 y 4) ===== */
+  .skill-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 0.7rem;
+    margin-top: 0.6rem;
+  }
+  .skill-card {
+    background: white;
+    border-radius: 0.9rem;
+    padding: 0.9rem 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    box-shadow: 0 6px 18px -5px rgba(0,0,0,0.06), 0 0 0 1px rgba(0,0,0,0.03);
+    transition: transform 0.25s ease;
+    animation: fadeUp 0.6s ease both;
+  }
+  .skill-card:hover { transform: translateY(-3px); }
+  .skill-card i { font-size: 1.6rem; flex-shrink: 0; }
+  .skill-card span {
+    font-size: clamp(0.9rem, 1.1vw, 1.05rem);
+    font-weight: 700;
+    color: var(--text-main);
+    line-height: 1.3;
+  }
+  .skill-card.blue i { color: var(--c-blue); }
+  .skill-card.green i { color: var(--c-green); }
+
+  .info-box {
+    background: white;
+    border-radius: 0.9rem;
+    padding: 0.9rem 1.1rem;
+    margin-top: 0.8rem;
+    box-shadow: 0 6px 18px -5px rgba(0,0,0,0.06), 0 0 0 1px rgba(0,0,0,0.03);
+    border-left: 5px solid var(--c-green);
+  }
+  .info-box h4 {
+    font-size: clamp(1rem, 1.2vw, 1.15rem);
+    font-weight: 800;
+    color: var(--text-main);
+    margin-bottom: 0.4rem;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+  .info-box p {
+    margin: 0;
+    font-size: clamp(0.9rem, 1.05vw, 1.05rem);
+    line-height: 1.5;
+  }
+
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-top: 0.6rem;
+  }
+
+  @media (max-width: 768px) {
+    .two-col { grid-template-columns: 1fr; }
+    .flow-step { flex-direction: column; text-align: center; }
+    .t-horizontal { flex-direction: column; }
+    .t-vertical { max-width: 100%; }
+    .skill-grid { grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); }
+  }
+</style>
+</head>
+<body>
+
+<div class="progress"><div class="bar" id="bar"></div></div>
+
+<main class="deck" id="deck">
+
+  <!-- 1 · PORTADA -->
+  <section class="slide active cover">
+    <div class="big-ico"><i class="bi bi-diagram-3-fill"></i></div>
+    <h1>Perfil T-Shaped<br>en Ingeniería de Software</h1>
+    <p>La combinación perfecta entre <strong style="color:#fff;">habilidades técnicas profundas</strong> y <strong style="color:#fff;">habilidades blandas</strong> para integrarte en todo el ciclo de vida del producto.</p>
+
+    <div class="authors">
+      <span class="author-badge" style="background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.2); color: #e2e8f0;"><i class="bi bi-person-fill"></i> Bancayán Valera Kevin Roger</span>
+      <span class="author-badge" style="background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.2); color: #e2e8f0;"><i class="bi bi-person-fill"></i> Marcelo Chapoñan Gerald Fernando</span>
+      <span class="author-badge" style="background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.2); color: #e2e8f0;"><i class="bi bi-person-fill"></i> Valdera Soto Joel Alberto</span>
+    </div>
+
+    <div class="subtitle-pills">
+      <span><i class="bi bi-code-slash"></i> Habilidades técnicas</span>
+      <span><i class="bi bi-people"></i> Habilidades blandas</span>
+      <span><i class="bi bi-shield-check"></i> Ética</span>
+    </div>
+  </section>
+
+  <!-- 2 · ¿QUÉ ES? (AZUL) - MÁS INFORMACIÓN -->
+  <section class="slide" style="background: var(--c-blue-bg);">
+    <div class="content">
+      <h2 class="slide-title title-blue"><i class="bi bi-1-circle-fill"></i> ¿Qué es el perfil T-Shaped?</h2>
+
+      <p style="max-width: 1200px;">
+        Es un modelo de competencias que describe al profesional ideal: alguien que combina <strong>habilidades técnicas profundas</strong> en un área específica (la barra vertical de la T) con <strong>habilidades blandas y de colaboración</strong> que le permiten integrarse en todo el ciclo de vida del software (la barra horizontal).
+      </p>
+
+      <p style="max-width: 1200px;">
+        La barra vertical representa el <strong>conocimiento especializado</strong> que te da autoridad técnica. La barra horizontal representa la <strong>capacidad de comunicarte y colaborar</strong> con otras áreas. Sin la primera, no hay profundidad; sin la segunda, no hay integración.
+      </p>
+
+      <div class="t-diagram">
+        <div class="t-horizontal">
+          <div class="t-item"><i class="bi bi-chat-dots"></i><span>Comunicación</span></div>
+          <div class="t-item"><i class="bi bi-people"></i><span>Trabajo en equipo</span></div>
+          <div class="t-item"><i class="bi bi-diagram-2"></i><span>Pensamiento sistémico</span></div>
+          <div class="t-item"><i class="bi bi-check2-square"></i><span>Aseguramiento de calidad</span></div>
+          <div class="t-item"><i class="bi bi-gear-wide-connected"></i><span>Despliegue continuo</span></div>
+          <div class="t-item"><i class="bi bi-kanban"></i><span>Metodologías ágiles</span></div>
+          <div class="t-item"><i class="bi bi-file-text"></i><span>Documentación</span></div>
+          <div class="t-item"><i class="bi bi-shield-check"></i><span>Ética</span></div>
+        </div>
+        <div class="t-vertical">
+          <div class="t-item"><i class="bi bi-code-slash"></i><span>Desarrollo web</span></div>
+          <div class="t-item"><i class="bi bi-database"></i><span>Bases de datos</span></div>
+          <div class="t-item"><i class="bi bi-cloud"></i><span>Computación en la nube</span></div>
+          <div class="t-item"><i class="bi bi-cpu"></i><span>Inteligencia artificial</span></div>
+        </div>
+      </div>
+
+      <div class="t-legend">
+        <span><span class="dot" style="background: var(--c-blue);"></span> Vertical: habilidades técnicas (hard skills)</span>
+        <span><span class="dot" style="background: var(--c-green);"></span> Horizontal: habilidades blandas (soft skills)</span>
+      </div>
+
+      <div class="callout" style="border-left-color: var(--c-blue); margin-top: 1rem;">
+        <p><i class="bi bi-info-circle-fill" style="color: var(--c-blue);"></i> <strong>Origen del modelo:</strong> fue popularizado por consultoras como McKinsey para describir a profesionales que no solo dominan su especialidad, sino que también pueden colaborar eficazmente en equipos multidisciplinarios. Hoy es un estándar en la industria tecnológica.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3 · BARRA VERTICAL: HABILIDADES TÉCNICAS (VERDE) - MÁS INFORMACIÓN, SIN DESCRIPCIÓN EN TARJETAS -->
+  <section class="slide" style="background: var(--c-green-bg);">
+    <div class="content">
+      <h2 class="slide-title title-green"><i class="bi bi-2-circle-fill"></i> Barra Vertical: Habilidades Técnicas</h2>
+
+      <p style="max-width: 1200px;">
+        Son los <strong>conocimientos profundos y especializados</strong> en un área del desarrollo. Esta barra es la que te da <strong>autoridad técnica</strong> y la capacidad de resolver problemas complejos. Sin ella, el profesional carece de un ancla real de conocimiento.
+      </p>
+
+      <div class="skill-grid">
+        <div class="skill-card green"><i class="bi bi-server"></i><span>Desarrollo del lado del servidor</span></div>
+        <div class="skill-card green"><i class="bi bi-window"></i><span>Desarrollo del lado del cliente</span></div>
+        <div class="skill-card green"><i class="bi bi-cloud-arrow-up"></i><span>Computación en la nube</span></div>
+        <div class="skill-card green"><i class="bi bi-graph-up-arrow"></i><span>Datos e inteligencia artificial</span></div>
+        <div class="skill-card green"><i class="bi bi-shield-lock"></i><span>Seguridad informática</span></div>
+        <div class="skill-card green"><i class="bi bi-phone"></i><span>Desarrollo móvil</span></div>
+        <div class="skill-card green"><i class="bi bi-diagram-3"></i><span>Arquitectura de software</span></div>
+        <div class="skill-card green"><i class="bi bi-terminal"></i><span>Automatización y pruebas</span></div>
+      </div>
+
+      <div class="two-col" style="margin-top: 1rem;">
+        <div class="info-box" style="border-left-color: var(--c-green);">
+          <h4><i class="bi bi-lightbulb-fill" style="color: var(--c-green);"></i> ¿Cómo se desarrolla?</h4>
+          <p>Se construye con formación académica sólida, práctica constante en proyectos reales, estudio de nuevas tecnologías y experiencia acumulada en el tiempo. Es un proceso continuo de aprendizaje.</p>
+        </div>
+        <div class="info-box" style="border-left-color: var(--c-green);">
+          <h4><i class="bi bi-exclamation-triangle-fill" style="color: var(--c-green);"></i> ¿Por qué es importante?</h4>
+          <p>Sin profundidad técnica no hay código de calidad, no hay capacidad de resolver problemas complejos y no hay autoridad profesional. Es el fundamento sobre el que se construye todo lo demás.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4 · BARRA HORIZONTAL: HABILIDADES BLANDAS (PÚRPURA) - TARJETAS SIN DESCRIPCIÓN, MÁS INFORMACIÓN -->
+  <section class="slide" style="background: var(--c-purple-bg);">
+    <div class="content">
+      <h2 class="slide-title title-purple"><i class="bi bi-3-circle-fill"></i> Barra Horizontal: Habilidades Blandas</h2>
+
+      <p style="max-width: 1200px;">
+        Son las <strong>habilidades de comunicación, colaboración y visión global</strong> que te permiten moverte por todo el ciclo de vida del software. No se espera que seas experto en todo, sino que tu especialidad no viva aislada del producto.
+      </p>
+
+      <div class="skill-grid">
+        <div class="skill-card blue"><i class="bi bi-chat-dots-fill"></i><span>Comunicación con el cliente y el equipo</span></div>
+        <div class="skill-card blue"><i class="bi bi-check2-square"></i><span>Colaboración con el equipo de calidad</span></div>
+        <div class="skill-card blue"><i class="bi bi-diagram-2-fill"></i><span>Pensamiento sistémico</span></div>
+        <div class="skill-card blue"><i class="bi bi-gear-wide-connected"></i><span>Despliegue y operaciones</span></div>
+        <div class="skill-card blue"><i class="bi bi-kanban-fill"></i><span>Metodologías ágiles</span></div>
+        <div class="skill-card blue"><i class="bi bi-file-text-fill"></i><span>Documentación clara</span></div>
+        <div class="skill-card blue"><i class="bi bi-shield-check"></i><span>Conciencia ética y de seguridad</span></div>
+        <div class="skill-card blue"><i class="bi bi-people-fill"></i><span>Empatía y escucha activa</span></div>
+      </div>
+
+      <div class="two-col" style="margin-top: 1rem;">
+        <div class="info-box" style="border-left-color: var(--c-purple);">
+          <h4><i class="bi bi-lightbulb-fill" style="color: var(--c-purple);"></i> ¿Cómo se desarrolla?</h4>
+          <p>Se fortalece con la experiencia en equipos multidisciplinarios, la práctica de la comunicación clara, la participación en revisiones de código, la documentación de decisiones y la exposición a proyectos reales con clientes.</p>
+        </div>
+        <div class="info-box" style="border-left-color: var(--c-purple);">
+          <h4><i class="bi bi-exclamation-triangle-fill" style="color: var(--c-purple);"></i> ¿Por qué es importante?</h4>
+          <p>Sin habilidades blandas, el conocimiento técnico se queda aislado. La barra horizontal es la que permite que tu especialidad se integre, se entienda y genere valor real en el producto final.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5 · COMPARACIÓN (NARANJA) -->
+  <section class="slide" style="background: var(--c-orange-bg);">
+    <div class="content">
+      <h2 class="slide-title title-orange"><i class="bi bi-4-circle-fill"></i> Perfil I-Shaped vs. Perfil T-Shaped</h2>
+
+      <p style="max-width: 1200px;">
+        En software, el <strong>perfil I-Shaped</strong> programa bien pero frena al equipo; el <strong>perfil T-Shaped</strong> programa bien <strong>y</strong> hace que todo el equipo avance.
+      </p>
+
+      <table class="compare-table">
+        <thead>
+          <tr>
+            <th class="i-shape"><i class="bi bi-dash-circle"></i> Perfil I-Shaped (solo programación)</th>
+            <th class="t-shape"><i class="bi bi-check-circle"></i> Perfil T-Shaped (integral)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Domina su lenguaje pero no entiende el negocio</td>
+            <td><strong>Entiende el problema antes de escribir código</strong></td>
+          </tr>
+          <tr>
+            <td>No documenta ni se comunica con el equipo</td>
+            <td><strong>Documenta, revisa el código de otros y da retroalimentación</strong></td>
+          </tr>
+          <tr>
+            <td>Ve solo su parte del proyecto</td>
+            <td><strong>Comprende el sistema completo y cómo encaja su parte</strong></td>
+          </tr>
+          <tr>
+            <td>Le cuesta trabajar con calidad, diseño o despliegue</td>
+            <td><strong>Colabora con todas las áreas del ciclo de vida del software</strong></td>
+          </tr>
+          <tr>
+            <td>Ignora el impacto ético de su algoritmo</td>
+            <td><strong>Evalúa sesgos, privacidad y consecuencias sociales</strong></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="callout" style="border-left-color: var(--c-orange);">
+        <p><i class="bi bi-info-circle-fill" style="color: var(--c-orange);"></i> <strong>Realidad profesional:</strong> muchos ingenieros con experiencia desarrollan un perfil aún más completo, con profundidad en dos o más áreas. El modelo T-Shaped es el punto de partida, no el techo.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6 · CASO PRÁCTICO (CIAN) -->
+  <section class="slide" style="background: var(--c-cyan-bg);">
+    <div class="content">
+      <h2 class="slide-title title-cyan"><i class="bi bi-5-circle-fill"></i> Caso Práctico: Sistema de Recomendación</h2>
+
+      <p style="max-width: 1200px;">
+        Imagina que eres el ingeniero asignado a un sistema de recomendación para una plataforma de streaming. Tu <strong>habilidad técnica</strong> te permite dominar el modelo de inteligencia artificial. Tus <strong>habilidades blandas</strong> entran en juego así:
+      </p>
+
+      <div class="flow-container">
+        <div class="flow-step">
+          <div class="flow-num">1</div>
+          <div class="flow-content">
+            <h4>Con el cliente y el equipo de producto</h4>
+            <p>Entiendes qué métrica importa: ¿tiempo frente a la pantalla? ¿satisfacción del usuario? ¿diversidad de contenido?</p>
+          </div>
+          <i class="bi bi-person-workspace flow-icon"></i>
+        </div>
+        <div class="flow-step">
+          <div class="flow-num">2</div>
+          <div class="flow-content">
+            <h4>Con el equipo de calidad</h4>
+            <p>Defines cómo probar que las recomendaciones no sean ofensivas ni repetitivas.</p>
+          </div>
+          <i class="bi bi-check2-square flow-icon"></i>
+        </div>
+        <div class="flow-step">
+          <div class="flow-num">3</div>
+          <div class="flow-content">
+            <h4>Con el equipo legal y de privacidad</h4>
+            <p>Revisas qué datos personales usas y con qué consentimiento.</p>
+          </div>
+          <i class="bi bi-shield-lock flow-icon"></i>
+        </div>
+        <div class="flow-step">
+          <div class="flow-num">4</div>
+          <div class="flow-content">
+            <h4>Con la ética y la responsabilidad social</h4>
+            <p>Te preguntas si el algoritmo amplifica sesgos: ¿favorece solo lo popular? ¿perjudica a los creadores pequeños?</p>
+          </div>
+          <i class="bi bi-heart-pulse flow-icon"></i>
+        </div>
+      </div>
+
+      <div class="callout" style="border-left-color: var(--c-cyan);">
+        <p><i class="bi bi-lightbulb-fill" style="color: var(--c-cyan);"></i> <strong>La ética no es un añadido:</strong> es parte de las habilidades blandas. Un algoritmo ético requiere un ingeniero que mire más allá de su editor de código.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7 · PRINCIPIOS (ROJO) -->
+  <section class="slide" style="background: var(--c-red-bg);">
+    <div class="content">
+      <h2 class="slide-title title-red"><i class="bi bi-6-circle-fill"></i> Principios del Ingeniero T-Shaped</h2>
+
+      <p style="max-width: 1200px;">
+        La ética y la colaboración no son un complemento: son la <strong>base</strong> del perfil T-Shaped aplicado al desarrollo de software.
+      </p>
+
+      <div class="skill-section-title" style="color: var(--c-red);">
+        <i class="bi bi-star-fill"></i> Principios fundamentales
+      </div>
+
+      <div class="skill-tags" style="margin-bottom: 1rem;">
+        <span class="skill-tag" style="border-color: var(--c-red);"><i class="bi bi-search" style="color: var(--c-red);"></i> Transparencia</span>
+        <span class="skill-tag" style="border-color: var(--c-red);"><i class="bi bi-scales" style="color: var(--c-red);"></i> Justicia</span>
+        <span class="skill-tag" style="border-color: var(--c-red);"><i class="bi bi-person-check" style="color: var(--c-red);"></i> Responsabilidad</span>
+        <span class="skill-tag" style="border-color: var(--c-red);"><i class="bi bi-lock" style="color: var(--c-red);"></i> Privacidad</span>
+      </div>
+
+      <ul class="list">
+        <li>
+          <i class="bi bi-check-circle-fill" style="color: var(--c-red);"></i>
+          <div><strong>Transparencia:</strong> explicar cómo funciona el algoritmo, qué datos utiliza y qué decisiones toma.</div>
+        </li>
+        <li>
+          <i class="bi bi-check-circle-fill" style="color: var(--c-red);"></i>
+          <div><strong>Justicia:</strong> auditar los resultados para detectar y corregir discriminación algorítmica.</div>
+        </li>
+        <li>
+          <i class="bi bi-check-circle-fill" style="color: var(--c-red);"></i>
+          <div><strong>Responsabilidad:</strong> asumir las consecuencias de nuestras decisiones técnicas, incluso las no previstas.</div>
+        </li>
+        <li>
+          <i class="bi bi-check-circle-fill" style="color: var(--c-red);"></i>
+          <div><strong>Privacidad:</strong> respetar la autonomía y los datos de las personas. El dato no es solo un recurso: es una extensión de alguien.</div>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- 8 · CONCLUSIÓN -->
+  <section class="slide cover">
+    <div class="big-ico"><i class="bi bi-patch-check-fill" style="color: var(--c-green);"></i></div>
+    <h1 style="font-size: clamp(1.9rem, 3.8vw, 3rem);">Profundo en tu especialidad.<br>Consciente de todo lo demás.</h1>
+    <p style="color: #94a3b8; max-width: 720px;">El perfil T-Shaped no te pide ser experto en todo. Te pide ser profundo en algo y consciente del contexto humano de lo que construyes.</p>
+
+    <div style="margin-top: 1.5rem; background: rgba(255,255,255,0.08); padding: 1.2rem 2rem; border-radius: 1.2rem; border: 1px solid rgba(255,255,255,0.15); max-width: 720px;">
+      <p style="color: #e2e8f0; font-size: 1.1rem; font-weight: 600; margin: 0;">
+        <i class="bi bi-question-circle-fill" style="color: #60a5fa;"></i>
+        ¿En qué parte de la "T" eres fuerte hoy? ¿Y en cuál necesitas crecer?
+      </p>
+    </div>
+
+    <div style="margin-top: 1.8rem; color: #64748b; font-size: 0.95rem;">
+      <p>Usa las flechas ← → para navegar · El algoritmo refleja quién eres</p>
+    </div>
+  </section>
+
+</main>
+
+<div class="controls">
+  <button id="prev" aria-label="Anterior"><i class="bi bi-chevron-left"></i></button>
+  <span class="counter" id="counter">1 / 8</span>
+  <button id="next" aria-label="Siguiente"><i class="bi bi-chevron-right"></i></button>
+</div>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  const bar = document.getElementById('bar');
+  const counter = document.getElementById('counter');
+  const prevBtn = document.getElementById('prev');
+  const nextBtn = document.getElementById('next');
+  let current = 0;
+
+  function update() {
+    slides.forEach((s, i) => s.classList.toggle('active', i === current));
+    const total = slides.length;
+    bar.style.width = ((current + 1) / total * 100) + '%';
+    counter.textContent = (current + 1) + ' / ' + total;
+    prevBtn.disabled = current === 0;
+    nextBtn.disabled = current === total - 1;
+  }
+
+  function goTo(index) {
+    if (index < 0 || index >= slides.length) return;
+    current = index;
+    update();
+  }
+
+  prevBtn.addEventListener('click', () => goTo(current - 1));
+  nextBtn.addEventListener('click', () => goTo(current + 1));
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight' || e.key === 'PageDown' || e.key === ' ') {
+      e.preventDefault(); goTo(current + 1);
+    } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+      e.preventDefault(); goTo(current - 1);
+    }
+  });
+
+  let touchStartX = 0;
+  document.addEventListener('touchstart', (e) => {
+    touchStartX = e.changedTouches[0].screenX;
+  }, { passive: true });
+  document.addEventListener('touchend', (e) => {
+    const dx = e.changedTouches[0].screenX - touchStartX;
+    if (Math.abs(dx) > 60) {
+      if (dx < 0) goTo(current + 1);
+      else goTo(current - 1);
+    }
+  }, { passive: true });
+
+  update();
+</script>
+
+</body>
+</html>
