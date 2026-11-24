@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Mind Map · Machine Learning Models</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <style>
+    :root {
+      --bg: #f4f8ff;
+      --ink: #0b1f4d;
+      --blue: #1236e8;
+      --blueM: #0a8fb8;
+      --terra: #e0661b;
+      --green: #0b8a4a;
+      --purple: #6b21a8;
+      --brown: #b45309;
+      --sun: #FFC234;
+      --pink: #db2777;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      font-family: "Segoe UI", Arial, sans-serif;
+      color: var(--ink);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .particles { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+    .particle { position: absolute; border-radius: 50%; opacity: .15; animation: float 18s infinite ease-in-out; }
+    .particle:nth-child(1) { width: 120px; height: 120px; background: var(--blue); left: 5%; top: 10%; animation-duration: 22s; }
+    .particle:nth-child(2) { width: 80px; height: 80px; background: var(--blueM); left: 85%; top: 5%; animation-duration: 18s; }
+    .particle:nth-child(3) { width: 160px; height: 160px; background: var(--terra); left: 10%; top: 75%; animation-duration: 25s; }
+    .particle:nth-child(4) { width: 100px; height: 100px; background: var(--green); left: 80%; top: 80%; animation-duration: 20s; }
+    .particle:nth-child(5) { width: 60px; height: 60px; background: var(--sun); left: 50%; top: 90%; animation-duration: 16s; }
+    .particle:nth-child(6) { width: 140px; height: 140px; background: var(--purple); left: 90%; top: 40%; animation-duration: 24s; }
+    .particle:nth-child(7) { width: 90px; height: 90px; background: var(--pink); left: 20%; top: 30%; animation-duration: 21s; }
+
+    @keyframes float {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      25% { transform: translate(30px, -40px) scale(1.1); }
+      50% { transform: translate(-20px, 30px) scale(.9); }
+      75% { transform: translate(40px, 20px) scale(1.05); }
+    }
+
+    #map { position: relative; width: 1100px; height: 700px; margin: 0 auto; z-index: 1; }
+
+    svg.connectors { position: absolute; left: 0; top: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; }
+    .connector { fill: none; stroke-width: 4; stroke-linecap: round; stroke-dasharray: 900; stroke-dashoffset: 900; animation: draw 1.5s ease forwards; }
+    .connector.c1 { stroke: var(--blue); }
+    .connector.c2 { stroke: var(--blueM); }
+    .connector.c3 { stroke: var(--terra); }
+    .connector.c4 { stroke: var(--green); }
+    .connector.c5 { stroke: var(--purple); }
+    .connector.c6 { stroke: var(--brown); }
+    .connector:nth-child(1) { animation-delay: .2s; }
+    .connector:nth-child(2) { animation-delay: .3s; }
+    .connector:nth-child(3) { animation-delay: .4s; }
+    .connector:nth-child(4) { animation-delay: .5s; }
+    .connector:nth-child(5) { animation-delay: .6s; }
+    .connector:nth-child(6) { animation-delay: .7s; }
+    @keyframes draw { to { stroke-dashoffset: 0; } }
+
+    .center {
+      position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
+      width: 310px; height: 160px; border-radius: 80px;
+      background: linear-gradient(135deg, #1236e8 0%, #0b1f4d 100%);
+      color: #fff; display: flex; flex-direction: column; align-items: center;
+      justify-content: center; text-align: center; padding: 10px 18px;
+      box-shadow: 0 10px 40px rgba(18, 54, 232, .45), 0 0 0 6px rgba(255, 255, 255, .4);
+      border: 4px solid #00e5ff; z-index: 4;
+      animation: centerPop 1s cubic-bezier(.34, 1.56, .64, 1) both;
+      cursor: pointer; transition: transform .3s;
+    }
+    .center:hover { transform: translate(-50%, -50%) scale(1.05); box-shadow: 0 15px 50px rgba(18, 54, 232, .6), 0 0 0 8px rgba(255, 255, 255, .5); }
+    .center::before { content: ""; position: absolute; inset: -12px; border-radius: 90px; border: 3px dashed rgba(0, 229, 255, .5); animation: spinSlow 20s linear infinite; }
+    @keyframes spinSlow { to { transform: rotate(360deg); } }
+    @keyframes centerPop {
+      from { opacity: 0; transform: translate(-50%, -50%) scale(.5); }
+      to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+    }
+    .center .ttl { font-size: 19px; font-weight: 800; line-height: 1.1; text-shadow: 0 2px 8px rgba(0,0,0,.3); }
+    .center .sub { font-size: 9px; margin-top: 6px; opacity: .85; letter-spacing: .15em; text-transform: uppercase; }
+    .center .people-badge {
+      margin-top: 8px; background: var(--pink); padding: 4px 10px; border-radius: 12px;
+      font-size: 9px; font-weight: bold; display: flex; align-items: center; gap: 5px;
+      box-shadow: 0 2px 8px rgba(0,0,0,.3);
+    }
+
+    .branch {
+      position: absolute; width: 270px; height: 78px; border-radius: 18px;
+      color: #fff; display: flex; align-items: center; gap: 12px;
+      padding: 0 14px; cursor: pointer; border: none; text-align: left;
+      font-family: inherit; box-shadow: 0 8px 20px rgba(0,0,0,.2);
+      transition: transform .25s cubic-bezier(.34, 1.56, .64, 1), box-shadow .25s;
+      z-index: 3;
+    }
+    .branch:hover, .branch:focus-visible { transform: translateY(-6px) scale(1.06); box-shadow: 0 16px 32px rgba(0,0,0,.3); outline: none; }
+    .branch i { font-size: 22px; flex: none; }
+    .branch .txt { display: flex; flex-direction: column; line-height: 1.15; min-width: 0; }
+    .branch .txt b { font-size: 13px; font-weight: 800; }
+    .branch .txt small { font-size: 10px; opacity: .9; margin-top: 3px; line-height: 1.3; }
+
+    .b1 { left: 25px; top: 95px; background: linear-gradient(135deg, #1236e8, #0a2bb8); }
+    .b2 { left: 25px; top: 305px; background: linear-gradient(135deg, #0a8fb8, #086d8c); }
+    .b3 { left: 25px; top: 515px; background: linear-gradient(135deg, #e0661b, #b84f12); }
+    .b4 { right: 25px; top: 95px; background: linear-gradient(135deg, #0b8a4a, #086a38); }
+    .b5 { right: 25px; top: 305px; background: linear-gradient(135deg, #6b21a8, #4c1580); }
+    .b6 { right: 25px; top: 515px; background: linear-gradient(135deg, #b45309, #8a3d07); }
+
+    @keyframes branchFloat {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-6px); }
+    }
+    @keyframes popIn {
+      from { opacity: 0; transform: scale(.7); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    .b1 { animation: popIn .7s cubic-bezier(.34, 1.56, .64, 1) both, branchFloat 4s ease-in-out infinite .7s; }
+    .b2 { animation: popIn .7s cubic-bezier(.34, 1.56, .64, 1) .15s both, branchFloat 4s ease-in-out infinite 1.5s; }
+    .b3 { animation: popIn .7s cubic-bezier(.34, 1.56, .64, 1) .3s both, branchFloat 4s ease-in-out infinite 2s; }
+    .b4 { animation: popIn .7s cubic-bezier(.34, 1.56, .64, 1) .45s both, branchFloat 4s ease-in-out infinite 2.5s; }
+    .b5 { animation: popIn .7s cubic-bezier(.34, 1.56, .64, 1) .6s both, branchFloat 4s ease-in-out infinite 3s; }
+    .b6 { animation: popIn .7s cubic-bezier(.34, 1.56, .64, 1) .75s both, branchFloat 4s ease-in-out infinite 3.5s; }
+
+    .branch::after {
+      content: ""; position: absolute; right: -6px; top: -6px; width: 16px; height: 16px;
+      border-radius: 50%; background: var(--sun); border: 3px solid #fff;
+      box-shadow: 0 0 0 0 rgba(255, 194, 52, .7);
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(255,194,52,.7); }
+      70% { box-shadow: 0 0 0 12px rgba(255,194,52,0); }
+      100% { box-shadow: 0 0 0 0 rgba(255,194,52,0); }
+    }
+
+    .overlay {
+      position: fixed; inset: 0; background: rgba(11, 31, 77, .7);
+      backdrop-filter: blur(4px); display: none; align-items: center;
+      justify-content: center; padding: 20px; z-index: 100;
+    }
+    .overlay.open { display: flex; animation: fadeIn .25s ease; }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+    .modal {
+      background: #fff; border-radius: 24px; max-width: 720px; width: 100%;
+      max-height: 88vh; overflow-y: auto;
+      box-shadow: 0 30px 80px rgba(0,0,0,.5);
+      border-top: 10px solid var(--accent, var(--blue));
+      animation: slideUp .4s cubic-bezier(.34, 1.56, .64, 1);
+      position: relative;
+    }
+    @keyframes slideUp {
+      from { transform: translateY(60px) scale(.95); opacity: 0; }
+      to { transform: translateY(0) scale(1); opacity: 1; }
+    }
+
+    .modal-head {
+      display: flex; align-items: center; gap: 18px;
+      padding: 26px 30px 18px; border-bottom: 2px solid #eef1f8;
+      position: sticky; top: 0; background: #fff;
+      border-radius: 24px 24px 0 0; z-index: 3;
+    }
+    .modal-head .m-icon {
+      width: 60px; height: 60px; border-radius: 16px;
+      background: var(--accent, var(--blue)); color: #fff;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 30px; flex: none;
+      box-shadow: 0 8px 20px rgba(0,0,0,.25);
+    }
+    .modal-head h2 { font-size: 22px; line-height: 1.15; color: var(--ink); }
+    .modal-head .eyebrow {
+      font-size: 11px; font-weight: 800; letter-spacing: .25em;
+      color: var(--accent, var(--blue)); text-transform: uppercase; margin-bottom: 4px;
+    }
+
+    .close {
+      margin-left: auto; border: none; background: #0b1f4d; color: #fff;
+      border-radius: 12px; padding: 10px 16px; font-size: 14px; font-weight: 700;
+      cursor: pointer; transition: background .15s, transform .2s; flex: none;
+    }
+    .close:hover { background: var(--accent, var(--blue)); transform: scale(1.08); }
+
+    .modal-body { padding: 20px 30px 30px; font-size: 15px; line-height: 1.7; color: #1b2540; }
+    .modal-body p { margin: 10px 0; }
+    .modal-body b { color: var(--accent, var(--blue)); }
+
+    .topic-photo {
+      width: 100%; height: 200px; object-fit: cover; border-radius: 17px;
+      margin: 4px 0 16px; box-shadow: 0 8px 22px rgba(11,31,77,.13);
+    }
+
+    .content-en {
+      background: #f8faff; border-left: 4px solid var(--accent, var(--blue));
+      border-radius: 14px; padding: 16px 20px; margin-bottom: 16px;
+    }
+    .content-en h4 {
+      font-size: 12px; letter-spacing: .1em; text-transform: uppercase;
+      color: var(--accent, var(--blue)); margin-bottom: 10px;
+      display: flex; align-items: center; gap: 6px;
+    }
+    .content-en p { font-size: 15.5px; margin: 8px 0; }
+
+    .help-es {
+      background: #fff9f0; border: 1px dashed #e8a86a; border-radius: 14px;
+      padding: 16px 20px; margin-top: 16px;
+    }
+    .help-es h4 {
+      font-size: 12px; letter-spacing: .1em; text-transform: uppercase;
+      color: var(--terra); margin-bottom: 10px;
+      display: flex; align-items: center; gap: 6px;
+    }
+    .help-es p { font-size: 15.5px; color: #4a3520; margin: 8px 0; }
+
+    .page-heading {
+      position: fixed; top: 12px; left: 0; right: 0; text-align: center;
+      font-size: 13px; letter-spacing: .08em; color: #34517a; font-weight: 700;
+      z-index: 2; pointer-events: none;
+    }
+
+    @media (max-width: 1150px) {
+      body { overflow: auto; display: block; padding: 60px 14px 25px; }
+      #map { width: 100%; height: auto; display: flex; flex-direction: column; align-items: center; gap: 15px; padding: 20px 0; }
+      svg.connectors { display: none; }
+      .center { position: relative; left: auto; top: auto; transform: none; margin-bottom: 20px; width: 90%; max-width: 340px; }
+      .center::before { display: none; }
+      .branch { position: relative; left: auto !important; right: auto !important; top: auto !important; width: 90%; max-width: 420px; height: auto; min-height: 85px; padding: 12px 14px; }
+      .page-heading { position: absolute; top: 16px; }
+      .modal-head { padding: 18px; gap: 10px; }
+      .modal-body { padding: 18px; }
+      .modal-head h2 { font-size: 19px; }
+      .close { padding: 9px; font-size: 12px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation: none !important; transition: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page-heading">INTERACTIVE MIND MAP · MACHINE LEARNING MODELS</div>
+
+  <div class="particles">
+    <div class="particle"></div><div class="particle"></div><div class="particle"></div>
+    <div class="particle"></div><div class="particle"></div><div class="particle"></div>
+    <div class="particle"></div>
+  </div>
+
+  <div id="map">
+    <svg class="connectors" viewBox="0 0 1100 700" preserveAspectRatio="none">
+      <defs>
+        <path id="path1" d="M 420 320 C 320 280, 260 220, 170 134" />
+        <path id="path2" d="M 400 350 C 300 350, 260 350, 170 344" />
+        <path id="path3" d="M 420 380 C 320 420, 260 480, 170 554" />
+        <path id="path4" d="M 680 320 C 780 280, 840 220, 930 134" />
+        <path id="path5" d="M 700 350 C 800 350, 840 350, 930 344" />
+        <path id="path6" d="M 680 380 C 780 420, 840 480, 930 554" />
+      </defs>
+      <use href="#path1" class="connector c1" />
+      <use href="#path2" class="connector c2" />
+      <use href="#path3" class="connector c3" />
+      <use href="#path4" class="connector c4" />
+      <use href="#path5" class="connector c5" />
+      <use href="#path6" class="connector c6" />
+    </svg>
+
+    <div class="center" data-target="p0" role="button" tabindex="0">
+      <div class="ttl">MACHINE<br>LEARNING MODELS</div>
+      <div class="sub">FUNDAMENTALS & TYPES</div>
+      <div class="people-badge"><i class="bi bi-diagram-3"></i> Click to explore</div>
+    </div>
+
+    <button class="branch b1" data-target="p1">
+      <i class="bi bi-box"></i>
+      <span class="txt">
+        <b>1. What is an ML Model?</b>
+        <small>Definition · function</small>
+      </span>
+    </button>
+    <button class="branch b2" data-target="p2">
+      <i class="bi bi-sliders"></i>
+      <span class="txt">
+        <b>2. Characteristics</b>
+        <small>Features · performance</small>
+      </span>
+    </button>
+    <button class="branch b3" data-target="p3">
+      <i class="bi bi-gear-wide-connected"></i>
+      <span class="txt">
+        <b>3. How does it work?</b>
+        <small>Training · inference</small>
+      </span>
+    </button>
+    <button class="branch b4" data-target="p4">
+      <i class="bi bi-diagram-2"></i>
+      <span class="txt">
+        <b>4. Types of ML Models</b>
+        <small>Supervised · Unsupervised · RL</small>
+      </span>
+    </button>
+    <button class="branch b5" data-target="p5">
+      <i class="bi bi-check2-square"></i>
+      <span class="txt">
+        <b>5. How to choose the best?</b>
+        <small>Criteria · trade-offs</small>
+      </span>
+    </button>
+    <button class="branch b6" data-target="p6">
+      <i class="bi bi-arrow-repeat"></i>
+      <span class="txt">
+        <b>6. Training & 7. Conclusions</b>
+        <small>Process · key takeaways</small>
+      </span>
+    </button>
+  </div>
+
+  <div class="overlay" id="overlay">
+    <div class="modal" id="modal" style="--accent:#1236e8;">
+      <div class="modal-head">
+        <div class="m-icon" id="modal-icon"><i class="bi bi-box"></i></div>
+        <div>
+          <div class="eyebrow" id="modal-eyebrow">TOPIC</div>
+          <h2 id="modal-title">Title</h2>
+        </div>
+        <button class="close" id="close-btn">✕ Close</button>
+      </div>
+      <div class="modal-body" id="modal-body"></div>
+    </div>
+  </div>
+
+  <script>
+    const CONTENT = {
+      p0: {
+        eyebrow: "OVERVIEW",
+        title: "Machine Learning Models: Overview",
+        icon: "bi-diagram-3",
+        accent: "#1236e8",
+        html: `
+          <img class="topic-photo" src="https://images.unsplash.com/photo-1555949963-aa79dcee981c?auto=format&fit=crop&w=1100&q=80" alt="Machine Learning concept" loading="lazy" onerror="this.style.display='none'">
+          <div class="content-en">
+            <h4><i class="bi bi-file-text"></i> General summary</h4>
+            <p>A machine learning model is a computer program trained with data to recognize patterns and make decisions. Instead of following fixed rules, it learns from examples and uses what it learned to answer new situations. The quality of its answers depends directly on the quality of the examples it was trained with.</p>
+          </div>
+          <div class="help-es">
+            <h4><i class="bi bi-arrow-right-circle"></i> Descripción en español</h4>
+            <p>Un modelo de machine learning es una computadora que ha sido entrenada con muchos ejemplos hasta que puede reconocer patrones por sí sola. Tú le das información y ella te devuelve una respuesta, sin que nadie le haya dicho exactamente qué hacer: descubrió la relación mirando los ejemplos.</p>
+            <p>Por ejemplo, si le muestras muchas fotos de gatos y perros, aprende qué hace que un gato parezca gato. Después, cuando le das una foto nueva, puede decirte qué animal es probablemente. Enseñarle con ejemplos se llama <b>entrenar</b>, y usarla después para obtener respuestas se llama <b>hacer predicciones</b>.</p>
+          </div>
+        `
+      },
+      p1: {
+        eyebrow: "TOPIC 1",
+        title: "What is a Machine Learning Model?",
+        icon: "bi-box",
+        accent: "#1236e8",
+        html: `
+          <img class="topic-photo" src="https://images.unsplash.com/photo-1555949963-aa79dcee981c?auto=format&fit=crop&w=1100&q=80" alt="ML Model definition" loading="lazy" onerror="this.style.display='none'">
+          <div class="content-en">
+            <h4><i class="bi bi-file-text"></i> General summary</h4>
+            <p>A machine learning model is a computer program that learns from examples instead of following written rules. It receives information, processes it based on what it learned during training, and returns an answer. Its usefulness depends on having enough varied and real examples to learn from.</p>
+          </div>
+          <div class="help-es">
+            <h4><i class="bi bi-arrow-right-circle"></i> Descripción en español</h4>
+            <p>Piensa en una computadora a la que le has mostrado cientos de ejemplos. Le das información y ella te devuelve una respuesta. Nadie le dijo exactamente qué hacer: ella descubrió la relación mirando los ejemplos.</p>
+            <p>Por ejemplo, si le muestras muchas fotos de gatos y perros, poco a poco aprende qué hace que un gato parezca gato y un perro parezca perro. Después, cuando le das una foto nueva, puede decirte qué animal es probablemente.</p>
+            <p>Enseñarle con ejemplos se llama <b>entrenar</b>. Usarla después para obtener respuestas se llama <b>hacer predicciones</b>.</p>
+          </div>
+        `
+      },
+      p2: {
+        eyebrow: "TOPIC 2",
+        title: "Characteristics of a Machine Learning Model",
+        icon: "bi-sliders",
+        accent: "#0a8fb8",
+        html: `
+          <img class="topic-photo" src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1100&q=80" alt="ML characteristics" loading="lazy" onerror="this.style.display='none'">
+          <div class="content-en">
+            <h4><i class="bi bi-file-text"></i> General summary</h4>
+            <p>A machine learning model learns from data, works with new information, receives inputs and returns results, and can be measured by how often it is right. Its main challenge is finding a balance: it must learn enough to be useful, but not so much that it memorizes and fails with new data.</p>
+          </div>
+          <div class="help-es">
+            <h4><i class="bi bi-arrow-right-circle"></i> Descripción en español</h4>
+            <p>Un buen modelo aprende de los datos en lugar de seguir reglas escritas por una persona. Debe funcionar bien con información nueva que nunca vio, no solo con los ejemplos que estudió. También recibe información, devuelve un resultado y podemos medir cuántas veces acierta.</p>
+            <p>Además, necesita encontrar un equilibrio: si es demasiado simple, no aprenderá lo suficiente; si memoriza todo, fallará cuando vea algo nuevo. Un buen modelo aprende la idea general, no cada pequeño detalle.</p>
+          </div>
+        `
+      },
+      p3: {
+        eyebrow: "TOPIC 3",
+        title: "How does a Machine Learning Model work?",
+        icon: "bi-gear-wide-connected",
+        accent: "#e0661b",
+        html: `
+          <img class="topic-photo" src="https://images.unsplash.com/photo-1518186285589-2f7649de83e0?auto=format&fit=crop&w=1100&q=80" alt="ML workflow" loading="lazy" onerror="this.style.display='none'">
+          <div class="content-en">
+            <h4><i class="bi bi-file-text"></i> General summary</h4>
+            <p>A machine learning model works in two main steps: training and use. During training, it studies many examples to find patterns. During use, it applies those patterns to new information. To confirm it really learned, the examples are divided into groups, and the final test uses data the model has never seen.</p>
+          </div>
+          <div class="help-es">
+            <h4><i class="bi bi-arrow-right-circle"></i> Descripción en español</h4>
+            <p>El modelo pasa por dos pasos principales. Primero se <b>entrena</b>: mira muchos ejemplos e intenta encontrar el patrón que conecta la información con la respuesta. Luego se <b>usa</b>: cuando llega información nueva, da una respuesta basada en lo que aprendió.</p>
+            <p>Para asegurarnos de que realmente aprendió, los ejemplos se dividen en grupos. Algunos se usan para estudiar, otros para comprobar y otros para una prueba final con información que el modelo nunca vio. Así sabemos si funcionará en la vida real y no solo en la práctica.</p>
+          </div>
+        `
+      },
+      p4: {
+        eyebrow: "TOPIC 4",
+        title: "Types of Machine Learning Models",
+        icon: "bi-diagram-2",
+        accent: "#0b8a4a",
+        html: `
+          <img class="topic-photo" src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1100&q=80" alt="Types of ML" loading="lazy" onerror="this.style.display='none'">
+          <div class="content-en">
+            <h4><i class="bi bi-file-text"></i> General summary</h4>
+            <p>There are three main types of machine learning: supervised, unsupervised, and reinforcement. Supervised learning uses examples with correct answers. Unsupervised learning looks for hidden patterns without answers. Reinforcement learning learns by trial, receiving rewards or penalties for its actions.</p>
+          </div>
+          <div class="help-es">
+            <h4><i class="bi bi-arrow-right-circle"></i> Descripción en español</h4>
+            <p>Hay tres formas principales en que un modelo puede aprender:</p>
+            <p><b>Aprendizaje supervisado:</b> le mostramos al modelo ejemplos junto con la respuesta correcta. Puede aprender a predecir un número, como un precio, o a elegir una categoría, como spam o no spam.</p>
+            <p><b>Aprendizaje no supervisado:</b> le damos información sin respuestas, y él busca grupos o patrones ocultos por su cuenta.</p>
+            <p><b>Aprendizaje por refuerzo:</b> el modelo aprende probando cosas y recibiendo recompensas o castigos, como un juego en el que mejora con la práctica.</p>
+          </div>
+        `
+      },
+      p5: {
+        eyebrow: "TOPIC 5",
+        title: "How to choose the best model?",
+        icon: "bi-check2-square",
+        accent: "#6b21a8",
+        html: `
+          <img class="topic-photo" src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1100&q=80" alt="Choosing a model" loading="lazy" onerror="this.style.display='none'">
+          <div class="content-en">
+            <h4><i class="bi bi-file-text"></i> General summary</h4>
+            <p>There is no single best model for every situation. The right choice depends on the type of answer needed, the amount and quality of data available, the need to explain how the model decides, and the available time or computing power. Sometimes a simple model is better than a complex one.</p>
+          </div>
+          <div class="help-es">
+            <h4><i class="bi bi-arrow-right-circle"></i> Descripción en español</h4>
+            <p>No existe un único mejor modelo para todo. Para elegir uno, hazte algunas preguntas sencillas: ¿Qué tipo de respuesta necesito? ¿Cuánta información tengo? ¿Necesito explicar cómo decide el modelo? ¿Y cuánto tiempo o capacidad de cómputo tengo?</p>
+            <p>A veces un modelo simple y fácil de entender es mejor que uno muy complejo. La elección correcta depende del problema, los datos y lo que más te importe.</p>
+          </div>
+        `
+      },
+      p6: {
+        eyebrow: "TOPICS 6 & 7",
+        title: "Training & Conclusions",
+        icon: "bi-arrow-repeat",
+        accent: "#b45309",
+        html: `
+          <img class="topic-photo" src="https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=1100&q=80" alt="Training process" loading="lazy" onerror="this.style.display='none'">
+          <div class="content-en">
+            <h4><i class="bi bi-file-text"></i> General summary</h4>
+            <p>Training a model is similar to studying for an exam: you prepare the material, study, do practice tests, and finally face real questions. A model that only does well on practice has not truly learned. In conclusion, machine learning models learn from examples, there are three main ways to learn, and choosing and training the right model is what makes it useful in real life.</p>
+          </div>
+          <div class="help-es">
+            <h4><i class="bi bi-arrow-right-circle"></i> Descripción en español</h4>
+            <p>Entrenar un modelo se parece mucho a estudiar para un examen. Primero preparas el material, que son los datos. Luego estudias, que es el entrenamiento en sí. Después haces algunos simulacros para ver si estás listo, y al final das el examen real con preguntas que nunca viste antes.</p>
+            <p>En conclusión, los modelos de machine learning aprenden de ejemplos en lugar de seguir reglas fijas. Hay tres formas principales de aprender: con respuestas, sin respuestas y por prueba y recompensa. Elegir el modelo correcto depende del problema, y entrenarlo bien es lo que lo hace realmente útil en la vida real.</p>
+          </div>
+        `
+      }
+    };
+
+    const overlay = document.getElementById('overlay');
+    const modal = document.getElementById('modal');
+    const modalIcon = document.getElementById('modal-icon');
+    const modalEyebrow = document.getElementById('modal-eyebrow');
+    const modalTitle = document.getElementById('modal-title');
+    const modalBody = document.getElementById('modal-body');
+    const closeBtn = document.getElementById('close-btn');
+
+    function openModal(id) {
+      const data = CONTENT[id];
+      if (!data) return;
+      modal.style.setProperty('--accent', data.accent);
+      modalIcon.innerHTML = `<i class="bi ${data.icon}"></i>`;
+      modalEyebrow.textContent = data.eyebrow;
+      modalTitle.textContent = data.title;
+      modalBody.innerHTML = data.html;
+      overlay.classList.add('open');
+      document.body.style.overflow = 'hidden';
+      modal.scrollTop = 0;
+    }
+
+    function closeModal() {
+      overlay.classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
+    document.querySelectorAll('.branch, .center').forEach(btn => {
+      btn.addEventListener('click', () => openModal(btn.dataset.target));
+      btn.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          openModal(btn.dataset.target);
+        }
+      });
+    });
+
+    closeBtn.addEventListener('click', closeModal);
+    overlay.addEventListener('click', e => { if (e.target === overlay) closeModal(); });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+  </script>
+</body>
+</html>
